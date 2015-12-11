@@ -14,17 +14,29 @@ class IndexController extends Zend_Controller_Action
         if(!$auth->hasIdentity()){
             $this->_helper->FlashMessenger->addMessage('Login não efetuado ou sessão expirada');
             $this->redirect('/login');
+        }else{
+            $acl = new Application_Model_Acl_Acl();
+            
+            if($acl->isAllowed()){
+                echo "sim";
+            }else{
+                echo "não";
+            }
         }
     }
 
     public function init()
-    {                
+    {       
        
     }
 
     public function indexAction()
     {          
-        $acl = new Application_Model_Acl_Acl();
+        
+    }
+    
+    public function listarAction() {
+        
     }
 
 }
