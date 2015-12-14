@@ -2,16 +2,18 @@
 
 class LoginController extends Zend_Controller_Action
 {
-
+       
     public function init()
     {
-        /* Initialize action controller here */
+        
     }
 
     public function indexAction()
     {
         $form = new Application_Form_Login;
         $request = $this->_request;
+        $config = Zend_Controller_Front::getInstance()->getParam('bootstrap');
+        $custom = $config->getOption('custom');
         
         if($request->isPost())
         {
@@ -33,10 +35,10 @@ class LoginController extends Zend_Controller_Action
             }            
         }else{
             $this->view->messages = $this->_helper->FlashMessenger->getMessages();
-        }
-        
+        }        
         
         $this->view->form = $form;
+        $this->view->logourl = $custom['logourl'];
         
     }
     

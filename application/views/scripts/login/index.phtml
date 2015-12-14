@@ -1,5 +1,10 @@
 <div id="box-login" class="container">
 	<div id="login">
+		<?php if($this->logourl): ?>
+			<p>
+				<img alt="" src="<?php echo $this->logourl ?>">
+			</p>			
+		<?php endif; ?>
 		<?php if($this->messages): ?>
 		<?php foreach ($this->messages as $message): ?>
 		<div class="alert alert-dimissible alert-danger" >
