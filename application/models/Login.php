@@ -13,7 +13,8 @@ class Application_Model_Login
         $adapter = new Zend_Auth_Adapter_DbTable($db);
         $adapter->setTableName('zf_usuarios')
                 ->setIdentityColumn('email')
-                ->setCredentialColumn('password');
+                ->setCredentialColumn('password')
+                /*->setCredentialTreatment('SHA1(CONCAT(?,salt))') */;
         
         // Atribuindo campo extra para a verificação
         $select = $adapter->getDbSelect();

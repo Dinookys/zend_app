@@ -2,10 +2,11 @@
 
 class UsuariosController extends Zend_Controller_Action
 {
-
+       
+    
     public function init()
     {
-        /* Initialize action controller here */
+        
     }
 
     public function indexAction()
@@ -15,7 +16,21 @@ class UsuariosController extends Zend_Controller_Action
 
     public function addAction()
     {
-        // action body
+        $form = new Application_Form_CriarUsuario;
+        $request = $this->_request;
+        if($request->isPost()){
+            $data = $request->getPost();
+            
+            if($form->isValid($data))
+            {
+                print_r($data);   
+            }else{
+                $this->view->messages = $this->_helper->FlashMessenger->getMessages();                    
+                $form->populate($data);
+            }
+        }
+        
+        $this->view->cadastroForm =  $form;
     }
 
 
