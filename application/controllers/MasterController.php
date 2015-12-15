@@ -1,12 +1,11 @@
 <?php
 
-class IndexController extends Zend_Controller_Action
+abstract class MasterController extends Zend_Controller_Action
 {
-
     protected $db = null;
     protected $data_user = null;
     protected $_custom;
-
+    
     public function preDispatch()
     {
         parent::preDispatch();
@@ -16,28 +15,18 @@ class IndexController extends Zend_Controller_Action
     
         if(!$auth->hasIdentity()){
             $this->redirect('/login');
-        }else{            
+        }else{
             $acl = new Application_Model_Acl_Acl();
             if(!$acl->isAllowed()){
-                $this->redirect('/error/forbidden');  
+                $this->redirect('/error/forbidden');
             }
         }
     }
-       
+     
     public function init()
-    {        
+    {
         $config = Zend_Controller_Front::getInstance()->getParam('bootstrap');
-        $this->_custom = $config->getOption('custom');        
+        $this->_custom = $config->getOption('custom');
         $this->view->headTitle($this->_custom['company_name'] . ' | ' . $this->getRequest()->getControllerName());
     }
-
-    public function indexAction()
-    {
-        
-    }
-
-
 }
-
-
-

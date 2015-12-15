@@ -2,6 +2,15 @@
 
 class ErrorController extends Zend_Controller_Action
 {
+    
+    protected $_custom;
+    
+    public function init()
+    {
+        $config = Zend_Controller_Front::getInstance()->getParam('bootstrap');
+        $this->_custom = $config->getOption('custom');        
+        $this->view->headTitle($this->_custom['company_name'] . ' | ' . $this->getRequest()->getControllerName());
+    }
 
     public function errorAction()
     {
@@ -53,6 +62,13 @@ class ErrorController extends Zend_Controller_Action
         return $log;
     }
 
+    public function forbiddenAction()
+    {
+        
+    }
+
 
 }
+
+
 

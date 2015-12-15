@@ -2,18 +2,22 @@
 
 class LoginController extends Zend_Controller_Action
 {
+
+    protected $_custom;
        
     public function init()
     {
-        
+        $config = Zend_Controller_Front::getInstance()->getParam('bootstrap');
+        $this->_custom = $config->getOption('custom');
+        $this->_helper->layout->setLayout('layout-login');
+        $this->view->headTitle($this->getRequest()->getControllerName() . ' | ' . $this->_custom['company_name'] );
     }
 
     public function indexAction()
     {
+        
         $form = new Application_Form_Login;
-        $request = $this->_request;
-        $config = Zend_Controller_Front::getInstance()->getParam('bootstrap');
-        $custom = $config->getOption('custom');
+        $request = $this->_request;                
         
         if($request->isPost())
         {
@@ -35,10 +39,11 @@ class LoginController extends Zend_Controller_Action
             }            
         }else{
             $this->view->messages = $this->_helper->FlashMessenger->getMessages();
-        }        
+        }
         
         $this->view->form = $form;
-        $this->view->logourl = $custom['logourl'];
+        $this->view->logourl = $this->_custom['logourl'];
+        $this->view->company_name = $this->_custom['company_name'];       
         
     }
     
