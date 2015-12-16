@@ -2,14 +2,13 @@
 <html lang="pt-br" >
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<?= $this->headTitle(); ?>
+	<?php echo $this->headTitle() ?>
 	<link rel="stylesheet" href="<?php echo $this->baseUrl() . "/"; ?>css/bootstrap.min.css">	
 	<link rel="stylesheet" href="<?php echo $this->baseUrl() . "/"; ?>css/app.min.css">
-	<script src="<?= $this->baseUrl() . "/"; ?>js/jquery.min.js" ></script>
-	<script src="<?= $this->baseUrl() . "/"; ?>js/bootstrap.min.js" ></script>
-	<script src="<?= $this->baseUrl() . "/"; ?>js/bootbox.min.js" ></script>
 </head>
-<body>
-	<?= $this->layout()->content; ?>	
+<body>	
+	<?php echo $this->layout()->content; ?>
+	<script src="<?php echo $this->baseUrl() . "/"; ?>js/jquery.min.js" ></script>
+	<script src="<?php echo $this->baseUrl() . "/"; ?>js/bootstrap.min.js" ></script>	
 </body>	
 </html>

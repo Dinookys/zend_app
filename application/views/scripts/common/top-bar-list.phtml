@@ -1,0 +1,43 @@
+<script>
+	(function($){
+		$(document).ready(function(){
+			$('#edit').click(function(e){
+				e.preventDefault();
+				var id = $('input[type=checkbox].checkbox:checked').eq(0).attr('id');
+				
+				if(id != undefined){
+					window.location.href = '<?= $this->baseUrl() . '/'. $this->controllerName; ?>/edit/id/'+ id + '';
+				}else{
+					bootbox.alert("Selecione um item através da lista");
+				}				
+			});
+
+			$('#remove').click(function(e){
+				e.preventDefault();
+				bootbox.confirm("Remover itens selecionados?", function(result){
+					if(result){
+						$('form#<?= $this->controllerName ?>').attr('action', '<?= $this->baseUrl() . '/'. $this->controllerName ?>/delete').submit();
+					}else{
+						$('.checkbox').prop('checked', false);
+					}
+				});				
+			});
+			
+			$('#checkAll').click(function(e){				
+				$('.checkbox').prop('checked', $(this).is(":checked"));
+			});
+		});
+	})(jQuery);
+</script>
+<div class="navbar navbar-default">
+	<div class="container">
+		<div class="navbar-brand">
+			<?= $this->barTitle; ?>
+		</div>
+		<div class="navbar-right" >
+			<a href="#" id="edit" class="btn btn-info navbar-btn" >Editar</a>
+			<a class="btn btn-success navbar-btn" href="<?= $this->baseUrl() . '/' . $this->controllerName ?>/add">Adicionar</a>
+			<a href="#" id="remove" class="btn btn-primary navbar-btn" >Remover</a>
+		</div>
+	</div>
+</div>

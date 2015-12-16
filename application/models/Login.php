@@ -14,7 +14,7 @@ class Application_Model_Login
         $adapter->setTableName('zf_usuarios')
                 ->setIdentityColumn('email')
                 ->setCredentialColumn('password')
-                /*->setCredentialTreatment('SHA1(CONCAT(?,salt))') */;
+                ->setCredentialTreatment('SHA1(CONCAT(?,salt))');
         
         // Atribuindo campo extra para a verificação
         $select = $adapter->getDbSelect();

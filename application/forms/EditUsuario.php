@@ -9,7 +9,7 @@ class Application_Form_EditUsuario extends Zend_Form
         $required = new Zend_Validate_NotEmpty ();
         $required->setType ($required->getType() | Zend_Validate_NotEmpty::INTEGER | Zend_Validate_NotEmpty::ZERO);
         
-        // Pega a lista de perfis no banco de dados na tabla #__perfis
+        // Pega a lista de perfis no banco de dados na tabela #__perfis
         $perfis = new Application_Model_Usuarios();        
         $lista_options = $perfis->getPerfis();
         

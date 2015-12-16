@@ -1,46 +1,51 @@
+<?= $this->render('common/top-bar-list.phtml'); ?>
 <div class="container">
-	<table class="table table-condensed table-hover table-striped" >
-		<thead>
-			<tr>
-				<th>
-					#id
-				</th>
-				<th>
-					Nome
-				</th>
-				<th>
-					E-mail
-				</th>
-				<th>
-					Perfil
-				</th>
-				<th>
-					Acesso
-				</th>
-			</tr>
-		</thead>
-		<tbody>
-			<?php foreach ($this->data as $key => $data) : ?>
+<div class="row">
+<?= $this->render('common/message.phtml'); ?>
+</div>
+</div>
+<div class="container panel panel-default">	
+<form name="usuarios-list" id="usuarios" action="" method="post">
+		<table class="table table-condensed table-hover table-striped">
+			<thead>
 				<tr>
-					<td>
-						<?php echo $data->id; ?>
-					</td>
+					<th>
+						<input type="checkbox" id="checkAll" title="Seleciona todos os itens">
+					</th>
+					<th>Nome</th>
+					<th>E-mail</th>
+					<th>Perfil</th>
+					<th class="text-center" >Ativo</th>	
+				</tr>
+			</thead>
+			<tbody>			
+				<?php foreach ($this->data as $key => $data) : ?>
+					<tr>
+					<td><input class="checkbox" id="<?= $data->id; ?>" type="checkbox"
+						name="<?= $data->id; ?>"></td>
 					<td>
 						<a href="<?= $this->baseUrl() ?>/usuarios/edit/id/<?= $data->id ?>">
-							<?php echo $data->nome; ?>
+							<?= $data->nome; ?>
 						</a>
 					</td>
 					<td>
-						<?php echo $data->email; ?>
-					</td>
+							<?= $data->email; ?>
+						</td>
 					<td>
-						<?php echo $data->role; ?>
-					</td>
-					<td>
-						<?php echo $data->acesso; ?>
-					</td>
+							<?= $data->role; ?>
+						</td>
+					
+							<?php if($data->acesso) : ?>
+					<td class="success text-center" >
+								<i class="glyphicon glyphicon-ok-sign"></i>
+							<?php else : ?>
+					<td class="danger text-center" >
+								<i class="glyphicon glyphicon-remove-sign"></i>
+							<?php endif; ?>
+						</td>					
 				</tr>
-			<?php endforeach; ?>
+				<?php endforeach; ?>
 		</tbody>
-	</table>
+		</table>		
+	</form>
 </div>

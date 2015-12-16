@@ -2,7 +2,7 @@
 	<div id="login">
 		<?php if($this->logourl): ?>
 			<p>
-				<img alt="" src="<?php echo $this->logourl ?>">
+				<img alt="<?php echo $this->company_name; ?>" src="<?php echo $this->logourl ?>">
 			</p>			
 		<?php endif; ?>
 		<?php if($this->messages): ?>
@@ -19,5 +19,5 @@
 	</div>
 </div>
 <div id="copy-login" class="fix-bottom">
-	&copy; <?php echo date('Y'); ?>
+	&copy; <?php echo date('Y') . ' - ' . $this->company_name; ?>
 </div>

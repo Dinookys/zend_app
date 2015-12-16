@@ -1,0 +1,28 @@
+<script>
+	(function($){
+		$(document).ready(function(){
+			$('#adicionar').click(function(e){
+				e.preventDefault();
+				$('form').submit();
+			});
+
+			$('#fechar').click(function(e){
+				e.preventDefault();
+				window.location.href = '<?= $this->baseUrl() . '/'. $this->controllerName ?>';
+			});
+
+			$("input[type=submit]").hide();
+		});
+	})(jQuery);
+</script>
+<div class="navbar navbar-default">
+	<div class="container">
+		<div class="navbar-brand">
+			<?= $this->barTitle; ?>
+		</div>
+		<div class="navbar-right" >
+			<a href="#" id="adicionar" class="btn btn-info navbar-btn" >Adicionar</a>
+			<a href="#" id="fechar" class="btn btn-primary navbar-btn" >Fechar</a>
+		</div>
+	</div>
+</div>

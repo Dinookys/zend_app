@@ -12,6 +12,10 @@ class Application_Model_Usuarios
         $this->db = Zend_Db_Table::getDefaultAdapter();
     }
 
+    /**
+     * Method getPerfis Application_Model_Usuarios
+     * @return array
+     */
     public function getPerfis()
     {
         $sql = "SELECT id,role FROM zf_perfis WHERE 1";
@@ -20,38 +24,59 @@ class Application_Model_Usuarios
         return $result;
     }
 
-    public function insert($data)
+    /**
+     * Method insert Application_Model_Usuarios
+     * @param array
+     * @return boolean
+     */
+    public function insert($data = array())
     {
         $bind = $this->clearData($data);
-        $bind['password'] = sha1($bind['password']);        
+        $bind['password'] = sha1($bind['password']);
         
         try {
-            $this->db->insert($this->name, $bind);
+            if($this->db->insert($this->name, $bind)){
+                return true;
+            }
         } catch (Zend_Db_Adapter_Exception $e) {
             return $e->getMessage();
         }
     }
 
-    public function update($data)
+    /**
+     * Method update Application_Model_Usuarios
+     * @param array
+     * @return boolean
+     */
+    public function update($data = array())
     {
         $bind = $this->clearData($data);
-        unset($bind['id']);        
+        unset($bind['id']);
         
-        try {            
-            $this->db->update($this->name, $bind, 'id =' .$data['id'] );                        
+        try {
+            $where = $this->db->quoteInto('id = ?' , $data['id']);
+            if($this->db->update($this->name, $bind, $where))
+            {
+                return true;
+            }
         } catch (Zend_Db_Adapter_Exception $e) {
             return $e->getMessage();
         }
     }
 
+    /**
+     * Method select Application_Model_Usuarios
+     * @param string
+     * @return array
+     * @tutorial param $email = null return all rows
+     */
     public function select($email = null)
     {
         try {
-            if ($email) {                
+            if ($email) {
                 $result = $this->db->fetchRow('SELECT u.id, u.nome, u.email, u.id_perfil, u.acesso, p.role FROM ' . $this->name . ' AS u LEFT JOIN zf_perfis AS p ON u.id_perfil = p.id WHERE email = ?', array(
                     $email
                 ), Zend_Db::FETCH_OBJ);
-                
             } else {
                 $this->db->setFetchMode(Zend_Db::FETCH_OBJ);
                 $result = $this->db->fetchAll('SELECT u.id, u.nome, u.email, u.id_perfil, u.acesso, p.role FROM ' . $this->name . ' AS u LEFT JOIN zf_perfis AS p ON u.id_perfil = p.id WHERE 1 ORDER BY id ASC');
@@ -63,6 +88,11 @@ class Application_Model_Usuarios
         }
     }
 
+    /**
+     * Method selectById Application_Model_Usuarios
+     * @param string
+     * @return array     
+     */
     public function selectById($id = null)
     {
         try {
@@ -79,6 +109,11 @@ class Application_Model_Usuarios
         }
     }
 
+    /**
+     * Method clearData Application_Model_Usuarios
+     * @param array
+     * @return array
+     */
     private function clearData($data)
     {
         $result = $this->db->describeTable($this->name);
@@ -91,5 +126,21 @@ class Application_Model_Usuarios
         }
         
         return $cleardata;
+    }
+    
+    /**
+     * Method remove Application_Model_Usuarios
+     * @param int
+     * @return boolean
+     */
+    public function delete($id)
+    {           
+        try {
+            $where = $this->db->quoteInto('id = ?', $id);
+            $this->db->delete($this->name, $where);
+            return true;
+        }catch (Zend_Db_Adapter_Exception $e){
+            return $e->getMessage();
+        }
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-class Application_Form_CriarUsuario extends Zend_Form
+class Application_Form_AddUsuario extends Zend_Form
 {
 
     public function init()
@@ -9,7 +9,7 @@ class Application_Form_CriarUsuario extends Zend_Form
         $required = new Zend_Validate_NotEmpty ();
         $required->setType ($required->getType() | Zend_Validate_NotEmpty::INTEGER | Zend_Validate_NotEmpty::ZERO);
         
-        // Pega a lista de perfis no banco de dados na tabla #__perfis
+        // Pega a lista de perfis no banco de dados na tabela #__perfis
         $perfis = new Application_Model_Usuarios();        
         $lista_options = $perfis->getPerfis();
         
@@ -17,8 +17,7 @@ class Application_Form_CriarUsuario extends Zend_Form
         
         foreach ($lista_options as $option){
             $options_perfil[$option->id] = $option->role;
-        }  
-
+        }
         
         $this->addElement('text','nome',array(
             'label'  =>  'Nome',
@@ -34,21 +33,32 @@ class Application_Form_CriarUsuario extends Zend_Form
             'class'     => 'form-control'
         ));
         
-        $this->addElement('select','perfil',array(
+        $this->addElement('select','id_perfil',array(
             'label'  =>  'Perfil',
             'required'  =>  true,
             'filters'   =>  array('StringTrim'),
             'class'     => 'form-control',
             'multiOptions' => $options_perfil,
             'validators' => array($required)
-        ));
-                
+        )); 
         
-        $this->addElement('password','senha',array(
+        $this->addElement('select','acesso',array(
+            'label'  =>  'Habilitado',
+            'required'  =>  true,     
+            'class'     => 'form-control',
+            'multiOptions' => array('0'=>'não', '1'=>'sim'),            
+        ))
+        ->setDefault('acesso', '0');        
+        
+        
+        $this->addElement('password','password',array(
             'label'  =>  'Senha',
             'required'  =>  true,
             'filters'   =>  array('StringTrim'),
-            'class'     => 'form-control'
+            'class'     => 'form-control',
+            'validators' => array(
+                array('StringLength', false, array('min' => 4, 'max' => 10))
+            )
         ));
 
         $this->addElement('password','confirm',array(
@@ -57,13 +67,13 @@ class Application_Form_CriarUsuario extends Zend_Form
             'filters'   =>  array('StringTrim'),
             'class'     => 'form-control',
             'validators' => array(
-                array('identical', false, array('token' => 'senha'))
+                array('identical', false, array('token' => 'password'))
             )
         ));
         
         $submit = $this->addElement('submit','Cadastrar', array(
             'class' => 'btn btn-primary btn-md'            
-        ));               
+        ));
         
         $this->setElementDecorators(array(
             'ViewHelper',            
@@ -71,7 +81,7 @@ class Application_Form_CriarUsuario extends Zend_Form
             'Label',
             'Description',
             array('HtmlTag', array('tag' => 'div', 'class' => 'form-group'))            
-        ), array('Cadastrar'), false);       
+        ), array('Cadastrar'), false);   
         
         $this->setElementDecorators(array(
             'ViewHelper',
