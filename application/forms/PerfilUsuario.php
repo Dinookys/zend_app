@@ -1,6 +1,6 @@
 <?php
 
-class Application_Form_AddUsuario extends Zend_Form
+class Application_Form_PerfilUsuario extends Zend_Form
 {
 
     public function init()
@@ -33,24 +33,6 @@ class Application_Form_AddUsuario extends Zend_Form
             'class'     => 'form-control'
         ));
         
-        $this->addElement('select','id_perfil',array(
-            'label'  =>  'Perfil',
-            'required'  =>  true,
-            'filters'   =>  array('StringTrim'),
-            'class'     => 'form-control',
-            'multiOptions' => $options_perfil,
-            'validators' => array($required)
-        )); 
-        
-        $this->addElement('select','acesso',array(
-            'label'  =>  'Habilitado',
-            'required'  =>  true,     
-            'class'     => 'form-control',
-            'multiOptions' => array('0'=>'não', '1'=>'sim'),            
-        ))
-        ->setDefault('acesso', '0');        
-        
-        
         $this->addElement('password','password',array(
             'label'  =>  'Senha',
             'required'  =>  true,
@@ -61,7 +43,7 @@ class Application_Form_AddUsuario extends Zend_Form
                 array('StringLength', false, array('min' => 4, 'max' => 10))
             )
         ));
-
+        
         $this->addElement('password','confirm',array(
             'label'  =>  'Confirma Senha',
             'required'  =>  true,
@@ -71,25 +53,29 @@ class Application_Form_AddUsuario extends Zend_Form
                 array('identical', false, array('token' => 'password'))
             )
         ));
+
+        $this->addElement('hidden','id',array(
+            'label'  =>  ''
+        ));        
         
-        $submit = $this->addElement('submit','Cadastrar', array(
+        $submit = $this->addElement('submit','Atualizar', array(
             'class' => 'btn btn-primary btn-md'            
-        ));
-        
+        ));        
+
         $this->setElementDecorators(array(
             'ViewHelper',            
             'Errors',
             'Label',
             'Description',
             array('HtmlTag', array('tag' => 'div', 'class' => 'form-group'))            
-        ), array('Cadastrar'), false);   
+        ), array('Atualizar'), false);   
         
         $this->setElementDecorators(array(
             'ViewHelper',
             'Errors',            
             'Description',
             array('HtmlTag', array('tag' => 'div', 'class' => 'form-group'))
-        ), array('Cadastrar'), true);
+        ), array('Atualizar', 'id'), true);
 
         $this->setDecorators(array(
             'FormElements',
@@ -97,11 +83,9 @@ class Application_Form_AddUsuario extends Zend_Form
             array('HtmlTag', array('tag' => 'div', 'class' => 'panel panel-body panel-default'))
         ));
         
-        $this->setAttrib('id', 'add_usuario');
+        $this->setAttrib('id', 'edit_usuario');
         $this->setAttrib('class', 'form');
         $this->setMethod('post');
     }
 
-
 }
-

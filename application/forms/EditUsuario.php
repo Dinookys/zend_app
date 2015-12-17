@@ -76,10 +76,13 @@ class Application_Form_EditUsuario extends Zend_Form
         $this->setDecorators(array(
             'FormElements',
             'Form',            
-            array('HtmlTag', array('tag' => 'div', 'class' => 'form', 'id'=> 'editar_usuario'))
+            array('HtmlTag', array('tag' => 'div', 'class' => 'panel panel-body panel-default'))
         ));
         
-        $this->setMethod('post'); 
+        $this->setAttrib('id', 'editar_usuario');
+        $this->setAttrib('class', 'form');
+        $this->setMethod('post');
+        
     }
 
 }

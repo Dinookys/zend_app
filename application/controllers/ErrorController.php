@@ -8,8 +8,10 @@ class ErrorController extends Zend_Controller_Action
     public function init()
     {
         $config = Zend_Controller_Front::getInstance()->getParam('bootstrap');
+        $auth = Zend_Auth::getInstance();
         $this->_custom = $config->getOption('custom');        
         $this->view->headTitle($this->_custom['company_name'] . ' | ' . $this->getRequest()->getControllerName());
+        $this->view->user = $auth->getIdentity();
     }
 
     public function errorAction()

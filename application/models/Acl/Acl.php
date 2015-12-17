@@ -6,19 +6,15 @@ class Application_Model_Acl_Acl extends Zend_Acl{
     
     function __construct()
     {        
-        $auth = Zend_Auth::getInstance();
-        $db = Zend_Db_Table::getDefaultAdapter();
+        $auth = Zend_Auth::getInstance();        
         $request = Zend_Controller_Front::getInstance()->getRequest();
                 
         $this->_current_resource = $request->getControllerName() . ':' . $request->getActionName();     
         
         $user = $auth->getIdentity();
         
-        $db->setFetchMode(Zend_Db::FETCH_OBJ);
-        $result = $db->fetchRow('SELECT role, resources FROM zf_perfis WHERE id = ?', $user->id_perfil);
-        $this->_role = $result->role;
-        
-        $resources = explode(',', $result->resources);
+        $this->_role = $user->role;        
+        $resources = explode(',', $user->resources);
         $this->addRole($this->_role);        
         
         foreach ($resources as $value){

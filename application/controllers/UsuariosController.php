@@ -7,14 +7,14 @@ class UsuariosController extends Zend_Controller_Action
 
     protected $_custom = null;
 
-    protected $data_user;
-    
-    protected $_actionName;
-    
-    protected $_FlashMessenger;
+    protected $data_user = null;
+
+    protected $_actionName = null;
+
+    protected $_FlashMessenger = null;
 
     public function preDispatch()
-    {               
+    {
         $auth = Zend_Auth::getInstance();
         $this->data_user = $auth->getIdentity();
         
@@ -25,7 +25,8 @@ class UsuariosController extends Zend_Controller_Action
             if (! $acl->isAllowed()) {
                 $this->redirect('/error/forbidden');
             }
-        }       
+        }
+        $this->view->user = $this->data_user;
         parent::preDispatch();
     }
 
@@ -41,6 +42,8 @@ class UsuariosController extends Zend_Controller_Action
         $this->view->controllerName = $this->getRequest()->getControllerName();
         $this->view->actionName = $this->_actionName = $this->getRequest()->getActionName();
         $this->view->messages = $this->_FlashMessenger->getMessages($this->_actionName);
+        $this->view->user = $this->data_user;
+        
     }
 
     public function indexAction()
@@ -62,9 +65,7 @@ class UsuariosController extends Zend_Controller_Action
             
             if ($form->isValid($data)) {
                 if (! $this->_modelUsers->select($data['email'])) {
-                    $this->_modelUsers->insert($data);
-                    $form->populate(array());
-                    
+                    $this->_modelUsers->insert($data);                                        
                     $this->_FlashMessenger->setNamespace('index')->addMessage('Cadastrado realizado com sucesso.');
                     $this->view->message_type = 'alert-success';
                     $this->redirect('usuarios/index');
@@ -94,8 +95,7 @@ class UsuariosController extends Zend_Controller_Action
                 if ($checkData->id != $data['id'] && $checkData->email == $data['email']) {
                     $this->_FlashMessenger->setNamespace($this->_actionName)->addMessage('O email <b>' . $data['email'] . '</b> já está cadastrado');
                 } else {
-                    $this->_modelUsers->update($data);
-                    $form->populate(array());
+                    $this->_modelUsers->update($data);                    
                     $this->view->message_type = 'alert-success';
                     $this->_FlashMessenger->setNamespace($this->_actionName)->addMessage('Atualizado com sucesso!');
                 }
@@ -143,4 +143,41 @@ class UsuariosController extends Zend_Controller_Action
         
         $this->redirect('/usuarios/index');
     }
+
+    public function userAction()
+    {
+       $form = new Application_Form_PerfilUsuario();       
+       $request = $this->_request;
+       
+       if ($request->isPost()) {
+            $data = $request->getPost();            
+            if ($form->isValid($data)) {
+                $checkData = $this->_modelUsers->select($data['email']);
+                
+                if ($checkData->id != $data['id'] && $checkData->email == $data['email']) {
+                    $this->_FlashMessenger->setNamespace($this->_actionName)->addMessage('O email <b>' . $data['email'] . '</b> já está cadastrado');
+                } else {
+                    $this->_modelUsers->update($data);                    
+                    $this->view->message_type = 'alert-success';
+                    $this->_FlashMessenger->setNamespace($this->_actionName)->addMessage('Atualizado com sucesso!');
+                }
+            } else {
+                $form->populate($data);
+            }
+        } else {
+            $data = $this->_modelUsers->selectById($this->data_user->id);
+            
+            if ($data) {
+                $form->populate($data);
+            } else {
+                $this->redirect('/usuarios/index');
+            }
+        }
+        
+       $this->view->barTitle = 'Editando usuário';
+       $this->view->formUser = $form; 
+    }
+
+
 }
+

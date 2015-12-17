@@ -29,7 +29,11 @@ class Application_Model_Login
         
         if($result->isValid()){
             // Gravando dados na sessão
-            $contents = $adapter->getResultRowObject(null,'password');
+            $contents = $adapter->getResultRowObject(null,'password');   
+            $db->setFetchMode(Zend_Db::FETCH_OBJ);
+            $result = $db->fetchRow('SELECT role, resources FROM zf_perfis WHERE id = ?', $contents->id_perfil);
+            $contents = (object) array_merge((array) $contents,(array)$result);           
+            
             $auth->getStorage()->write($contents);
             return true;
         }else{

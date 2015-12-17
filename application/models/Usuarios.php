@@ -51,6 +51,10 @@ class Application_Model_Usuarios
     public function update($data = array())
     {
         $bind = $this->clearData($data);
+        if(isset($bind['password'])){
+            $bind['password'] = sha1($bind['password']);
+        };
+        
         unset($bind['id']);
         
         try {
