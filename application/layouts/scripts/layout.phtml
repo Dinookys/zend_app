@@ -9,8 +9,42 @@
 	<script src="<?= $this->baseUrl() . "/"; ?>js/jquery.min.js" ></script>
 	<script src="<?= $this->baseUrl() . "/"; ?>js/bootstrap.min.js" ></script>
 	<script src="<?= $this->baseUrl() . "/"; ?>js/bootbox.min.js" ></script>
+	<script src="<?= $this->baseUrl() . "/"; ?>js/cidades-estados-1.4-utf8.js" ></script>
 </head>
 <body>	
-	<?= $this->layout()->content; ?>	
+	<?= $this->layout()->content; ?>
+	<script>
+		new dgCidadesEstados({
+	        cidade: document.getElementById('cidade'),
+	        estado: document.getElementById('estado'),
+	        estadoVal: 'GO',
+        	cidadeVal: 'Goiânia'
+	      });
+
+
+		$('#cep').on('blur', function(){
+			
+			val = $(this).val(),
+			cep = val.replace(/[^\d]/, '');
+
+			$.ajax({
+				'method' : 'GET',
+				'url' : 'http://cep.correiocontrol.com.br/' + cep +'.json'
+			}).done(function(data){
+				if(!data.error){
+					$('#bairro').val(data.bairro);
+					
+					$('input#endereco').val(data.logradouro);
+					$('input#cidade').val(data.cidade);
+					$('input#estado').val(data.estado);
+
+					$('select#cidade option[value='+ data.cidade +']').prop('selected', true);
+					$('select#endereco option[value='+ data.estado +']').prop('selected', true);
+				}				
+			});
+
+		});
+
+	</script>
 </body>	
 </html>
