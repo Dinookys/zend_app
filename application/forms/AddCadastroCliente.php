@@ -1,23 +1,15 @@
 <?php
 
-class Application_Form_FichaAtendimento extends Zend_Form
+class Application_Form_AddCadastroCliente extends Zend_Form
 {
 
     public function init()
     {
         // Verifica se o campo select esta com o valor null   
         $required = new Zend_Validate_NotEmpty ();
-        $required->setType ($required->getType() | Zend_Validate_NotEmpty::STRING | Zend_Validate_NotEmpty::ZERO);
+        $required->setType ($required->getType() | Zend_Validate_NotEmpty::STRING | Zend_Validate_NotEmpty::ZERO); 
         
-        
-        $this->setElementDecorators($this->setColSize());
-        
-        $this->setElementDecorators(array(
-            'ViewHelper',
-            'Errors',
-            'Description',
-            array('HtmlTag', array('tag' => 'div', 'class' => 'form-group col-xs-12'))
-        ), array('Enviar', 'id'), true);
+        $data_now = new Zend_Date();
         
         $options_estado_civil = array(
             '-- Selecione --', 
@@ -27,7 +19,70 @@ class Application_Form_FichaAtendimento extends Zend_Form
             'viuvo' => 'Viuvo'
         );
         
+        $options_empty = array(
+            '-- Selecione --',            
+        );
+        
+        $options_imovel = array(
+            '-- Selecione --',
+            'imovel01' => 'Imóvel 01',
+            'imovel02' => 'Imóvel 02',
+            'imovel03' => 'Imóvel 03',
+        );
+        
+        $options_meio_comunicacao = array(
+            '-- Selecione --',
+            'imovel01' => 'Telefone',
+            'tv' => 'TV',
+            'local' => 'Pass. no Local',
+            'radio' => 'Rádio',
+            'faixas' => 'Faixas',
+            'email' => 'Email',
+            'panfletagem' => 'Panfletagem',
+            'mala direta' => 'Mala direta',
+            'indicação' => 'Indicação',
+            'internet' => 'Internet',
+            'Jornal' => 'Jornal',
+            'outdoor' => 'Outdoor',
+            'outros' => 'Outros',            
+        );
+        
+        $options_renda = array(
+            '-- Selecione --',
+            'formal' => 'Formal',
+            'informal' => 'Informal',
+            'mista' => 'Mista',
+        );
+        
         $options_sim_nao = array('Não','Sim');
+        
+        $this->addElement('select','imovel',array(
+            'label'  =>  'Imóvel',
+            'required'  =>  true,
+            'filters'   =>  array('StringTrim'),
+            'class'     => 'form-control',
+            'multiOptions' => $options_imovel,
+            'validators' => array($required),
+            'decorators' => $this->setColSize(3)
+        ));
+        
+        // Adicionando tag HTML usando description do elemento
+        $this->addElement('hidden', 'data_desc', array(
+            'description' => '<label>Data</label><p>' . $data_now->toString('dd/MM/YYYY') .'</p>',
+            'ignore' => true,
+            'decorators' => array(
+                array('Description', array('escape'=>false, 'tag'=>'div', 'class' => "col-xs-2 pull-right")),
+            ),
+        ));        
+        
+        // Adicionando tag HTML usando description do elemento
+        $this->addElement('hidden', 'header3', array(
+            'description' => '<h3>DADOS CADASTRAIS</h3>',
+            'ignore' => true,
+            'decorators' => array(
+                array('Description', array('escape'=>false, 'tag'=>'div', 'class' => "col-xs-12")),
+            ),
+        ));
         
         $this->addElement('text','nome',array(
             'label'  =>  'Nome',
@@ -37,6 +92,14 @@ class Application_Form_FichaAtendimento extends Zend_Form
             'decorators' => $this->setColSize(6)
         ));
         
+        $this->addElement('text','cpf',array(
+            'label'  =>  'CPF',
+            'required'  =>  true,
+            'filters'   =>  array('StringTrim'),
+            'class'     => 'form-control',
+            'decorators' => $this->setColSize(3)
+        ));
+        
         $this->addElement('select','estado_civil',array(
             'label'  =>  'Estado Civil',
             'required'  =>  true,
@@ -44,19 +107,54 @@ class Application_Form_FichaAtendimento extends Zend_Form
             'class'     => 'form-control',
             'multiOptions' => $options_estado_civil,
             'validators' => array($required),
+            'decorators' => $this->setColSize(3)
+        ));
+        
+        $this->addElement('text','email',array(
+            'label'  =>  'E-mail',
+            'required'  =>  false,
+            'filters'   =>  array('StringTrim'),
+            'class'     => 'form-control',
             'decorators' => $this->setColSize(6)
+        ));
+        
+        $this->addElement('text','data_nasc',array(
+            'label'  =>  'Dt de Nascimento',
+            'required'  =>  false,
+            'description' => '<span class="glyphicon glyphicon-calendar"></span>',
+            'filters'   =>  array('StringTrim'),
+            'class'     => 'form-control',            
+            'decorators' => $this->setColSize(3, true, true)
+        ));
+        
+        // Adicionando tag HTML usando description do elemento
+        $this->addElement('hidden', 'hr_end', array(
+            'description' => '<hr/>',
+            'ignore' => true,
+            'decorators' => array(
+                array('Description', array('escape'=>false, 'tag'=>'div', 'class' => "col-xs-12")),
+            ),
+        ));
+        
+        $this->addElement('text','cep',array(
+            'label'  =>  'CEP',
+            'required'  =>  false,
+            'filters'   =>  array('StringTrim'),
+            'class'     => 'form-control',
+            'decorators' => $this->setColSize(3)
         ));
         
         $this->addElement('text','endereco',array(
             'label'  =>  'Endereço',
-            'required'  =>  true,
+            'required'  =>  false,
             'filters'   =>  array('StringTrim'),
-            'class'     => 'form-control'
+            'class'     => 'form-control',
+            'decorators' => $this->setColSize(9)
         ));
         
         $this->addElement('text','bairro',array(
             'label'  =>  'Bairro',
-            'required'  =>  true,
+            'required'  =>  false,
             'filters'   =>  array('StringTrim'),
             'class'     => 'form-control',
             'decorators' => $this->setColSize(6)
@@ -67,7 +165,7 @@ class Application_Form_FichaAtendimento extends Zend_Form
             'required'  =>  true,
             'filters'   =>  array('StringTrim'),
             'class'     => 'form-control',
-            'multiOptions' => $options_estado_civil,
+            'multiOptions' => $options_empty,
             'validators' => array($required),
             'decorators' => $this->setColSize(6)
         ));
@@ -77,17 +175,9 @@ class Application_Form_FichaAtendimento extends Zend_Form
             'required'  =>  true,
             'filters'   =>  array('StringTrim'),
             'class'     => 'form-control',
-            'multiOptions' => $options_estado_civil,
+            'multiOptions' => $options_empty,
             'validators' => array($required)
             ,'decorators' => $this->setColSize(6)
-        ));
-        
-        $this->addElement('text','cep',array(
-            'label'  =>  'CEP',
-            'required'  =>  true,
-            'filters'   =>  array('StringTrim'),
-            'class'     => 'form-control',
-            'decorators' => $this->setColSize(6)
         ));
         
         $this->addElement('text','fone_resid',array(
@@ -114,20 +204,13 @@ class Application_Form_FichaAtendimento extends Zend_Form
             'decorators' => $this->setColSize(4)
         ));
         
-        $this->addElement('text','email',array(
-            'label'  =>  'E-mail',
-            'required'  =>  false,
-            'filters'   =>  array('StringTrim'),
-            'class'     => 'form-control',
-            'decorators' => $this->setColSize(6)
-        ));
-        
-        $this->addElement('text','data_nasc',array(
-            'label'  =>  'Dt de Nascimento',
-            'required'  =>  false,
-            'filters'   =>  array('StringTrim'),
-            'class'     => 'form-control',
-            'decorators' => $this->setColSize(6)
+        // Adicionando tag HTML usando description do elemento
+        $this->addElement('hidden', 'hr_contato', array(
+            'description' => '<hr/>',
+            'ignore' => true,
+            'decorators' => array(
+                array('Description', array('escape'=>false, 'tag'=>'div', 'class' => "col-xs-12")),
+            ),
         ));
         
         $this->addElement('text','empresa_trabalha',array(
@@ -135,7 +218,7 @@ class Application_Form_FichaAtendimento extends Zend_Form
             'required'  =>  false,
             'filters'   =>  array('StringTrim'),
             'class'     => 'form-control',
-            
+            'decorators' => $this->setColSize()            
         ));
 
         $this->addElement('text','profissao',array(
@@ -167,7 +250,7 @@ class Application_Form_FichaAtendimento extends Zend_Form
             'required'  =>  true,
             'filters'   =>  array('StringTrim'),
             'class'     => 'form-control',
-            'multiOptions' => $options_estado_civil,
+            'multiOptions' => $options_renda,
             'validators' => array($required),
             'decorators' => $this->setColSize(6)
         ));
@@ -202,29 +285,57 @@ class Application_Form_FichaAtendimento extends Zend_Form
             'filters'   =>  array('StringTrim'),
             'class'     => 'form-control',
             'decorators' => $this->setColSize(3)
-        ));        
+        ));
+        
+        // Adicionando tag HTML usando description do elemento
+        $this->addElement('hidden', 'header3_atendimento', array(
+            'description' => '<h3>SOBRE O ATENDIEMENTO</h3>',
+            'ignore' => true,
+            'decorators' => array(
+                array('Description', array('escape'=>false, 'tag'=>'div', 'class' => "col-xs-12")),
+            ),
+        ));
         
         $this->addElement('select','meio_comunicacao',array(
             'label'  =>  'Meio de Comunicação',
             'required'  =>  true,
             'filters'   =>  array('StringTrim'),
             'class'     => 'form-control',
-            'multiOptions' => $options_estado_civil,
-            'validators' => array($required)
+            'multiOptions' => $options_meio_comunicacao,
+            'validators' => array($required),
+            'decorators' => $this->setColSize()
         ));
         
         $this->addElement('textarea','observacoes',array(
             'label'  =>  'Observações',
-            'required'  =>  true,
+            'required'  =>  false,
             'filters'   =>  array('StringTrim'),
             'class'     => 'form-control',
             'cols'  => 80,
-            'rows'  => 5
+            'rows'  => 5,
+            'decorators' => $this->setColSize()
+        ));
+        
+        $this->addElement('hidden', 'data', array(
+            'value' => $data_now->toString('YYYY-MM-dd'),
+            'decorators' => $this->setColSize(12)
+        ));
+        
+        $this->addElement('hidden', 'created_user_id', array(
+            'value' => CURRENT_USER_ID,
+            'decorators' => $this->setColSize(12)
+        ));
+        
+        $this->addElement('hidden', 'last_user_id', array(
+            'value' => CURRENT_USER_ID,
+            'decorators' => $this->setColSize(12)
         ));
         
         $this->addElement('submit','Enviar',array(
             'label'  =>  'Enviar',
-            'class' => 'btn btn-success pull-right'
+            'ignore' => 'true',
+            'class' => 'btn btn-success pull-right',
+            'decorators' => $this->setColSize(12,false)
         ));
         
         $this->setDecorators(array(            
@@ -240,16 +351,34 @@ class Application_Form_FichaAtendimento extends Zend_Form
         
     }
     
-    private function setColSize($size = 12)
+    private function setColSize($size = 12, $label = true, $addon = false)
     {
-        return array(
+        $decorator = array(
             'Label',
             'ViewHelper',
             'Errors',
-            'Description',
-            array('HtmlTag', array('tag' => 'div', 'class' => 'form-group col-xs-'. $size .''))
+            'Description',            
+            array('HtmlTag', array('tag' => 'div', 'class' => 'form-group col-xs-'. $size .'')),
+            array('Description', array('escape'=>false, 'tag'=>'span', 'class' => "input-group-addon"))
+            
         );
+        
+        if(!$label){
+            unset($decorator['0']);
+        }
+        
+        if(!$addon){
+            unset($decorator['5']);
+        }
+        
+        return $decorator;
+    }
+    
+    public function addFieldId($id) {
+        $this->addElement('hidden', 'id', array(
+            'value' => $id,
+            'decorators' => $this->setColSize(12)
+        ));
     }
 
 }
-

@@ -34,8 +34,13 @@ class UsuariosController extends Zend_Controller_Action
     {
         $this->_modelUsers = new Application_Model_Usuarios();
         $config = Zend_Controller_Front::getInstance()->getParam('bootstrap');
-        $this->_FlashMessenger = $this->_helper->getHelper('FlashMessenger');
+        
         $this->_custom = $config->getOption('custom');
+        // Pegando array de configurações para a criação do menu
+        $this->view->menu = $config->getOption('menu');
+        
+        $this->_FlashMessenger = $this->_helper->getHelper('FlashMessenger');
+        
         $this->view->headTitle(strtoupper($this->getRequest()
             ->getControllerName()) . ' | ' . $this->_custom['company_name']);
         
@@ -51,9 +56,17 @@ class UsuariosController extends Zend_Controller_Action
         $request = $this->_request;
         if ($request->isPost()) {
             $data = $request->getPost();
-        }        
-        $this->view->barTitle = 'Usuários';
-        $this->view->data = $this->_modelUsers->select();        
+        }
+        
+        $filter = $request->getParam('filter');
+        
+        if($filter == '0'){
+            $this->view->data = $this->_modelUsers->selectAll('0');
+        }else{
+            $this->view->data = $this->_modelUsers->selectAll('1');
+        }
+        
+        $this->view->barTitle = 'Usuários';       
     }
 
     public function addAction()
@@ -70,7 +83,7 @@ class UsuariosController extends Zend_Controller_Action
                     $this->view->message_type = 'alert-success';
                     $this->redirect('usuarios/index');
                 } else {
-                    $this->_FlashMessenger->setNamespace($this->_actionName)->addMessage('O email <b>' . $data['email'] . '</b> já está cadastrado');
+                    $this->view->messages = array('O email <b>' . $data['email'] . '</b> já está cadastrado');                    
                 }
             } else {
                 $form->populate($data);
@@ -93,11 +106,11 @@ class UsuariosController extends Zend_Controller_Action
                 $checkData = $this->_modelUsers->select($data['email']);
                 
                 if ($checkData->id != $data['id'] && $checkData->email == $data['email']) {
-                    $this->_FlashMessenger->setNamespace($this->_actionName)->addMessage('O email <b>' . $data['email'] . '</b> já está cadastrado');
+                    $this->view->messages = array('O email <b>' . $data['email'] . '</b> já está cadastrado');                    
                 } else {
                     $this->_modelUsers->update($data);                    
                     $this->view->message_type = 'alert-success';
-                    $this->_FlashMessenger->setNamespace($this->_actionName)->addMessage('Atualizado com sucesso!');
+                    $this->view->messages = array('Atualizado com sucesso!');                    
                 }
             } else {
                 $form->populate($data);
@@ -141,7 +154,7 @@ class UsuariosController extends Zend_Controller_Action
             $this->_FlashMessenger->setNamespace('index')->addMessage(sprintf('%s %s com sucesso!', $totalData, $textoRemovido));
         }
         
-        $this->redirect('/usuarios/index');
+        $this->redirect('/usuarios/index/filter/0');
     }
 
     public function userAction()
@@ -170,7 +183,7 @@ class UsuariosController extends Zend_Controller_Action
             if ($data) {
                 $form->populate($data);
             } else {
-                $this->redirect('/usuarios/index');
+                $this->redirect('/index');
             }
         }
         
@@ -178,6 +191,28 @@ class UsuariosController extends Zend_Controller_Action
        $this->view->formUser = $form; 
     }
 
+    public function trashAction()
+    {        
+        $request = $this->_request;
+        $model = new Application_Model_Clientes();
+        
+        if ($request->isPost()) {
+            $data = array_keys($request->getPost());
+            $totalData = count($data);
+            
+            $textoRemovido = 'item movido para lixeira';
+            if ($totalData > 1) {
+                $textoRemovido = 'itens movidos para lixeira';
+            }
+            
+            foreach ($data as $id) {
+                $model->trash($id, 0);
+            }
+            
+            $this->_FlashMessenger->setNamespace('index')->addMessage(sprintf('%s %s com sucesso!', $totalData, $textoRemovido));
+        }
+        
+        $this->redirect('/usuarios/index');
+    }
 
 }
-

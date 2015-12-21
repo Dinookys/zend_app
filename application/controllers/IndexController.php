@@ -13,6 +13,8 @@ class IndexController extends Zend_Controller_Action
 
     protected $_actionName = null;
 
+    protected $_controllerName = null;
+
     protected $_FlashMessenger = null;
 
     public function preDispatch()
@@ -38,37 +40,28 @@ class IndexController extends Zend_Controller_Action
         
         $this->_modelUsers = new Application_Model_Usuarios();
         $config = Zend_Controller_Front::getInstance()->getParam('bootstrap');
-        $this->_FlashMessenger = $this->_helper->getHelper('FlashMessenger');
         $this->_custom = $config->getOption('custom');
+        
+        // Pegando array de configurações para a criação do menu
+        $this->view->menu = $config->getOption('menu');
+        
+        $this->_FlashMessenger = $this->_helper->getHelper('FlashMessenger');        
         $this->view->headTitle(strtoupper($this->getRequest()
             ->getControllerName()) . ' | ' . $this->_custom['company_name']);
         
-        $this->view->controllerName = $this->getRequest()->getControllerName();
+        $this->view->controllerName = $this->_controllerName = $this->getRequest()->getControllerName();
         $this->view->actionName = $this->_actionName = $this->getRequest()->getActionName();
-        $this->view->messages = $this->_FlashMessenger->getMessages($this->_actionName);
+        $this->view->messages = $this->_FlashMessenger->getMessages($this->_controllerName);
         $this->view->user = $this->data_user; 
     }
 
     public function indexAction()
-    {   
-        switch (strtolower($this->data_user->role)){
+    {
+        switch (strtolower(CURRENT_USER_ROLE)){
             case 'corretor':
-                $this->redirect('index/ficha-atendimento');
+                $this->redirect('clientes');
                 break;
         };
     }
 
-    public function fichaAtendimentoAction()
-    {
-        $form = new Application_Form_FichaAtendimento();
-        
-        $this->view->formFicha = $form;
-    }
-
-
 }
-
-
-
-
-

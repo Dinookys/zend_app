@@ -1,0 +1,11 @@
+<?= $this->render('common/top-menu.phtml'); ?>
+<?= $this->render('common/top-bar-add.phtml'); ?>
+<div class="container" >
+	<?= $this->render('common/message.phtml'); ?>
+	<?= $this->form; ?>
+</div>
+<script>
+	$("#data_nasc").datetimepicker({
+		format: 'DD/MM/YYYY'
+	});
+</script>

@@ -1,21 +1,3 @@
-<?php 
-
-$navs = array();
-$navHtml = "";
-$resources = explode(',', $this->user->resources);
-
-foreach ($resources as $value){
-	$value = explode(':', $value);
-	if(!in_array($value[0], $navs)){
-		$navs[] = $value[0];
-		if($this->controllerName == $value[0]){
-			$navHtml .="<li class='active'><a href='{$this->baseUrl()}/{$value[0]}'>{$value[0]}</a></li>";	
-		}else{
-			$navHtml .="<li><a href='{$this->baseUrl()}/{$value[0]}'>{$value[0]}</a></li>";	
-		}		
-	}
-} 
-?>	        		
 <div class="navbar navbar-inverse">
 	<div class="container">
 		<div class="navbar-brand">
@@ -25,7 +7,16 @@ foreach ($resources as $value){
 			|
 		</div>	
 		<ul class="nav navbar-nav">
-        	<?= $navHtml ?>
+        	<?php foreach ($this->menu[strtolower($this->user->role)] as $key => $name) : ?>
+				
+			<?php if($key == $this->controllerName) : ?>
+				<li class="active" >
+			<?php else : ?>
+        		<li>
+        	<?php endif; ?>
+        			<a href="<?= $this->baseUrl() ?>/<?= $key ?>"><?= $name ?></a>
+        		</li>
+        	<?php endforeach; ?>
       	</ul>
 		<div class="navbar-right" >
 			<a title="Editar perfil" href="<?= $this->baseUrl() ?>/usuarios/user" id="edit-user" class="btn btn-link navbar-btn">

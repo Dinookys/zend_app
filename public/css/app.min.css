@@ -66,3 +66,15 @@ ul.errors{
   padding: 5px;
   font-size: 11px;
 }
+
+.form-control ~.input-group-addon{
+  display: none;
+  border: 1px solid #ccc;
+  position: absolute;
+  top: 28px;
+  right: 18px;  
+}
+
+.form-group:hover > .input-group-addon{
+  display: table;
+}

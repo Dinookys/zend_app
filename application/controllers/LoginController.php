@@ -18,7 +18,8 @@ class LoginController extends Zend_Controller_Action
     {
         
         $form = new Application_Form_Login;
-        $request = $this->_request;                
+        $request = $this->_request;
+        $auth = Zend_Auth::getInstance();
         
         if($request->isPost())
         {
@@ -40,6 +41,10 @@ class LoginController extends Zend_Controller_Action
             }            
         }else{
             $this->view->messages = $this->_helper->FlashMessenger->getMessages();
+        }
+        
+        if($auth->hasIdentity()){
+            $this->redirect('/index');
         }
         
         $this->view->form = $form;

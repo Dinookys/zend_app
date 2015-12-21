@@ -39,7 +39,7 @@ class Application_Model_Usuarios
                 return true;
             }
         } catch (Zend_Db_Adapter_Exception $e) {
-            return $e->getMessage();
+            throw new Zend_Exception($e->getMessage());
         }
     }
 
@@ -64,7 +64,7 @@ class Application_Model_Usuarios
                 return true;
             }
         } catch (Zend_Db_Adapter_Exception $e) {
-            return $e->getMessage();
+            throw new Zend_Exception($e->getMessage());
         }
     }
 
@@ -88,7 +88,25 @@ class Application_Model_Usuarios
             
             return $result;
         } catch (Zend_Db_Adapter_Exception $e) {
-            return $e->getMessage();
+            throw new Zend_Exception($e->getMessage());
+        }
+    }
+    
+    /** Recupera dados da tabela #__clientes
+     * @param Zend_DB::FETCH $mode
+     * @return array
+     */
+    public function selectAll($filterState = 1)
+    {
+        try {
+            $filterState = $this->db->quoteInto('state = ?', $filterState);                
+            $result = $this->db->fetchAll('SELECT u.id, u.nome, u.email, u.id_perfil, u.acesso, u.state, p.role FROM ' . $this->name . ' AS u LEFT JOIN zf_perfis AS p ON u.id_perfil = p.id WHERE '. $filterState .' ORDER BY id DESC', 
+                NULL,
+                Zend_Db::FETCH_OBJ);
+            
+            return $result;
+        } catch (Zend_Db_Adapter_Exception $e) {
+            throw new Zend_Exception($e->getMessage());
         }
     }
 
@@ -109,7 +127,24 @@ class Application_Model_Usuarios
             
             return false;
         } catch (Zend_Db_Adapter_Exception $e) {
-            return $e->getMessage();
+            throw new Zend_Exception($e->getMessage());
+        }
+    }
+    
+    /**
+     * trash atualiza estado do item
+     * @param int $id
+     * @param int $state
+     * @throws Zend_Exception
+     */
+    public function trash($id, $state = 0){
+        try {
+            $where = $this->db->quoteInto('id = ?', $id);
+            $bind = array('state' => $state);
+            $this->db->update($this->name, $bind, $where);
+            return true;
+        }catch (Zend_Db_Adapter_Exception $e){
+            throw new Zend_Exception($e->getMessage());
         }
     }
 
@@ -144,7 +179,7 @@ class Application_Model_Usuarios
             $this->db->delete($this->name, $where);
             return true;
         }catch (Zend_Db_Adapter_Exception $e){
-            return $e->getMessage();
+            throw new Zend_Exception($e->getMessage());
         }
     }
 }

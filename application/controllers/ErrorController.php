@@ -9,7 +9,10 @@ class ErrorController extends Zend_Controller_Action
     {
         $config = Zend_Controller_Front::getInstance()->getParam('bootstrap');
         $auth = Zend_Auth::getInstance();
-        $this->_custom = $config->getOption('custom');        
+        $this->_custom = $config->getOption('custom');
+        // Pegando array de configurações para a criação do menu
+        $this->view->menu = $config->getOption('menu');
+                
         $this->view->headTitle($this->_custom['company_name'] . ' | ' . $this->getRequest()->getControllerName());
         $this->view->user = $auth->getIdentity();
     }

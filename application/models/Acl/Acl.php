@@ -13,23 +13,30 @@ class Application_Model_Acl_Acl extends Zend_Acl{
         
         $user = $auth->getIdentity();
         
-        $this->_role = $user->role;        
-        $resources = explode(',', $user->resources);
-        $this->addRole($this->_role);        
+        $this->_role = $user->role;
+        $this->addRole($this->_role);
         
-        foreach ($resources as $value){
-            $this->addResource($value);
-        }
-        
-        $this->allow($this->_role, $resources);
-        
-        if(!in_array($this->_current_resource, $this->getResources())){
+        if(is_array($user->resources)){
+            $resources = explode(',', $user->resources);
+            foreach ($resources as $value){
+                $this->addResource($value);
+            }
+            
+            $this->allow($this->_role, $resources);
+            
+            if(!in_array($this->_current_resource, $this->getResources())){
+                $this->addResource($this->_current_resource);
+            }
+            
+            if(!in_array($this->_current_resource, $resources)){
+                $this->deny($this->_role, $this->_current_resource);
+            }
+            
+        }else{
             $this->addResource($this->_current_resource);
-        }
-        
-        if(!in_array($this->_current_resource, $resources)){
-            $this->deny($this->_role, $this->_current_resource);
-        }
+            $this->allow($this->_role, $this->_current_resource);
+        }        
+
     }
     
     public function isAllowed() {
