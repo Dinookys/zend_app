@@ -153,7 +153,8 @@ class Application_Model_Clientes
      * @param int $state
      * @throws Zend_Exception
      */
-    public function trash($id, $state = 0){
+    public function trash($id, $state= 0)
+    {
         try {
             $where = $this->db->quoteInto('id = ?', $id);
             $bind = array('state' => $state);

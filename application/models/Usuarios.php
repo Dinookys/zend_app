@@ -14,6 +14,7 @@ class Application_Model_Usuarios
 
     /**
      * Method getPerfis Application_Model_Usuarios
+     * 
      * @return array
      */
     public function getPerfis()
@@ -26,7 +27,9 @@ class Application_Model_Usuarios
 
     /**
      * Method insert Application_Model_Usuarios
-     * @param array
+     * 
+     * @param
+     *            array
      * @return boolean
      */
     public function insert($data = array())
@@ -35,7 +38,7 @@ class Application_Model_Usuarios
         $bind['password'] = sha1($bind['password']);
         
         try {
-            if($this->db->insert($this->name, $bind)){
+            if ($this->db->insert($this->name, $bind)) {
                 return true;
             }
         } catch (Zend_Db_Adapter_Exception $e) {
@@ -45,22 +48,24 @@ class Application_Model_Usuarios
 
     /**
      * Method update Application_Model_Usuarios
-     * @param array
+     * 
+     * @param
+     *            array
      * @return boolean
      */
     public function update($data = array())
     {
         $bind = $this->clearData($data);
-        if(isset($bind['password'])){
+        if (isset($bind['password'])) {
             $bind['password'] = sha1($bind['password']);
-        };
+        }
+        ;
         
         unset($bind['id']);
         
         try {
-            $where = $this->db->quoteInto('id = ?' , $data['id']);
-            if($this->db->update($this->name, $bind, $where))
-            {
+            $where = $this->db->quoteInto('id = ?', $data['id']);
+            if ($this->db->update($this->name, $bind, $where)) {
                 return true;
             }
         } catch (Zend_Db_Adapter_Exception $e) {
@@ -70,7 +75,9 @@ class Application_Model_Usuarios
 
     /**
      * Method select Application_Model_Usuarios
-     * @param string
+     * 
+     * @param
+     *            string
      * @return array
      * @tutorial param $email = null return all rows
      */
@@ -91,18 +98,18 @@ class Application_Model_Usuarios
             throw new Zend_Exception($e->getMessage());
         }
     }
-    
-    /** Recupera dados da tabela #__clientes
-     * @param Zend_DB::FETCH $mode
+
+    /**
+     * Recupera dados da tabela #__clientes
+     * 
+     * @param Zend_DB::FETCH $mode            
      * @return array
      */
     public function selectAll($filterState = 1)
     {
         try {
-            $filterState = $this->db->quoteInto('state = ?', $filterState);                
-            $result = $this->db->fetchAll('SELECT u.id, u.nome, u.email, u.id_perfil, u.acesso, u.state, p.role FROM ' . $this->name . ' AS u LEFT JOIN zf_perfis AS p ON u.id_perfil = p.id WHERE '. $filterState .' ORDER BY id DESC', 
-                NULL,
-                Zend_Db::FETCH_OBJ);
+            $filterState = $this->db->quoteInto('state = ?', $filterState);
+            $result = $this->db->fetchAll('SELECT u.id, u.nome, u.email, u.id_perfil, u.acesso, u.state, p.role FROM ' . $this->name . ' AS u LEFT JOIN zf_perfis AS p ON u.id_perfil = p.id WHERE ' . $filterState . ' ORDER BY id DESC', NULL, Zend_Db::FETCH_OBJ);
             
             return $result;
         } catch (Zend_Db_Adapter_Exception $e) {
@@ -112,8 +119,10 @@ class Application_Model_Usuarios
 
     /**
      * Method selectById Application_Model_Usuarios
-     * @param string
-     * @return array     
+     * 
+     * @param
+     *            string
+     * @return array
      */
     public function selectById($id = null)
     {
@@ -130,27 +139,33 @@ class Application_Model_Usuarios
             throw new Zend_Exception($e->getMessage());
         }
     }
-    
+
     /**
      * trash atualiza estado do item
-     * @param int $id
-     * @param int $state
+     * 
+     * @param int $id            
+     * @param int $state            
      * @throws Zend_Exception
      */
-    public function trash($id, $state = 0){
+    public function trash($id, $state = 0)
+    {
         try {
             $where = $this->db->quoteInto('id = ?', $id);
-            $bind = array('state' => $state);
+            $bind = array(
+                'state' => $state
+            );
             $this->db->update($this->name, $bind, $where);
             return true;
-        }catch (Zend_Db_Adapter_Exception $e){
+        } catch (Zend_Db_Adapter_Exception $e) {
             throw new Zend_Exception($e->getMessage());
         }
     }
 
     /**
      * Method clearData Application_Model_Usuarios
-     * @param array
+     * 
+     * @param
+     *            array
      * @return array
      */
     private function clearData($data)
@@ -166,19 +181,21 @@ class Application_Model_Usuarios
         
         return $cleardata;
     }
-    
+
     /**
      * Method remove Application_Model_Usuarios
-     * @param int
+     * 
+     * @param
+     *            int
      * @return boolean
      */
     public function delete($id)
-    {           
+    {
         try {
             $where = $this->db->quoteInto('id = ?', $id);
             $this->db->delete($this->name, $where);
             return true;
-        }catch (Zend_Db_Adapter_Exception $e){
+        } catch (Zend_Db_Adapter_Exception $e) {
             throw new Zend_Exception($e->getMessage());
         }
     }

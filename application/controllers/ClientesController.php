@@ -2,14 +2,9 @@
 
 class ClientesController extends Zend_Controller_Action
 {
-
-    protected $db = null;
-
     protected $data_user = null;
 
     protected $_custom = null;
-
-    protected $_layout = null;
 
     protected $_actionName = null;
 
@@ -78,7 +73,7 @@ class ClientesController extends Zend_Controller_Action
 
     public function addAction()
     {
-        $form = new Application_Form_AddCadastroCliente();
+        $form = new Application_Form_CadastroCliente();
         $model = new Application_Model_Clientes();
         $request = $this->_request;
     
@@ -109,7 +104,7 @@ class ClientesController extends Zend_Controller_Action
 
     public function editAction()
     {
-        $form = new Application_Form_AddCadastroCliente();
+        $form = new Application_Form_CadastroCliente();
         $model = new Application_Model_Clientes();
         $request = $this->_request;
     
@@ -229,3 +224,4 @@ class ClientesController extends Zend_Controller_Action
         $this->redirect('/clientes/index');
     }
 }
+

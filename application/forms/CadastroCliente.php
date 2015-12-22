@@ -1,6 +1,6 @@
 <?php
 
-class Application_Form_AddCadastroCliente extends Zend_Form
+class Application_Form_CadastroCliente extends Zend_Form
 {
 
     public function init()
