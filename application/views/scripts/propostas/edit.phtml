@@ -1,4 +1,11 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>Propostas</b> and script/action name <b>edit</b></p>
+<?= $this->render('common/top-menu.phtml') ?>
+<?= $this->render('common/top-bar-edit.phtml') ?>
+<div class="container" >
+	<?= $this->render('common/message.phtml'); ?>
+	<?= $this->form; ?>
 </div>
+<script>
+	$("#data_nasc").datetimepicker({
+		format: 'DD/MM/YYYY'
+	});
+</script>

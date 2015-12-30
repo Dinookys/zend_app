@@ -67,7 +67,7 @@
 			if(window.location.href.replace(window.location.origin, '') == '<?= $this->baseUrl() . '/' . $this->controllerName ?>/index/filter/0'){
 				$("#verlixeira").text('Sair da lixeira');
 				$("#verlixeira").attr( 'href','<?= $this->baseUrl() . '/' . $this->controllerName ?>/index');		
-				$("#lixeira").css({'display': 'none'});	
+				$("#lixeira").css({'display': 'none'});
 				$("#remove").css({'display': 'inline-block'});
 				$("#restore").css({'display': 'inline-block'});						
 			}else{
@@ -85,11 +85,10 @@
 		</div>	
 		<div class="navbar-right" >
 			<a id="verlixeira" href="<?= $this->baseUrl() . '/' . $this->controllerName ?>/index/filter/0" class="btn btn-default navbar-btn">Ver lixeira</a>		
-			<a style="display: none;" href="#" id="remove" class="btn btn-danger navbar-btn" title="Remover definitivamente item(s) selecionados" ><i class="glyphicon glyphicon-remove-sign" ></i> Remover</a>
+			<a style="display: none;" href="#" id="remove" class="btn btn-danger navbar-btn" title="Remover definitivamente item(s) selecionados" ><i class="glyphicon glyphicon-remove-sign" ></i> Remover</a>	
 			<a style="display: none;" href="#" id="restore" class="btn btn-success navbar-btn" title="Restaura item(s) selecionados" ><i class="glyphicon glyphicon-retweet" ></i> Restaurar</a>	
 			<a href="#" id="lixeira" class="btn btn-warning navbar-btn" title="Enviar item(s) selecionados para Lixeira" ><i class="glyphicon glyphicon-trash" ></i> Lixeira</a>
 			<a href="#" id="edit" class="btn btn-info navbar-btn" title="Editar item selecionado" ><i class="glyphicon glyphicon-edit" ></i> Editar</a>
-			<a class="btn btn-success navbar-btn" href="<?= $this->baseUrl() . '/' . $this->controllerName ?>/add" title="Adicionar" ><i class="glyphicon glyphicon-plus-sign"></i> Adicionar</a>
 		</div>		
 	</div>
 </div>

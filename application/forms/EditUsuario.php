@@ -2,12 +2,13 @@
 
 class Application_Form_EditUsuario extends Zend_Form
 {
-
+    public $notEmpty;
+    
     public function init()
     {
         // Verifica se o campo select esta com o valor null   
-        $required = new Zend_Validate_NotEmpty ();
-        $required->setType ($required->getType() | Zend_Validate_NotEmpty::INTEGER | Zend_Validate_NotEmpty::ZERO);
+        $this->notEmpty = new Zend_Validate_NotEmpty ();
+        $this->notEmpty->setType ($this->notEmpty->getType() | Zend_Validate_NotEmpty::INTEGER | Zend_Validate_NotEmpty::ZERO);
         
         // Pega a lista de perfis no banco de dados na tabela #__perfis
         $perfis = new Application_Model_Usuarios();        
@@ -39,8 +40,17 @@ class Application_Form_EditUsuario extends Zend_Form
             'filters'   =>  array('StringTrim'),
             'class'     => 'form-control',
             'multiOptions' => $options_perfil,
-            'validators' => array($required)
-        )); 
+            'validators' => array($this->notEmpty)
+        ));
+        
+        $this->addElement('select','parent_id',array(
+            'label'  =>  'Superior',
+            'required'  =>  true,
+            'filters'   =>  array('StringTrim'),
+            'class'     => 'form-control',            
+            'validators' => array($this->notEmpty),
+            'registerInArrayValidator' => false
+        ));
         
         $this->addElement('select','acesso',array(
             'label'  =>  'Habilitado',
@@ -52,26 +62,30 @@ class Application_Form_EditUsuario extends Zend_Form
 
         $this->addElement('hidden','id',array(
             'label'  =>  ''
-        ));        
+        )); 
+        
+        $this->addElement('hidden','role',array(
+            'label'  =>  ''
+        ));
         
         $submit = $this->addElement('submit','Atualizar', array(
             'class' => 'btn btn-primary btn-md'            
-        ));        
-
-        $this->setElementDecorators(array(
-            'ViewHelper',            
-            'Errors',
-            'Label',
-            'Description',
-            array('HtmlTag', array('tag' => 'div', 'class' => 'form-group'))            
-        ), array('Atualizar'), false);   
+        ));
         
-        $this->setElementDecorators(array(
+        $this->setElementDecorators(array(            
             'ViewHelper',
             'Errors',            
             'Description',
             array('HtmlTag', array('tag' => 'div', 'class' => 'form-group'))
         ), array('Atualizar', 'id'), true);
+        
+        $this->setElementDecorators(array(
+            'Label',
+            'ViewHelper',
+            'Errors',
+            'Description',
+            array('HtmlTag', array('tag' => 'div', 'class' => 'form-group'))
+        ), array('Atualizar'), false);
 
         $this->setDecorators(array(
             'FormElements',
@@ -84,5 +98,21 @@ class Application_Form_EditUsuario extends Zend_Form
         $this->setMethod('post');
         
     }
-
+    
+    /**
+     * Passa um array para $options_superior baseado na RoleName informado
+     * @param string $roleName
+     */
+    public function setSuperior($roleName){
+        $perfil = new Application_Model_Usuarios();
+        $data = $perfil->selectByRole($roleName);
+        $options = array("-- Selecione --");
+        
+       if($data){
+           foreach ($data as $value){
+               $options[$value->id] = $value->nome;
+           }    
+       }       
+       return $options;     
+    }
 }

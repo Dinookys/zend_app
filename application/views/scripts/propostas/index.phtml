@@ -1,22 +1,22 @@
 <?= $this->render('common/top-menu.phtml'); ?>
-<?= $this->render('common/top-bar-list.phtml'); ?>
+<?= $this->render('common/top-bar-list-sample.phtml'); ?>
 <div class="container">
 <div class="row">
 <?= $this->render('common/message.phtml'); ?>
 </div>
 </div>
 <div class="container panel panel-default">	
-<form name="clientes-list" id="clientes" action="" method="post">
+<form name="propostas-list" id="propostas" action="" method="post">
 		<table class="table table-condensed table-hover table-striped">
 			<thead>
 				<tr>
 					<th>
 						<input type="checkbox" id="checkAll" title="Seleciona todos os itens">
-					</th>
-					<th>Data</th>
-					<th>Descrição</th>
+					</th>					
+					<th>Nome</th>
+					<th>Criado</th>
+					<th>Alterado</th>
 					<th>Status</th>	
-					<th>Avisos</th>							
 				</tr>
 			</thead>
 			<tbody>
@@ -26,30 +26,32 @@
 					<td><input class="checkbox" id="<?= $data->id; ?>" type="checkbox"
 						name="<?= $data->id; ?>"></td>
 					<td>
-						<a href="<?= $this->baseUrl() ?>/clientes/edit/id/<?= $data->id ?>">
-							<?= $data->nome; ?>
+						
+						<?php if($data->locked == 1): ?>
+							 <i title="Sendo editado por: <?= $this->model_user->selectNameById($data->locked_by) ?> " class="glyphicon glyphicon-lock"></i>
+						<?php endif; ?>
+
+						<a href="<?= $this->baseUrl() ?>/<?= $this->controllerName; ?>/edit/id/<?= $data->id ?>">
+							<?= $data->nome; ?> / <?= $data->conj_nome; ?>
 						</a>
 					</td>
 					<td>
-							<?= $data->email; ?>
-						</td>
+						<?= $this->model_user->selectNameById($data->created_user_id); ?>
+					</td>
 					<td>
-							<?= $data->cpf; ?>
-						</td>					
-							<?php 
-							     $data1 = date_create($data->data); 
-							     $data2 = date_create(Zend_Date::now()->toString('YYYY-MM-dd'));
-							?>
-							<?php if(date_diff($data1,$data2)->format('%a') <= '7'): ?>
-					<td class="success text-center" >
-								<?php $this->date->set($data->data);?>
-								<?= $this->date->get('dd/MM/YYYY') ?>								
-							<?php else : ?>
-					<td class="danger text-center" >
-								<?php $this->date->set($data->data);?>
-								<?= $this->date->get('dd/MM/YYYY') ?>
+						<?= $this->model_user->selectNameById($data->last_user_id); ?>
+					</td>					
+					<td>
+							<?php if($data->status == 1): ?>
+								Aprovado
+							<?php elseif($data->status == 2): ?>
+								Aguardando
+							<?php elseif($data->status == 3): ?>
+								Negado
+							<?php else: ?>
+								Incompleto
 							<?php endif; ?>
-						</td>					
+					</td>
 				</tr>
 				<?php endforeach; ?>
 				<?php endif; ?>

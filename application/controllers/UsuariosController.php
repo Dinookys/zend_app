@@ -81,7 +81,7 @@ class UsuariosController extends Zend_Controller_Action
                     $this->_modelUsers->insert($data);                                        
                     $this->_FlashMessenger->setNamespace('index')->addMessage('Cadastrado realizado com sucesso.');
                     $this->view->message_type = 'alert-success';
-                    $this->redirect('usuarios/index');
+                    $this->redirect('usuarios/edit/id/'.$this->_modelUsers->lastInserId());
                 } else {
                     $this->view->messages = array('O email <b>' . $data['email'] . '</b> já está cadastrado');                    
                 }
@@ -117,13 +117,25 @@ class UsuariosController extends Zend_Controller_Action
             }
         } else {
             $data = $this->_modelUsers->selectById($request->getParam('id'));
-            
-            if ($data) {
+            // se for vazio redireciona para a index
+            if ($data) {                
                 $form->populate($data);
             } else {
                 $this->redirect('/usuarios/index');
             }
         }
+        
+        if(in_array($data['role'], array('Corretor','Supervisor'))){
+            $roleName = 'Gerente';
+        }else if(in_array($data['role'], array('Gerente'))){
+            $roleName = 'Coordenador';
+        }else{
+            $roleName = '';
+        }
+        
+        $options = $form->setSuperior($roleName);        
+        $form->getElement('parent_id')->addMultiOptions($options);        
+        
         $this->view->barTitle = 'Editando usuário';
         $this->view->editForm = $form;
     }
@@ -186,13 +198,13 @@ class UsuariosController extends Zend_Controller_Action
                 $this->redirect('/index');
             }
         }
-        
+       
        $this->view->barTitle = 'Editando usuário';
        $this->view->formUser = $form; 
     }
 
     public function trashAction()
-    {        
+    {
         $request = $this->_request;
         $model = new Application_Model_Clientes();
         
@@ -215,4 +227,8 @@ class UsuariosController extends Zend_Controller_Action
         $this->redirect('/usuarios/index');
     }
 
+    public function unlockAction()
+    {              
+        $this->redirect('/usuarios/index');
+    }
 }

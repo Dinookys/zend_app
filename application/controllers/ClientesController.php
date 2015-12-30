@@ -2,73 +2,90 @@
 
 class ClientesController extends Zend_Controller_Action
 {
-    protected $data_user = null;
 
-    protected $_custom = null;
+    protected $data_user;
 
-    protected $_actionName = null;
+    protected $_custom;
 
-    protected $_controllerName = null;
+    protected $_acl;
 
-    protected $_FlashMessenger = null;
+    protected $_actionName;
 
-    public function preDispatch()
-    {
-    
-        $auth = Zend_Auth::getInstance();
-        $this->data_user = $auth->getIdentity();
-    
-        if(!$auth->hasIdentity()){
-            $this->redirect('/login');
-        }else{            
-            $acl = new Application_Model_Acl_Acl();
-            if(!$acl->isAllowed()){
-                $this->redirect('/error/forbidden');  
-            }
-        }        
-        $this->view->user = $this->data_user;        
-        parent::preDispatch();
-    }
+    protected $_controllerName;
+
+    protected $_FlashMessenger;
+
+    protected $_ids;
 
     public function init()
     {
+        $auth = Zend_Auth::getInstance();
+        $this->data_user = $auth->getIdentity();
+        
+        if (! $auth->hasIdentity()) {
+            $this->redirect('/login');
+        } else {
+            $acl = new Application_Model_Acl_Acl();
+            if (! $acl->isAllowed()) {
+                $this->redirect('/error/forbidden');
+            }
+        }
+        
+        $this->view->user = $this->data_user;
+        $this->view->model_user = new Application_Model_Usuarios();
         
         $this->_modelUsers = new Application_Model_Usuarios();
         $config = Zend_Controller_Front::getInstance()->getParam('bootstrap');
         
         $this->_custom = $config->getOption('custom');
+        
+        // Acessando permissões
+        $this->_acl = $config->getOption('acl');
         // Pegando array de configurações para a criação do menu
         $this->view->menu = $config->getOption('menu');
         
-        $this->_FlashMessenger = $this->_helper->getHelper('FlashMessenger');        
+        $this->_FlashMessenger = $this->_helper->getHelper('FlashMessenger');
         $this->view->headTitle(strtoupper($this->getRequest()
             ->getControllerName()) . ' | ' . $this->_custom['company_name']);
         
         $this->view->controllerName = $this->_controllerName = $this->getRequest()->getControllerName();
-        $this->view->actionName = $this->_actionName = $this->getRequest()->getActionName();        
+        $this->view->actionName = $this->_actionName = $this->getRequest()->getActionName();
         $this->view->user = $this->data_user;
         $this->_FlashMessenger->clearMessages($this->_controllerName);
         
+        if ($this->data_user->childrens_ids) {
+            $this->_ids = $this->data_user->childrens_ids;
+            $this->_ids[] = CURRENT_USER_ID;
+        } else {
+            $this->_ids = array(
+                CURRENT_USER_ID
+            );
+        }
         $this->view->date = new Zend_Date();
     }
 
     public function indexAction()
     {
-        $model = new Application_Model_Clientes();        
+        $model = new Application_Model_Clientes();
         $request = $this->_request;
-        $filter = $request->getParam('filter');        
+        $filter = $request->getParam('filter');
         
-        if($filter == '0'){
-            $data = $model->selectAll('0');
-        }else{
-            $data = $model->selectAll('1');
+        if (is_null($filter)) {
+            $filter = 1;
+        }
+        
+        // Recuperando dados do clientes baseado no Perfil ativo.
+        if (in_array(CURRENT_USER_ROLE, $this->_acl['full_controll'])) {
+            $data = $model->selectAll($filter);
+        } else {
+            $ids = implode(',', $this->_ids);
+            $data = $model->selectByUsersIds($filter, $ids);
         }
         
         $data = $model->convertData($data);
         $this->view->messages = $this->_FlashMessenger->getMessages($this->_controllerName);
         $this->view->data = $data;
         $this->view->barTitle = "Clientes";
-        
     }
 
     public function addAction()
@@ -76,28 +93,31 @@ class ClientesController extends Zend_Controller_Action
         $form = new Application_Form_CadastroCliente();
         $model = new Application_Model_Clientes();
         $request = $this->_request;
-    
-        if($request->isPost() && $form->isValid($request->getPost())){
+        
+        if ($request->isPost() && $form->isValid($request->getPost())) {
             $data = $request->getPost();
-    
-            $check = $model->selectBy($data['cpf'], false);
-    
-            if($check){
-                $this->view->messages = array('CPF '. $data['cpf'] .' já cadastrado!');
+            
+            $check = $model->selectBy($data['cpf']);
+            
+            if ($check) {
+                $this->view->messages = array(
+                    'CPF ' . $data['cpf'] . ' já cadastrado!'
+                );
                 $this->view->message_type = 'alert-warning';
                 $form->populate($data);
-            }else{
-                if($model->insert($data)){
-                    $this->view->messages = array('Cadastro realizado com sucesso');                    
+            } else {
+                if ($model->insert($data)) {
+                    $this->view->messages = array(
+                        'Cadastro realizado com sucesso'
+                    );
                     $this->view->message_type = 'alert-success';
                     $this->redirect($this->_controllerName . 'edit/id/' . $model->lastInserId());
-                }else{
+                } else {
                     $form->populate($data);
                 }
             }
-    
         }
-    
+        
         $this->view->barTitle = "Novo Cliente";
         $this->view->form = $form;
     }
@@ -107,46 +127,64 @@ class ClientesController extends Zend_Controller_Action
         $form = new Application_Form_CadastroCliente();
         $model = new Application_Model_Clientes();
         $request = $this->_request;
-    
-        if($request->isPost() && $form->isValid($request->getPost())){
-    
+        
+        if ($request->isPost() && $form->isValid($request->getPost())) {
+            
             $data = $request->getPost();
             $id = $data['id'];
-            $cpf = $data['cpf'];    
+            $cpf = $data['cpf'];
             $data['last_user_id'] = CURRENT_USER_ID;
             
-            $check = $model->selectBy($cpf, false);
+            $check = $model->selectBy($cpf);
             
-            if($check && $check['id'] != $id){
-                $this->view->messages = array('CPF já cadastro.');
+            if ($check && $check['id'] != $id) {
+                $this->view->messages = array(
+                    'CPF já cadastro.'
+                );
                 $this->view->message_type = "alert-danger";
-                $form->populate($data);                
-            }else if($model->update($data['id'], $data) == 0){
-                $this->view->messages = array('Não foi feito nenhuma alteração.');                
-                $this->view->message_type = "alert-info";
-            }else{
-                $this->view->messages = array('Atualizado com sucesso!');           
-                $this->view->message_type = "alert-success";
-            }
-    
+                $form->populate($data);
+            } else 
+                if ($model->update($data['id'], $data) == 0) {
+                    $this->view->messages = array(
+                        'Não foi feito nenhuma alteração.'
+                    );
+                    $this->view->message_type = "alert-info";
+                } else {
+                    $this->view->messages = array(
+                        'Atualizado com sucesso!'
+                    );
+                    $this->view->message_type = "alert-success";
+                }
+            
             $form->populate($data);
-    
-        }else{
+        } else {
             $id = $this->getParam('id');
             $result = $model->selectById($id);
-    
-            if($result){
-                $data = json_decode($result['dados_cliente'], true);
-                $data['cpf'] = $result['cpf'];
-                $data['last_user_id'] = $result['last_user_id'];
-                $data['created_user_id'] = $result['created_user_id'];
-                $form->populate($data);
+            $data = json_decode($result['dados_cliente'], true);
+            $data['cpf'] = $result['cpf'];
+            $data['last_user_id'] = $result['last_user_id'];
+            $data['created_user_id'] = $result['created_user_id'];
+            $data['locked'] = $result['locked'];
+            $data['locked_by'] = $result['locked_by'];
+            
+            if($data['locked'] == 1 && $data['locked_by'] != CURRENT_USER_ID && $data['locked_by'] != 0){
+                $this->view->messages = array('Item bloqueado para edição');
+                $this->view->form = '';
+                return false;
             }else{
-                $this->view->messages = array('Cadastro não encontrado');                
+                $model->lockRow($data['id'], CURRENT_USER_ID, 1);
+            }
+            
+            if ($result['created_user_id'] == CURRENT_USER_ID or in_array(CURRENT_USER_ROLE, $this->_acl['full_controll']) or in_array($result['created_user_id'], $this->_ids)) {                
+                $form->populate($data);
+            } else {
+                $this->view->messages = array(
+                    'Cadastro não encontrado'
+                );
                 $this->view->message_type = "alert-danger";
             }
         }
-    
+        
         $form->addFieldId($id);
         $this->view->barTitle = "Editando Cliente";
         $this->view->form = $form;
@@ -223,5 +261,19 @@ class ClientesController extends Zend_Controller_Action
         
         $this->redirect('/clientes/index');
     }
-}
 
+    public function unlockAction()
+    {
+        $request = $this->_request;
+        $model = new Application_Model_Clientes();
+        
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            if (isset($data['locked_by']) == CURRENT_USER_ID) {
+                $model->lockRow($data['id'], 0, 0);
+            }
+        }
+        $this->redirect('/clientes/index');
+    }
+
+}

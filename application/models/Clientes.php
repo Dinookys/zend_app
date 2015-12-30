@@ -3,7 +3,7 @@
 class Application_Model_Clientes
 {
 
-    protected $name = 'zf_clientes';
+    private $name = 'zf_clientes';
 
     protected $db;
 
@@ -11,74 +11,100 @@ class Application_Model_Clientes
     {
         $this->db = Zend_Db_Table::getDefaultAdapter();
     }
-    
-    /** Recupera dados da tabela #__clientes
-     * @param Zend_DB::FETCH $mode
-     * @return array
-     */
-    public function selectAll($filterState = 1, $mode = Zend_Db::FETCH_OBJ)
-    {   
-        try {
-            
-            $filterState = $this->db->quoteInto('state = ?', $filterState);
-            
-            $sql = "SELECT * FROM ".$this->name. " WHERE ". $filterState . " ORDER BY id DESC";
-            $this->db->setFetchMode($mode);
-            $result = $this->db->fetchAll($sql);
-            return $result;
-        }catch (Zend_Exception $e){
-            throw new Zend_Exception($e->getMessage());
-            return false;
-        }
-    }    
 
-    /** Recupera dados da tabela #__clientes pelo campo id
-     * @param string $id
-     * @param boolean $userId use true para não recuperar pelo ID do usuario     
+    /**
+     * @param number $filterState
+     * @throws Zend_Exception
      */
-    public function selectById($id, $userId = false)
+    public function selectAll($filterState = 1)
     {
         try {
             
-            if($userId){
-                $sql = "SELECT * FROM ".$this->name." WHERE id = ? AND created_user_id = ?";
-                $result = $this->db->fetchRow($sql, array($id, CURRENT_USER_ID), Zend_Db::FETCH_ASSOC);
-            }else{
-                $sql = "SELECT * FROM ".$this->name." WHERE id = ?";
-                $result = $this->db->fetchRow($sql, array($id), Zend_Db::FETCH_ASSOC);
-            }
+            $result = $this->db->fetchAll("SELECT * FROM " . $this->name . " WHERE state = ? ORDER BY id DESC", array(
+                $filterState
+            ), Zend_Db::FETCH_OBJ);
             
             return $result;
-        }catch (Zend_Exception $e){
-            throw new Zend_Exception($e->getMessage());
-            return false;
-        }       
-        
-    }
-
-    /** Recupera dados da tabela #__clientes pelo campo CPF
-     * @param string $cpf
-     * @param boolean $userId use true para não recuperar pelo ID do usuario
-     */
-    public function selectBy($cpf, $userId = false)
-    {
-        try {
-            if($userId){
-                $sql = "SELECT * FROM ".$this->name." WHERE cpf = ? AND created_user_id = ?";
-                $result = $this->db->fetchRow($sql, array($cpf, CURRENT_USER_ID), Zend_Db::FETCH_ASSOC);
-            }else{
-                $sql = "SELECT * FROM ".$this->name." WHERE cpf = ?";
-                $result = $this->db->fetchRow($sql, array($cpf), Zend_Db::FETCH_ASSOC);
-            }
-            return $result;            
-        }catch (Zend_Exception $e){
+        } catch (Zend_Exception $e) {
             throw new Zend_Exception($e->getMessage());
             return false;
         }
     }
 
-    /** Adiciona dados na tabela #__clientes
-     * @param array $data     
+    /**
+     * @param number $filterState            
+     * @param string $userIds            
+     * @throws Zend_Exception
+     */
+    public function selectByUsersIds($filterState = 1, $ids)
+    {
+        try {
+            
+            $result = $this->db->fetchAll("SELECT * FROM " . $this->name . " WHERE state = ? AND created_user_id IN (" . $ids . ") ORDER BY id DESC", array(
+                $filterState
+            ), Zend_Db::FETCH_OBJ);
+            
+            return $result;
+        } catch (Zend_Exception $e) {
+            throw new Zend_Exception($e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * selectById
+     *
+     * @param string $cpf            
+     * @param bool $userId            
+     * @param bool $parentId            
+     * @throws Zend_Exception
+     * @return mixed|boolean
+     */
+    public function selectById($id)
+    {
+        try {
+            
+            $sql = "SELECT * FROM " . $this->name . " WHERE id = ?";
+            $result = $this->db->fetchRow($sql, array(
+                $id
+            ), Zend_Db::FETCH_ASSOC);
+            
+            return $result;
+        } catch (Zend_Exception $e) {
+            throw new Zend_Exception($e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * selectBy
+     *
+     * @param string $cpf            
+     * @param bool $userId            
+     * @param bool $parentId            
+     * @throws Zend_Exception
+     * @return mixed|boolean
+     */
+    public function selectBy($cpf)
+    {
+        try {
+            
+            $sql = "SELECT * FROM " . $this->name . " WHERE cpf = ?";
+            $result = $this->db->fetchRow($sql, array(
+                $cpf
+            ), Zend_Db::FETCH_ASSOC);
+            
+            return $result;
+        } catch (Zend_Exception $e) {
+            throw new Zend_Exception($e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Adiciona dados na tabela #__clientes
+     *
+     * @param array $data            
      */
     public function insert($data = array())
     {
@@ -102,9 +128,11 @@ class Application_Model_Clientes
         }
     }
 
-    /** Atualiza dados na tabela #__clientes
-     * @param string $id
-     * @param array $data
+    /**
+     * Atualiza dados na tabela #__clientes
+     *
+     * @param string $id            
+     * @param array $data            
      */
     public function update($id, $data = array())
     {
@@ -127,54 +155,60 @@ class Application_Model_Clientes
         } catch (Zend_Db_Adapter_Exception $e) {
             throw new Zend_Exception($e->getMessage());
             return false;
-        }        
-        
+        }
     }
 
     /**
      * Method remove Application_Model_Usuarios
-     * @param int
+     *
+     * @param
+     *            int
      * @return boolean
      */
     public function delete($id)
-    {           
+    {
         try {
             $where = $this->db->quoteInto('id = ?', $id);
             $this->db->delete($this->name, $where);
             return true;
-        }catch (Zend_Db_Adapter_Exception $e){
+        } catch (Zend_Db_Adapter_Exception $e) {
             throw new Zend_Exception($e->getMessage());
         }
     }
-    
+
     /**
      * trash atualiza estado do item
-     * @param int $id
-     * @param int $state
+     *
+     * @param int $id            
+     * @param int $state            
      * @throws Zend_Exception
      */
-    public function trash($id, $state= 0)
+    public function trash($id, $state = 0)
     {
         try {
             $where = $this->db->quoteInto('id = ?', $id);
-            $bind = array('state' => $state);
+            $bind = array(
+                'state' => $state
+            );
             $this->db->update($this->name, $bind, $where);
             return true;
-        }catch (Zend_Db_Adapter_Exception $e){
+        } catch (Zend_Db_Adapter_Exception $e) {
             throw new Zend_Exception($e->getMessage());
         }
     }
-    
-    public function lastInserId(){
+
+    public function lastInserId()
+    {
         return $this->db->lastInsertId($this->name);
     }
-    
-    public function convertData($data){
-        foreach ($data as $key => $value){
-            foreach ($data[$key] as $inkey => $invalue){
-                if($inkey == 'dados_cliente'){
+
+    public function convertData($data)
+    {
+        foreach ($data as $key => $value) {
+            foreach ($data[$key] as $inkey => $invalue) {
+                if ($inkey == 'dados_cliente') {
                     $toArray = json_decode($invalue, true);
-                    foreach ($toArray as $toArrayKey => $toArrayValue){
+                    foreach ($toArray as $toArrayKey => $toArrayValue) {
                         $data[$key]->$toArrayKey = $toArrayValue;
                     }
                     unset($data[$key]->$inkey);
@@ -185,12 +219,23 @@ class Application_Model_Clientes
         return $data;
     }
     
-    
+    public function lockRow($id, $current_user_id, $value){
+        try {
+            $where = $this->db->quoteInto('id=?', $id);
+            $result = $this->db->update($this->name, array('locked' => $value, 'locked_by' => $current_user_id), $where);
+            return $result;            
+        }catch (Zend_Db_Exception $e){
+            throw new Zend_Db_Exception($e->getMessage());
+            return false;
+        }
+    }
+
     /**
-     * Retorna array no formato Json removendo alguns parametros     * 
+     * Retorna array no formato Json removendo alguns parametros *
+     *
      * @param array $data            
      * @param array $excludes
-     *            itens no array a serem removidos do json
+     * itens no array a serem removidos do json
      */
     private function convertToJson($data = array(), $excludes = array())
     {
@@ -200,5 +245,4 @@ class Application_Model_Clientes
         
         return json_encode($data, JSON_UNESCAPED_UNICODE);
     }
-    
 }

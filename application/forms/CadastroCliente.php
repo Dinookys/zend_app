@@ -128,6 +128,38 @@ class Application_Form_CadastroCliente extends Zend_Form
         ));
         
         // Adicionando tag HTML usando description do elemento
+        $this->addElement('hidden', 'hr_filiacao', array(
+            'description' => '<h3>FILIAÇÃO</h3>',
+            'ignore' => true,
+            'decorators' => array(
+                array(
+                    'Description',
+                    array(
+                        'escape' => false,
+                        'tag' => 'div',
+                        'class' => "col-xs-12"
+                    )
+                )
+            )
+        ));
+        
+        $this->addElement('text','filiacao_pai',array(
+            'label'  =>  'Pai',
+            'required'  =>  true,
+            'filters'   =>  array('StringTrim'),
+            'class'     => 'form-control',
+            'decorators' => $this->setColSize(6)
+        ));
+        
+        $this->addElement('text','filiacao_mae',array(
+            'label'  =>  'Mãe',
+            'required'  =>  true,
+            'filters'   =>  array('StringTrim'),
+            'class'     => 'form-control',
+            'decorators' => $this->setColSize(6)
+        ));
+        
+        // Adicionando tag HTML usando description do elemento
         $this->addElement('hidden', 'hr_end', array(
             'description' => '<hr/>',
             'ignore' => true,
@@ -327,6 +359,16 @@ class Application_Form_CadastroCliente extends Zend_Form
         ));
         
         $this->addElement('hidden', 'last_user_id', array(
+            'value' => CURRENT_USER_ID,
+            'decorators' => $this->setColSize(12)
+        ));
+        
+        $this->addElement('hidden', 'locked', array(
+            'value' => CURRENT_USER_ID,
+            'decorators' => $this->setColSize(12)
+        ));
+        
+        $this->addElement('hidden', 'locked_by', array(
             'value' => CURRENT_USER_ID,
             'decorators' => $this->setColSize(12)
         ));
