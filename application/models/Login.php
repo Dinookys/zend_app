@@ -3,7 +3,7 @@
 class Application_Model_Login
 {
     protected $name = 'zf_usuarios';
-    protected $perilName = 'zf_perfis';
+    protected $perfilName = 'zf_perfis';
     
     public static function login($login,$senha)
     {
@@ -35,7 +35,7 @@ class Application_Model_Login
             $contents = $adapter->getResultRowObject(null,'password');
             $contents->childrens_ids = array();
             $db->setFetchMode(Zend_Db::FETCH_OBJ);
-            $result = $db->fetchRow('SELECT role FROM '. $model->perilName .' WHERE id = ?', $contents->id_perfil);
+            $result = $db->fetchRow('SELECT role FROM '. $model->perfilName .' WHERE id = ?', $contents->id_perfil);
             $userchildrens = $db->fetchCol('SELECT id FROM '. $model->name .' WHERE parent_id = ?', $contents->id);
             
             if($userchildrens){

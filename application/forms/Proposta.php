@@ -77,7 +77,7 @@ class Application_Form_Proposta extends Zend_Form
         
         $this->addElement('select', 'imovel', array(
             'label' => 'Imóvel',
-            'required' => true,
+            'required' => false,
             'filters' => array(
                 'StringTrim'
             ),
@@ -91,7 +91,7 @@ class Application_Form_Proposta extends Zend_Form
         
         $this->addElement('select', 'imovel_bloco_quadra', array(
             'label' => 'Bloco/Quadra',
-            'required' => true,
+            'required' => false,
             'filters' => array(
                 'StringTrim'
             ),
@@ -105,7 +105,7 @@ class Application_Form_Proposta extends Zend_Form
         
         $this->addElement('select', 'imovel_unidade', array(
             'label' => 'Unidade',
-            'required' => true,
+            'required' => false,
             'filters' => array(
                 'StringTrim'
             ),
@@ -135,7 +135,7 @@ class Application_Form_Proposta extends Zend_Form
         
         $this->addElement('text', 'nome', array(
             'label' => 'Nome',
-            'required' => true,
+            'required' => false,
             'filters' => array(
                 'StringTrim'
             ),
@@ -145,7 +145,7 @@ class Application_Form_Proposta extends Zend_Form
         
         $this->addElement('text', 'cpf', array(
             'label' => 'CPF',
-            'required' => true,
+            'required' => false,
             'filters' => array(
                 'StringTrim'
             ),
@@ -155,7 +155,7 @@ class Application_Form_Proposta extends Zend_Form
         
         $this->addElement('select', 'estado_civil', array(
             'label' => 'Estado Civil',
-            'required' => true,
+            'required' => false,
             'filters' => array(
                 'StringTrim'
             ),
@@ -228,7 +228,7 @@ class Application_Form_Proposta extends Zend_Form
         
         $this->addElement('text', 'filiacao_pai', array(
             'label' => 'Pai',
-            'required' => true,
+            'required' => false,
             'filters' => array(
                 'StringTrim'
             ),
@@ -238,7 +238,7 @@ class Application_Form_Proposta extends Zend_Form
         
         $this->addElement('text', 'filiacao_mae', array(
             'label' => 'Mãe',
-            'required' => true,
+            'required' => false,
             'filters' => array(
                 'StringTrim'
             ),
@@ -294,7 +294,7 @@ class Application_Form_Proposta extends Zend_Form
         
         $this->addElement('select', 'estado', array(
             'label' => 'Estado',
-            'required' => true,
+            'required' => false,
             'filters' => array(
                 'StringTrim'
             ),
@@ -308,7 +308,7 @@ class Application_Form_Proposta extends Zend_Form
         
         $this->addElement('select', 'cidade', array(
             'label' => 'Cidade',
-            'required' => true,
+            'required' => false,
             'filters' => array(
                 'StringTrim'
             ),
@@ -424,7 +424,7 @@ class Application_Form_Proposta extends Zend_Form
         
         $this->addElement('select', 'renda', array(
             'label' => 'Renda',
-            'required' => true,
+            'required' => false,
             'filters' => array(
                 'StringTrim'
             ),
@@ -500,7 +500,7 @@ class Application_Form_Proposta extends Zend_Form
         
         $this->addElement('text', 'conj_nome', array(
             'label' => 'Nome',
-            'required' => true,
+            'required' => false,
             'filters' => array(
                 'StringTrim'
             ),
@@ -510,7 +510,7 @@ class Application_Form_Proposta extends Zend_Form
         
         $this->addElement('text', 'conj_cpf', array(
             'label' => 'CPF',
-            'required' => true,
+            'required' => false,
             'filters' => array(
                 'StringTrim'
             ),
@@ -520,7 +520,7 @@ class Application_Form_Proposta extends Zend_Form
         
         $this->addElement('select', 'conj_estado_civil', array(
             'label' => 'Estado Civil',
-            'required' => true,
+            'required' => false,
             'filters' => array(
                 'StringTrim'
             ),
@@ -593,7 +593,7 @@ class Application_Form_Proposta extends Zend_Form
         
         $this->addElement('text', 'conj_filiacao_pai', array(
             'label' => 'Pai',
-            'required' => true,
+            'required' => false,
             'filters' => array(
                 'StringTrim'
             ),
@@ -603,7 +603,7 @@ class Application_Form_Proposta extends Zend_Form
         
         $this->addElement('text', 'conj_filiacao_mae', array(
             'label' => 'Mãe',
-            'required' => true,
+            'required' => false,
             'filters' => array(
                 'StringTrim'
             ),
@@ -659,7 +659,7 @@ class Application_Form_Proposta extends Zend_Form
         
         $this->addElement('select', 'conj_estado', array(
             'label' => 'Estado',
-            'required' => true,
+            'required' => false,
             'filters' => array(
                 'StringTrim'
             ),
@@ -673,7 +673,7 @@ class Application_Form_Proposta extends Zend_Form
         
         $this->addElement('select', 'conj_cidade', array(
             'label' => 'Cidade',
-            'required' => true,
+            'required' => false,
             'filters' => array(
                 'StringTrim'
             ),
@@ -789,7 +789,7 @@ class Application_Form_Proposta extends Zend_Form
         
         $this->addElement('select', 'conj_renda', array(
             'label' => 'Renda',
-            'required' => true,
+            'required' => false,
             'filters' => array(
                 'StringTrim'
             ),
@@ -901,7 +901,7 @@ class Application_Form_Proposta extends Zend_Form
         
         $this->addElement('select', 'meio_comunicacao', array(
             'label' => 'Meio de Comunicação',
-            'required' => true,
+            'required' => false,
             'filters' => array(
                 'StringTrim'
             ),

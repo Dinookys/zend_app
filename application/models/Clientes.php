@@ -116,6 +116,8 @@ class Application_Model_Clientes
             'cpf',
             'last_user',
             'created_user_id',
+            'locked',
+            'locked_by',
             'Enviar'
         ));
         
@@ -141,10 +143,11 @@ class Application_Model_Clientes
         $bind['last_user_id'] = $data['last_user_id'];
         $bind['created_user_id'] = $data['created_user_id'];
         $bind['dados_cliente'] = $this->convertToJson($data, array(
-            'id',
             'cpf',
             'last_user',
             'created_user_id',
+            'locked',
+            'locked_by',
             'Enviar'
         ));
         

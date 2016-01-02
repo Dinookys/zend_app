@@ -92,8 +92,16 @@ class Application_Model_Propostas extends Application_Model_Clientes
         }
         
         $data_proposta['descricao'] = $data['descricao'];
+        $data_proposta['locked'] = $data['locked'];
+        $data_proposta['locked_by'] = $data['locked_by'];
+        $data_proposta['status'] = $data['status'];
+        $data_proposta['state'] = $data['state'];
         
         unset($data['descricao']);
+        unset($data['locked']);
+        unset($data['locked_by']);
+        unset($data['status']);
+        unset($data['state']);
         
         $data_proposta['dados_extras'] = json_encode($data);
         try {

@@ -171,8 +171,8 @@ class ClientesController extends Zend_Controller_Action
                 $this->view->messages = array('Item bloqueado para edição');
                 $this->view->form = '';
                 return false;
-            }else{
-                $model->lockRow($data['id'], CURRENT_USER_ID, 1);
+            }else{                
+                $model->lockRow($id, CURRENT_USER_ID, 1);
             }
             
             if ($result['created_user_id'] == CURRENT_USER_ID or in_array(CURRENT_USER_ROLE, $this->_acl['full_controll']) or in_array($result['created_user_id'], $this->_ids)) {                
