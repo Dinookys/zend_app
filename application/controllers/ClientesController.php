@@ -75,7 +75,7 @@ class ClientesController extends Zend_Controller_Action
         }
         
         // Recuperando dados do clientes baseado no Perfil ativo.
-        if (in_array(CURRENT_USER_ROLE, $this->_acl['full_controll'])) {
+        if (in_array(CURRENT_USER_ROLE, $this->_acl['fullControll'])) {
             $data = $model->selectAll($filter);
         } else {
             $ids = implode(',', $this->_ids);
@@ -161,6 +161,7 @@ class ClientesController extends Zend_Controller_Action
             $id = $this->getParam('id');
             $result = $model->selectById($id);
             $data = json_decode($result['dados_cliente'], true);
+            $data['id'] = $result['id'];
             $data['cpf'] = $result['cpf'];
             $data['last_user_id'] = $result['last_user_id'];
             $data['created_user_id'] = $result['created_user_id'];
@@ -172,10 +173,10 @@ class ClientesController extends Zend_Controller_Action
                 $this->view->form = '';
                 return false;
             }else{                
-                $model->lockRow($id, CURRENT_USER_ID, 1);
+                $model->lockRow($data['id'], CURRENT_USER_ID, 1);
             }
             
-            if ($result['created_user_id'] == CURRENT_USER_ID or in_array(CURRENT_USER_ROLE, $this->_acl['full_controll']) or in_array($result['created_user_id'], $this->_ids)) {                
+            if ($result['created_user_id'] == CURRENT_USER_ID or in_array(CURRENT_USER_ROLE, $this->_acl['fullControll']) or in_array($result['created_user_id'], $this->_ids)) {                
                 $form->populate($data);
             } else {
                 $this->view->messages = array(

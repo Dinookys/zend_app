@@ -104,15 +104,20 @@ class Application_Form_EditUsuario extends Zend_Form
      * @param string $roleName
      */
     public function setSuperior($roleName){
-        $perfil = new Application_Model_Usuarios();
-        $data = $perfil->selectByRole($roleName);
         $options = array("-- Selecione --");
-        
-       if($data){
-           foreach ($data as $value){
-               $options[$value->id] = $value->nome;
-           }    
-       }       
+
+        if(in_array($roleName, array('Administrador','Diretor','Financeiro',''))){
+            $options[9999] = 'Sem Superior';
+        }else{
+            $perfil = new Application_Model_Usuarios();
+            $data = $perfil->selectByRole($roleName);    
+            if($data){
+               foreach ($data as $value){
+                    $options[$value->id] = $value->nome;
+               }    
+            }            
+        }
+             
        return $options;     
     }
 }

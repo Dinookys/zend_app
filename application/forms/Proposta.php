@@ -925,16 +925,6 @@ class Application_Form_Proposta extends Zend_Form
             'decorators' => $this->setColSize()
         ));
         
-        $this->addElement('file', 'upload_anexos', array(
-            'label' => 'Anexos',
-            'required' => false,
-            'filters' => array(
-                'StringTrim'
-            ),
-            'class' => 'form-control',
-            'decorators' => $this->setColSize()
-        ));
-        
         $this->addElement('hidden', 'data_proposta', array(
             'value' => $data_now->toString('YYYY-MM-dd'),
             'decorators' => $this->setColSize(12)

@@ -5,9 +5,6 @@ class Application_Form_PerfilUsuario extends Zend_Form
 
     public function init()
     {
-        // Verifica se o campo select esta com o valor null   
-        $required = new Zend_Validate_NotEmpty ();
-        $required->setType ($required->getType() | Zend_Validate_NotEmpty::INTEGER | Zend_Validate_NotEmpty::ZERO);
         
         // Pega a lista de perfis no banco de dados na tabela #__perfis
         $perfis = new Application_Model_Usuarios();        

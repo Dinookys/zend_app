@@ -75,7 +75,7 @@ class PropostasController extends Zend_Controller_Action
         }
         
         // Recuperando dados do clientes baseado no Perfil ativo.
-        if (in_array(CURRENT_USER_ROLE, $this->_acl['full_controll'])) {
+        if (in_array(CURRENT_USER_ROLE, $this->_acl['fullControll'])) {
             $data = $model->selectAll($filter);
         } else {
             $ids = implode(',', $this->_ids);
@@ -152,7 +152,7 @@ class PropostasController extends Zend_Controller_Action
             $model->lockRow($data['id'], CURRENT_USER_ID, 1);
         }
         
-        if (in_array($data['created_user_id'], $this->_ids) or $data['created_user_id'] == CURRENT_USER_ID or in_array(CURRENT_USER_ROLE, $this->_acl['full_controll'])) {
+        if (in_array($data['created_user_id'], $this->_ids) or $data['created_user_id'] == CURRENT_USER_ID or in_array(CURRENT_USER_ROLE, $this->_acl['fullControll'])) {
             $this->view->barTitle = "Editando proposta :: " . $data['nome'];
             $form->populate($data);
             $this->view->form = $form;

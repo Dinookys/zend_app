@@ -1,4 +1,4 @@
-<?= $this->render('common/top-menu.phtml'); ?>
+
 <?= $this->render('common/top-bar-list-sample.phtml'); ?>
 <div class="container">
 <div class="row">
@@ -32,7 +32,7 @@
 						<?php endif; ?>
 
 						<a href="<?= $this->baseUrl() ?>/<?= $this->controllerName; ?>/edit/id/<?= $data->id ?>">
-							<?= $data->nome; ?> / <?= $data->conj_nome; ?>
+							<?= $data->nome; ?> / <?= isset($data->conj_nome); ?>
 						</a>
 					</td>
 					<td>
