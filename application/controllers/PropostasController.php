@@ -248,7 +248,16 @@ class PropostasController extends Zend_Controller_Action
         }
         $this->redirect('/propostas/index');
     }
+
+    public function anexosAction()
+    {
+        // action body
+    }
+
+
 }
+
+
 
 
 

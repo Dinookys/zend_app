@@ -1,0 +1,46 @@
+<div class="container">	
+	<h3>Anexos</h3>
+	<form enctype="multipart/form-data" action="<?= $this->baseUrl() ?>/documentos/upload-ajax" id="ajaxUpload" class="form" method="post">
+		<div class="form-group">
+			<div class="col-xs-5">
+				<input type="text" class="form-control" name="text-file-1" >
+			</div>
+			<div class="col-xs-6">
+				<input type="file" class="form-control" name="file-1" >
+			</div>
+			<div class="col-xs-1">
+				<a href="#" class="btn btn-danger"><i class="glyphicon glyphicon-remove"></i></a>
+			</div>
+		</div>		
+	</form>	
+	<div class="col-xs-12">
+		<div id="addFileInput" class="btn btn-success">
+			<i class="glyphicon glyphicon-plus"></i> Mais
+		</div>
+		<div id="submitFiles" class="btn btn-info">
+			<i class="glyphicon glyphicon-upload"></i> Upload
+		</div>
+	</div>
+
+</div>
+<script>
+	var totalFileInput = 1;
+	$("#addFileInput").click(function(e){
+		e.preventDefault();
+		totalFileInput++;
+
+		var clone = $(".form-group").eq(0).clone();
+		$("#ajaxUpload").append(clone);
+	});
+
+	$('body').on('click','.btn.btn-danger',function(e){
+		e.preventDefault();
+		$(this).parent().parent().remove();
+	});
+
+	$("#submitFiles").click(function(e){
+		e.preventDefault();
+		$("#ajaxUpload").submit();
+	})
+
+</script>
