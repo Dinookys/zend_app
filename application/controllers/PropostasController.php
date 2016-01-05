@@ -93,6 +93,7 @@ class PropostasController extends Zend_Controller_Action
         $request = $this->getRequest();
         $id = $request->getParam('id');
         $model = new Application_Model_Propostas();
+        $documentos = new Application_Model_Documentos();
         
         $form = new Application_Form_Proposta();
         
@@ -155,12 +156,17 @@ class PropostasController extends Zend_Controller_Action
         if (in_array($data['created_user_id'], $this->_ids) or $data['created_user_id'] == CURRENT_USER_ID or in_array(CURRENT_USER_ROLE, $this->_acl['fullControll'])) {
             $this->view->barTitle = "Editando proposta :: " . $data['nome'];
             $form->populate($data);
-            $this->view->form = $form;
+            $this->view->form = $form;            
         } else {
             $this->view->messages = array(
                 'Sem permissão de acesso'
             );
         }
+        
+        // recuperando anexos da proposta
+        $this->view->anexos = $documentos->readDir(PUBLIC_PATH . DIRECTORY_SEPARATOR . 'uploads', $id);
+        $this->view->gereDocs = new Application_Model_Documentos();
+        
     }
 
     public function deleteAction()
@@ -251,21 +257,11 @@ class PropostasController extends Zend_Controller_Action
 
     public function anexosAction()
     {
-        // action body
+        $request = $this->_request;
+        if($request->isPost()){
+            $data = $request->getPost();            
+            $this->view->propostaId = $data['id'];            
+        }
     }
 
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

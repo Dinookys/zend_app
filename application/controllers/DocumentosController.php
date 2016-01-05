@@ -60,11 +60,10 @@ class DocumentosController extends Zend_Controller_Action
 		$this->_helper->layout->setLayout('ajax');
 		$data = $this->_request->getPost();
 		 
+		$extraDados ="";
+		
 		if(isset($data['id'])){
-			$extraDados = $data['id'];
-			$extraDados .= '_' . date('d_m_Y');
-		}else{
-			$extraDados = date('d_m_Y');
+			$extraDados = $data['id'] . '-';			
 		}
 				 
 		$path = PUBLIC_PATH . DIRECTORY_SEPARATOR . 'uploads';		 
@@ -79,7 +78,7 @@ class DocumentosController extends Zend_Controller_Action
 				print '<p class="alert alert-warning">Nenhum arquivo selecionado para upload<p>';
 				continue;
 			}else{
-				$fileName = $extraDados .'_'. str_replace(' ','_', strtolower($info['name']));
+				$fileName = $extraDados . str_replace(' ','_', strtolower($info['name']));
 				// Renomeando o arquivo
 				$upload->addFilter('Rename', array(
 						'target'=> $path.DIRECTORY_SEPARATOR.$fileName,

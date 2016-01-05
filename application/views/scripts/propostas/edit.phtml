@@ -1,7 +1,57 @@
-<?= $this->render('common/top-bar-edit.phtml') ?>
-<div class="container" >
+<?= $this->render('common/top-bar-edit.phtml')?>
+<div class="container">
 	<?= $this->render('common/message.phtml'); ?>
-	<?= $this->form; ?>	
+	<?= $this->form; ?>
+	
+	
+	<?php if($this->anexos) :?>		
+			<table class='table table-stripped table-condensed'>
+		<thead>
+			<tr>
+				<th>Nome</th>
+				<th>Tamanho</th>
+				<th class="text-center">Extensão</th>
+				<th>Modificado</th>
+				<th class="text-center" >Remover</th>
+			</tr>
+		</thead>	
+    	<?php foreach ($this->anexos as $file) : ?>
+    		<tbody>
+			<tr>
+				<td><a target="_blank" class="btn btn-link"
+					href="<?= $this->baseUrl() .'/uploads/' . $file['name']; ?>">
+    						<?= $file['name']; ?>
+    					</a></td>
+				<td>
+    					<?= $this->gereDocs->formatSizeUnits($file['size']); ?>
+    				</td>
+				<td class="text-center">
+    					<?= $file['extension']; ?>
+    				</td>
+				<td>
+    					<?= date('d/m/Y H:i:s', $file['date'])?>
+    				</td>
+    			<td class="text-center" >
+    				<a class="btn btn-danger removefile" href="<?= $file['name'] ?>" >
+    					<i class="glyphicon glyphicon-remove" ></i>
+    				</a>
+    			</td>
+			</tr>
+		</tbody>
+    	<?php endforeach; ?>
+    		</table>    	
+	<?php endif; ?>	
+	
+	<?php if(isset($this->form->id)): ?>	
+	<form class="form" method="post"
+		action="<?= $this->baseUrl(). '/propostas/anexos'?>">
+		<?= $this->form->id; ?>
+		<div class="form-group">
+			<input type="submit" value="Adicionar anexos" class="btn btn-info" />
+		</div>
+	</form>
+	<?php endif; ?>	
+
 </div>
 <script>
 	$("#data_nasc").datetimepicker({

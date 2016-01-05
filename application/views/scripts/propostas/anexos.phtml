@@ -1,6 +1,10 @@
 <div class="container">	
-	<h3>Anexos</h3>
-	<form id="ajaxUpload" class="form">		
+	<h3>Anexar</h3>
+	<form id="ajaxUpload" class="form">
+		<?php if(isset($this->propostaId)): ?>
+		<?php //Passando id da proposta para incluir no nome do documento ?>
+			<input type="hidden" value="<?= $this->propostaId; ?>" name="id" >	
+		<?php endif; ?>
 		<div class="form-group">
 			<div class="input-group">
 				<div class="input-group-addon">
@@ -10,20 +14,27 @@
 			</div>
 		</div>
 	</form>	
-	<div>
-		<div id="addFileInput" class="btn btn-success">
-			<i class="glyphicon glyphicon-plus"></i> Mais
-		</div>
-		<div id="submitFiles" class="btn btn-info">
-			<i class="glyphicon glyphicon-upload"></i> Upload
-		</div>
-	</div>
 	<div id="listUploads">
 		
 	</div>
 </div>
+<div class="container">
+	<div class="btn-group pull-left" >
+		<button id="addFileInput" class="btn btn-success">
+			<i class="glyphicon glyphicon-plus"></i> Mais
+		</button>
+		<button id="submitFiles" class="btn btn-info">
+			<i class="glyphicon glyphicon-upload"></i> Upload
+		</button>
+	</div>
+	<a id="fechar" href="<?= $this->propostaId ? $this->baseUrl() .'/propostas/edit/id/'. $this->propostaId .'' : $this->baseUrl() .'/propostas/' ?>" class="btn btn-danger pull-right">
+		<i class="glyphicon glyphicon-times"></i> Fechar
+	</a>
+</div>
 <script>	
-	var totalFileInput = 1;
+	var totalFileInput = 1,
+	inputGroup = '<div class="form-group"><div class="input-group"><div class="input-group-addon"><a title="Remover arquivo" href="#" ><i class="glyphicon glyphicon-remove"></i></a></div><input type="file" class="form-control" name="file-'+totalFileInput+'" ></div></div>';
+	
 	$("#addFileInput").click(function(e){
 		e.preventDefault();
 		totalFileInput++;
@@ -49,13 +60,19 @@
 			contentType: false
 		}).done(function(data){
 			if(data.error){
-				console.log(data.error)
+				console.log('<p class="alert alert-error" >'+data.error+'</p>');
 			}
 
 			if(data){
 				$("#listUploads").html(data);
+				$('.form-group').remove();
+				$("#ajaxUpload").append(inputGroup);
+				
+			}
+
+			if(data == ""){
+				$("#listUploads").html('<p class="alert alert-danger" >Problemas ao tentar fazer upload</p>');
 			}
 		})
 	})
-
 </script>
