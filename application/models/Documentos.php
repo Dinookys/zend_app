@@ -36,34 +36,49 @@ class Application_Model_Documentos
         
         return $fileArray;
     }
-    
-    function formatSizeUnits($bytes)
+
+    /**
+     *
+     * @param array|string $names            
+     */
+    public function removeFiles($names, $path = 'uploads')
     {
-        if ($bytes >= 1073741824)
-        {
+        $path = PUBLIC_PATH . DIRECTORY_SEPARATOR . $path;
+        $arrayReturn = array();
+        
+        if (is_array($names)) {
+            foreach ($names as $name) {
+                $arrayReturn[] = array(
+                    'name' => $name,
+                    'removed' => unlink($path . DIRECTORY_SEPARATOR . $name)
+                );
+            }
+        } else {
+            $arrayReturn[] = array(
+                'name' => $names,
+                'removed' => unlink($path . DIRECTORY_SEPARATOR . $names)
+            );
+        }
+        
+        return $arrayReturn;
+    }
+
+    public function formatSizeUnits($bytes)
+    {
+        if ($bytes >= 1073741824) {
             $bytes = number_format($bytes / 1073741824, 2) . ' GB';
-        }
-        elseif ($bytes >= 1048576)
-        {
+        } elseif ($bytes >= 1048576) {
             $bytes = number_format($bytes / 1048576, 2) . ' MB';
-        }
-        elseif ($bytes >= 1024)
-        {
+        } elseif ($bytes >= 1024) {
             $bytes = number_format($bytes / 1024, 2) . ' KB';
-        }
-        elseif ($bytes > 1)
-        {
+        } elseif ($bytes > 1) {
             $bytes = $bytes . ' bytes';
-        }
-        elseif ($bytes == 1)
-        {
+        } elseif ($bytes == 1) {
             $bytes = $bytes . ' byte';
-        }
-        else
-        {
+        } else {
             $bytes = '0 bytes';
         }
-    
+        
         return $bytes;
     }
 }

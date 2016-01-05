@@ -1,0 +1,14 @@
+<div class="navbar navbar-default">
+    <div class="container">
+    	<div class="navbar-brand">
+    		<?= $this->barTitle; ?>
+    	</div>
+    	<div class="navbar-right" >
+    		<a href="#" id="salvar" class="btn btn-info navbar-btn" > <i class='glyphicon glyphicon-ok' ></i> Salvar</a>
+    		<a href="<?= $this->baseUrl() .'/propostas/edit/id/'. $this->form->id->getValue() ?>" id="fechar" class="btn btn-primary navbar-btn" ><i class='glyphicon glyphicon-remove'></i> Fechar</a>
+    	</div>
+    </div>
+</div>
+<div class="container">
+	<?= $this->form; ?>
+</div>

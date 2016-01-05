@@ -258,10 +258,33 @@ class PropostasController extends Zend_Controller_Action
     public function anexosAction()
     {
         $request = $this->_request;
+        $model_cliente = new Application_Model_Clientes();
+        
         if($request->isPost()){
-            $data = $request->getPost();            
+            $data = $request->getPost();                                
+            $cliente = $model_cliente->selectById($data['id']);
+            $cliente_data = json_decode($cliente['dados_cliente'], true);
+
+            $this->view->barTitle = 'Anexar arquivos para :: ' . strtoupper($cliente_data['nome']);
             $this->view->propostaId = $data['id'];            
         }
     }
 
+    public function condicoesPagamentoAction()
+    {
+        $form = new Application_Form_CondicoesPagamento();
+        $model = new Application_Model_Propostas();
+        $model_cliente = new Application_Model_Clientes();
+        $request = $this->_request;
+        $data = $request->getPost();
+        
+        $cliente = $model_cliente->selectById($data['id']);
+        $cliente_data = json_decode($cliente['dados_cliente'], true);
+        
+        $form->populate($data);   
+        $this->view->barTitle = 'Condições de pagamento :: '. strtoupper($cliente_data['nome']);
+        $this->view->form = $form;
+        
+    }
+    
 }

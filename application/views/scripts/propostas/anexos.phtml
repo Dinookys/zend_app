@@ -1,5 +1,20 @@
-<div class="container">	
-	<h3>Anexar</h3>
+<div class="navbar navbar-default">
+    <div class="container">
+    	<div class="navbar-brand">
+    		<?= $this->barTitle; ?>
+    	</div>
+    	<div class="navbar-right" >
+			<button id="submitFiles" class="btn btn-info navbar-btn">
+				<i class="glyphicon glyphicon-upload"></i> Upload
+			</button>
+			<button id="addFileInput" class="btn btn-success navbar-btn">
+				<i class="glyphicon glyphicon-plus"></i> Mais
+			</button>
+			<a href="<?= $this->baseUrl() .'/propostas/edit/id/'. $this->propostaId ?>" id="fechar" class="btn btn-primary navbar-btn" ><i class='glyphicon glyphicon-remove'></i> Fechar</a>
+		</div>    	
+    </div>
+</div>
+<div class="container panel panel-body panel-default">		
 	<form id="ajaxUpload" class="form">
 		<?php if(isset($this->propostaId)): ?>
 		<?php //Passando id da proposta para incluir no nome do documento ?>
@@ -16,20 +31,7 @@
 	</form>	
 	<div id="listUploads">
 		
-	</div>
-</div>
-<div class="container">
-	<div class="btn-group pull-left" >
-		<button id="addFileInput" class="btn btn-success">
-			<i class="glyphicon glyphicon-plus"></i> Mais
-		</button>
-		<button id="submitFiles" class="btn btn-info">
-			<i class="glyphicon glyphicon-upload"></i> Upload
-		</button>
-	</div>
-	<a id="fechar" href="<?= $this->propostaId ? $this->baseUrl() .'/propostas/edit/id/'. $this->propostaId .'' : $this->baseUrl() .'/propostas/' ?>" class="btn btn-danger pull-right">
-		<i class="glyphicon glyphicon-times"></i> Fechar
-	</a>
+	</div>	
 </div>
 <script>	
 	var totalFileInput = 1,

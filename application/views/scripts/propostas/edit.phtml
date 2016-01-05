@@ -3,6 +3,16 @@
 	<?= $this->render('common/message.phtml'); ?>
 	<?= $this->form; ?>
 	
+	<?php if(isset($this->form->id)): ?>	
+	<form class="form" method="post"
+		action="<?= $this->baseUrl(). '/propostas/condicoes-pagamento'?>">
+		<?= $this->form->id; ?>
+		<div class="form-group">
+			<input type="submit" value="Adicionar / alterar condições de pagamento" class="btn btn-info" />
+		</div>
+	</form>
+	<?php endif; ?>	
+	
 	
 	<?php if($this->anexos) :?>		
 			<table class='table table-stripped table-condensed'>
@@ -54,7 +64,34 @@
 
 </div>
 <script>
-	$("#data_nasc").datetimepicker({
+	$("#data_nasc, #conj_data_nasc").datetimepicker({
 		format: 'DD/MM/YYYY'
+	});	
+
+	$(".removefile").click(function(e){		
+		e.preventDefault();
+		var self = this;
+		
+		var file = $(this).attr('href');
+		bootbox.confirm('Remover o arquivo: ' + file + '?',function(result){
+
+			var formdata = new FormData();
+			formdata.append("names", file);			
+			
+			if(result){
+				$.ajax({
+					type: 'POST',
+					url:'<?= $this->baseUrl() . '/documentos/remove-files' ?>',
+					data: formdata,
+					processData: false,
+					contentType: false,
+				}).success(function(data, textStatus){
+					var data = JSON.parse(data);
+					if(data[0].removed){
+						$(self).parents('tr').remove();
+					}
+				});
+			}
+		});
 	});
 </script>

@@ -3,8 +3,8 @@
 class DocumentosController extends Zend_Controller_Action
 {
 
-	public function init()
-	{
+    public function init()
+    {
 		$auth = Zend_Auth::getInstance();
 		$this->data_user = $auth->getIdentity();
 
@@ -48,15 +48,15 @@ class DocumentosController extends Zend_Controller_Action
 			);
 		}
 		$this->view->date = new Zend_Date();
-	}
+    }
 
-	public function indexAction()
-	{
+    public function indexAction()
+    {
 		// action body
-	}
+    }
 
-	public function uploadAjaxAction()
-	{
+    public function uploadAjaxAction()
+    {
 		$this->_helper->layout->setLayout('ajax');
 		$data = $this->_request->getPost();
 		 
@@ -95,6 +95,18 @@ class DocumentosController extends Zend_Controller_Action
 				}
 			}
 		}
-	}
+    }
 
+    public function removeFilesAction()
+    {
+        
+        $this->_helper->layout->setLayout('ajax');
+        
+        $request = $this->_request;        
+        if($request->isPost()){
+            $data = $request->getPost();
+            $documentos = new Application_Model_Documentos();
+            echo json_encode($documentos->removeFiles($data['names']));          
+        }        
+    }
 }

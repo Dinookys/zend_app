@@ -4,7 +4,7 @@ class Application_Model_Propostas extends Application_Model_Clientes
 {
 
     private $name = 'zf_propostas';
-
+    private $name_valores = 'zf_propostas_valores';
     private $_cliente_table = 'zf_clientes';
 
     public function insert(array $data)
@@ -104,6 +104,7 @@ class Application_Model_Propostas extends Application_Model_Clientes
         unset($data['state']);
         
         $data_proposta['dados_extras'] = json_encode($data);
+        
         try {
             $where = $this->db->quoteInto('id_cliente = ?', $id);
             $result = $this->db->update($this->name, $data_proposta, $where);
@@ -141,6 +142,7 @@ class Application_Model_Propostas extends Application_Model_Clientes
     {
         try {
             $where = $this->db->quoteInto('id_cliente = ?', $id);
+            $this->db->delete($this->name_valores, $where);
             $this->db->delete($this->name, $where);
             return true;
         } catch (Zend_Db_Adapter_Exception $e) {
@@ -189,6 +191,61 @@ class Application_Model_Propostas extends Application_Model_Clientes
         }
         
         return $data;
+    }
+    
+    /**     
+     * @param string $id
+     * @throws Zend_Db_Exception
+     * @return mixed|boolean
+     */
+    public function selectCondicoesPagamento($id){
+        try{            
+            if($id > 0){
+                $sql = 'SELECT * FROM '. $this->name_valores . 'WHERE id_cliente = ?';
+                return $this->db->fetchRow($sql, array($id), Zend_Db::FETCH_ASSOC);
+            }else{
+                return false;
+            }
+        }catch (Zend_Db_Exception $e){
+            throw new Zend_Db_Exception($e->getMessage());
+        }
+    }
+    
+    /**
+     *
+     * @param array $data
+     * @throws Zend_Db_Exception
+     */
+    public function insertCondicoesPagamento(array $data){
+        try{
+            if($id > 0){                
+                return $this->db->insert($this->name_valores, $data);
+            }else{
+                return false;
+            }
+        }catch (Zend_Db_Exception $e){
+            throw new Zend_Db_Exception($e->getMessage());
+        }
+    }
+    
+    /**
+     * 
+     * @param string $id
+     * @param array $data
+     * @throws Zend_Db_Exception
+     * @return number|boolean
+     */
+    public function updateCondicoesPagamento($id, array $data){
+        try{
+            if($id > 0){
+                $where = $this->db->quoteInto('id_cliente = ?', $id);
+                return $this->db->update($this->name_valores, $data, $where);
+            }else{
+                return false;
+            }
+        }catch (Zend_Db_Exception $e){
+            throw new Zend_Db_Exception($e->getMessage());
+        }
     }
 
     /**
