@@ -5,10 +5,140 @@
     	</div>
     	<div class="navbar-right" >
     		<a href="#" id="salvar" class="btn btn-info navbar-btn" > <i class='glyphicon glyphicon-ok' ></i> Salvar</a>
-    		<a href="<?= $this->baseUrl() .'/propostas/edit/id/'. $this->form->id->getValue() ?>" id="fechar" class="btn btn-primary navbar-btn" ><i class='glyphicon glyphicon-remove'></i> Fechar</a>
+    		<a href="<?= $this->baseUrl() .'/propostas/edit/id/'. $this->id ?>" id="fechar" class="btn btn-primary navbar-btn" ><i class='glyphicon glyphicon-remove'></i> Fechar</a>
     	</div>
     </div>
 </div>
 <div class="container">
-	<?= $this->form; ?>
+	<?= $this->render('common/message.phtml'); ?>
 </div>
+	
+<?php if (!empty($this->form)) : ?>
+
+<form class="container " id="<?= $this->form->getId(); ?>" method="<?= $this->form->getMethod(); ?>" enctype="<?= $this->form->getEnctype(); ?>">
+		<div class="row" >
+			<table class="table table-striped table-condensed table-bordered" >
+    			<tr>
+    				<td>
+    					<?= $this->form->sinal ?>
+                    	<?= $this->form->parcelas ?>
+                    	<?= $this->form->id ?>
+    				</td>
+    			</tr>
+    			<tr>    				
+    				<td>
+    					<table class="table" >
+    						<thead>
+    							<tr>
+    								<th>
+        								VALOR
+        							</th>
+        							<th>
+        								VENCIMENTO
+        							</th>
+        							<th>
+        								TIPO
+        							</th>
+        							<th>
+        								<a id="add-parcelas" class="btn btn-default" >
+        									<i class="glyphicon glyphicon-plus" ></i>
+        								</a>
+        							</th>    							
+    							</tr>    							
+    						</thead>
+						<tbody id="lista-parcelas" >
+    					<?php if($this->form->parcelas->getValue()): ?>
+    						<?php 
+    						     $parcelas = json_decode($this->form->parcelas->getValue(), true);    						      
+    						  ?>    						
+    						<?php foreach ($parcelas as $key => $parcela): ?>
+    							<tr>
+        							<td>        								
+        								<input class="form-control" type="text" name="parcelas[<?php echo $key; ?>][valor]" value="<?php echo $parcelas[$key]['valor'] ?>" />
+        							</td>    							
+        							<td>
+        								<input class="form-control" type="text" name="parcelas[<?php echo $key; ?>][vencimento]" value="<?php echo $parcelas[$key]['vencimento'] ?>" />
+        							</td>
+        							<td>
+        								<input class="form-control" type="text" name="parcelas[<?php echo $key; ?>][tipo]" value="<?php echo $parcelas[$key]['tipo'] ?>" />
+        							</td>  
+									<td>
+										<button class="remove-parcela btn btn-danger" >
+        									<i class="glyphicon glyphicon-minus" ></i>
+        								</button>
+									</td> 							
+        						</tr>
+    						<?php endforeach; ?>
+    					<?php else: ?>
+    						<tr>
+    							<td>
+    								<input class="form-control" type="text" name="parcelas[0][valor]" />
+    							</td>    							
+    							<td>
+    								<input class="form-control" type="text" name="parcelas[0][vencimento]" />
+    							</td>
+    							<td>
+    								<input class="form-control" type="text" name="parcelas[0][tipo]" />
+    							</td>  
+    							<td>
+									<button class="remove-parcela btn btn-danger" >
+    									<i class="glyphicon glyphicon-minus" ></i>
+    								</button>
+								</td> 							
+    						</tr>
+						</tbody>
+    					<?php endif;?>
+    					</table>
+    				</td>
+    			</tr>	
+    		</table>
+		</div>
+		<?= $this->form->enviar; ?>
+	</form>
+<?php endif; ?>
+	
+	<script>
+		var totalParcelas = $("#lista-parcelas tr").length - 1;		
+		$("#add-parcelas").click(function(e){
+			e.preventDefault();
+            totalParcelas++;
+            var tr = '<tr>';
+            tr +='<td>';
+            tr +='<input class="form-control" type="text" name="parcelas['+ totalParcelas +'][valor]" value="" />';
+            tr +='</td>';
+            tr +='<td>';
+            tr +='<input class="form-control" type="text" name="parcelas['+ totalParcelas +'][vencimento]" value="" />';
+            tr +='</td>';
+            tr +='<td>';
+            tr +='<input class="form-control" type="text" name="parcelas['+ totalParcelas +'][tipo]" value="" />';
+            tr +='</td>';
+            tr +='<td>';
+            tr +='<a class="remove-parcela btn btn-danger" >';
+            tr +='<i class="glyphicon glyphicon-minus" ></i>';
+            tr +='</a>';
+            tr +='</td>';
+            tr +='</tr>';			
+            $('#lista-parcelas').append(tr);
+		});		
+	
+		$('body').on('click','.remove-parcela', function(e){
+			e.preventDefault();
+			var self = $(this);
+			if(totalParcelas){
+				bootbox.confirm("Remover parcela?", function(result){
+					if(result){
+						self.parent().parent().remove();
+						totalParcelas--;
+					}
+				});
+			}else{
+				bootbox.alert('Operação não permitida!!');
+			}
+		});
+
+		$("#salvar").click(function(e){
+			e.preventDefault();
+			$('#<?= $this->id; ?>').submit();
+		});		
+		
+	</script>

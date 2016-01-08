@@ -1,17 +1,14 @@
 <?= $this->render('common/top-bar-edit.phtml')?>
+
 <div class="container">
 	<?= $this->render('common/message.phtml'); ?>
+	
+<?php if (!empty($this->form)) : ?>
+
 	<?= $this->form; ?>
 	
-	<?php if(isset($this->form->id)): ?>	
-	<form class="form" method="post"
-		action="<?= $this->baseUrl(). '/propostas/condicoes-pagamento'?>">
-		<?= $this->form->id; ?>
-		<div class="form-group">
-			<input type="submit" value="Adicionar / alterar condições de pagamento" class="btn btn-info" />
-		</div>
-	</form>
-	<?php endif; ?>	
+	<a href="<?= $this->baseUrl(). '/propostas/condicoes-pagamento/id/'. $this->form->id->getValue(); ?>"
+		class="btn btn-info">Condições de pagamento</a>
 	
 	
 	<?php if($this->anexos) :?>		
@@ -22,7 +19,7 @@
 				<th>Tamanho</th>
 				<th class="text-center">Extensão</th>
 				<th>Modificado</th>
-				<th class="text-center" >Remover</th>
+				<th class="text-center">Remover</th>
 			</tr>
 		</thead>	
     	<?php foreach ($this->anexos as $file) : ?>
@@ -41,27 +38,19 @@
 				<td>
     					<?= date('d/m/Y H:i:s', $file['date'])?>
     				</td>
-    			<td class="text-center" >
-    				<a class="btn btn-danger removefile" href="<?= $file['name'] ?>" >
-    					<i class="glyphicon glyphicon-remove" ></i>
-    				</a>
-    			</td>
+				<td class="text-center"><a class="btn btn-danger removefile"
+					href="<?= $file['name'] ?>"> <i class="glyphicon glyphicon-remove"></i>
+				</a></td>
 			</tr>
 		</tbody>
     	<?php endforeach; ?>
     		</table>    	
-	<?php endif; ?>	
+	<?php endif; ?>
 	
-	<?php if(isset($this->form->id)): ?>	
-	<form class="form" method="post"
-		action="<?= $this->baseUrl(). '/propostas/anexos'?>">
-		<?= $this->form->id; ?>
-		<div class="form-group">
-			<input type="submit" value="Adicionar anexos" class="btn btn-info" />
-		</div>
-	</form>
-	<?php endif; ?>	
-
+	<a
+		href="<?= $this->baseUrl(). '/propostas/anexos/id/'. $this->form->id->getValue(); ?>"
+		class="btn btn-info">Adicionar anexos</a>
+<?php endif; ?>
 </div>
 <script>
 	$("#data_nasc, #conj_data_nasc").datetimepicker({

@@ -201,7 +201,7 @@ class Application_Model_Propostas extends Application_Model_Clientes
     public function selectCondicoesPagamento($id){
         try{            
             if($id > 0){
-                $sql = 'SELECT * FROM '. $this->name_valores . 'WHERE id_cliente = ?';
+                $sql = 'SELECT * FROM '. $this->name_valores . ' WHERE id_cliente = ?';
                 return $this->db->fetchRow($sql, array($id), Zend_Db::FETCH_ASSOC);
             }else{
                 return false;

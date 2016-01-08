@@ -179,10 +179,12 @@ class ClientesController extends Zend_Controller_Action
             if ($result['created_user_id'] == CURRENT_USER_ID or in_array(CURRENT_USER_ROLE, $this->_acl['fullControll']) or in_array($result['created_user_id'], $this->_ids)) {                
                 $form->populate($data);
             } else {
+                $this->view->form = '';
                 $this->view->messages = array(
                     'Cadastro não encontrado'
                 );
                 $this->view->message_type = "alert-danger";
+                return false;
             }
         }
         

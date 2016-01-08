@@ -10,6 +10,21 @@ class Application_Form_CondicoesPagamento extends Zend_Form
         $required->setType($required->getType() | Zend_Validate_NotEmpty::STRING | Zend_Validate_NotEmpty::ZERO);        
         $data_now = new Zend_Date();
         
+        $this->addElement('text','sinal', array(
+            'Label' => 'Sinal',
+            'required' => true,
+            
+            'class'     => 'form-control',
+            'decorators' => $this->setColSize(6)
+        ));
+        
+        $this->addElement('hidden','parcelas', array(
+            'Label' => '',
+            'required' => true,            
+            'class'     => 'form-control',
+            'decorators' => $this->setColSize(12)
+        ));
+        
         $this->addElement('hidden', 'data', array(
             'value' => $data_now->toString('YYYY-MM-dd'),
             'decorators' => $this->setColSize(12)

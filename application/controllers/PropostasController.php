@@ -93,8 +93,7 @@ class PropostasController extends Zend_Controller_Action
         $request = $this->getRequest();
         $id = $request->getParam('id');
         $model = new Application_Model_Propostas();
-        $documentos = new Application_Model_Documentos();
-        
+        $documentos = new Application_Model_Documentos();        
         $form = new Application_Form_Proposta();
         
         $model->insert(array(
@@ -107,7 +106,6 @@ class PropostasController extends Zend_Controller_Action
             $id = $data['id'];
             $cpf = $data['cpf'];
             $data['last_user_id'] = CURRENT_USER_ID;
-            
             $check = $model->selectBy($cpf);
             
             if ($check && $check['id'] != $id) {
@@ -116,20 +114,20 @@ class PropostasController extends Zend_Controller_Action
                 );
                 $this->view->message_type = "alert-danger";
                 $form->populate($data);
-            } else 
-                if ($model->update($data['id'], $data) == 0) {
-                    $this->view->messages = array(
-                        'Não foi feito nenhuma alteração.'
-                    );
-                    $this->view->message_type = "alert-info";
-                } else {
-                    $this->view->messages = array(
-                        'Atualizado com sucesso!'
-                    );
-                    $this->view->message_type = "alert-success";
+            } else{
+                    
+                    if ($model->update($data['id'], $data) == 0) {
+                        $this->view->messages = array(
+                            'Não foi feito nenhuma alteração.'
+                        );
+                        $this->view->message_type = "alert-info";
+                    } else {
+                        $this->view->messages = array(
+                            'Atualizado com sucesso!'
+                        );
+                        $this->view->message_type = "alert-success";
+                    }
                 }
-            
-            $form->populate($data);
         } else {
             
             $data = $model->selectByClientId($id);
@@ -141,6 +139,7 @@ class PropostasController extends Zend_Controller_Action
             
             $data = array_merge($data, json_decode($data['dados_cliente'], true));
             unset($data['dados_cliente']);
+            
         }
         
         if ($data['locked'] == 1 && $data['locked_by'] != CURRENT_USER_ID && $data['locked_by'] != 0) {
@@ -149,24 +148,22 @@ class PropostasController extends Zend_Controller_Action
             );
             $this->view->form = '';
             return false;
-        } else {
-            $model->lockRow($data['id'], CURRENT_USER_ID, 1);
         }
         
         if (in_array($data['created_user_id'], $this->_ids) or $data['created_user_id'] == CURRENT_USER_ID or in_array(CURRENT_USER_ROLE, $this->_acl['fullControll'])) {
+            $model->lockRow($data['id'], CURRENT_USER_ID, 1);
             $this->view->barTitle = "Editando proposta :: " . $data['nome'];
             $form->populate($data);
-            $this->view->form = $form;            
-        } else {
+            $this->view->form = $form;
+            // recuperando anexos da proposta
+            $this->view->anexos = $documentos->readDir(PUBLIC_PATH . DIRECTORY_SEPARATOR . 'uploads', $id);
+            $this->view->gereDocs = new Application_Model_Documentos();
+        } else {    
+            $this->view->form = '';
             $this->view->messages = array(
                 'Sem permissão de acesso'
             );
         }
-        
-        // recuperando anexos da proposta
-        $this->view->anexos = $documentos->readDir(PUBLIC_PATH . DIRECTORY_SEPARATOR . 'uploads', $id);
-        $this->view->gereDocs = new Application_Model_Documentos();
-        
     }
 
     public function deleteAction()
@@ -260,14 +257,30 @@ class PropostasController extends Zend_Controller_Action
         $request = $this->_request;
         $model_cliente = new Application_Model_Clientes();
         
-        if($request->isPost()){
-            $data = $request->getPost();                                
-            $cliente = $model_cliente->selectById($data['id']);
-            $cliente_data = json_decode($cliente['dados_cliente'], true);
-
-            $this->view->barTitle = 'Anexar arquivos para :: ' . strtoupper($cliente_data['nome']);
-            $this->view->propostaId = $data['id'];            
+        if ($request->isPost()) {
+            $data = $request->getPost();
+        }else{
+            $id = $request->getParam('id');            
+            if (!isset($data['id'])) {
+                $data['id'] = $id;
+            }
         }
+        
+        $cliente = $model_cliente->selectById($data['id']);
+        $cliente_data = json_decode($cliente['dados_cliente'], true);
+        
+        if (in_array($cliente['created_user_id'], $this->_ids) or $cliente['created_user_id'] == CURRENT_USER_ID or in_array(CURRENT_USER_ROLE, $this->_acl['fullControll'])) {
+            $this->view->barTitle = 'Anexar arquivos para :: ' . strtoupper($cliente_data['nome']);
+            $this->view->propostaId = $data['id'];
+            $this->view->allow = true;
+        } else {
+            $this->view->allow = false;
+            $this->view->propostaId = $id;
+            $this->view->messages = array(
+                'Sem permissão de acesso'
+            );
+        }
+        
     }
 
     public function condicoesPagamentoAction()
@@ -276,15 +289,35 @@ class PropostasController extends Zend_Controller_Action
         $model = new Application_Model_Propostas();
         $model_cliente = new Application_Model_Clientes();
         $request = $this->_request;
-        $data = $request->getPost();
+        
+        if ($request->isPost()) {
+            $data = $request->getPost();
+        } else {
+            $id = $request->getParam('id');
+            $data = $model->selectCondicoesPagamento($id);
+            if (! isset($data['id'])) {
+                $data['id'] = $id;
+            }
+        }
+        
+        if (isset($data['parcelas'])) {
+            $data['parcelas'] = json_encode($data['parcelas']);
+        }
         
         $cliente = $model_cliente->selectById($data['id']);
         $cliente_data = json_decode($cliente['dados_cliente'], true);
         
-        $form->populate($data);   
-        $this->view->barTitle = 'Condições de pagamento :: '. strtoupper($cliente_data['nome']);
-        $this->view->form = $form;
+        if (in_array($cliente['created_user_id'], $this->_ids) or $cliente['created_user_id'] == CURRENT_USER_ID or in_array(CURRENT_USER_ROLE, $this->_acl['fullControll'])) {
+            $form->populate($data);
+            $this->view->barTitle = 'Condições de pagamento :: ' . strtoupper($cliente_data['nome']);
+            $this->view->form = $form;
+        } else {
+            $this->view->form = '';
+            $this->view->messages = array(
+                'Sem permissão de acesso'
+            );
+        }
         
+        $this->view->id = $data['id'];
     }
-    
 }

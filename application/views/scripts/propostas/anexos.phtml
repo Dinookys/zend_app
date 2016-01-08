@@ -14,6 +14,11 @@
 		</div>    	
     </div>
 </div>
+<div class="container">
+	<?= $this->render('common/message.phtml'); ?>
+</div>
+
+<?php if ($this->data): ?>	
 <div class="container panel panel-body panel-default">		
 	<form id="ajaxUpload" class="form">
 		<?php if(isset($this->propostaId)): ?>
@@ -33,6 +38,7 @@
 		
 	</div>	
 </div>
+<?php endif; ?>
 <script>	
 	var totalFileInput = 1,
 	inputGroup = '<div class="form-group"><div class="input-group"><div class="input-group-addon"><a title="Remover arquivo" href="#" ><i class="glyphicon glyphicon-remove"></i></a></div><input type="file" class="form-control" name="file-'+totalFileInput+'" ></div></div>';
