@@ -86,16 +86,19 @@ class Application_Model_Propostas extends Application_Model_Clientes
     {
         $data_proposta = array();
         
-        if (isset($data['anexos'])) {
-            $data_proposta['anexos'] = json_encode($data['anexos']);
-            unset($data['anexos']);
+        if(isset($data['status'])){
+            $data_proposta['descricao'] = $data['descricao'];
         }
         
-        $data_proposta['descricao'] = $data['descricao'];
-        $data_proposta['locked'] = $data['locked'];
+        $data_proposta['locked'] = $data['locked'];        
         $data_proposta['locked_by'] = $data['locked_by'];
-        $data_proposta['status'] = $data['status'];
-        $data_proposta['state'] = $data['state'];
+        
+        if(isset($data['status'])){
+            $data_proposta['status'] = $data['status'];
+        }
+        if(isset($data['state'])){
+            $data_proposta['state'] = $data['state'];
+        }
         
         unset($data['descricao']);
         unset($data['locked']);
@@ -218,11 +221,7 @@ class Application_Model_Propostas extends Application_Model_Clientes
      */
     public function insertCondicoesPagamento(array $data){
         try{
-            if($id > 0){                
-                return $this->db->insert($this->name_valores, $data);
-            }else{
-                return false;
-            }
+            return $this->db->insert($this->name_valores, $this->clearData($data, $this->name_valores));
         }catch (Zend_Db_Exception $e){
             throw new Zend_Db_Exception($e->getMessage());
         }
@@ -247,21 +246,5 @@ class Application_Model_Propostas extends Application_Model_Clientes
             throw new Zend_Db_Exception($e->getMessage());
         }
     }
-
-    /**
-     * Retorna array no formato Json removendo alguns parametros
-     *
-     * @param array $data            
-     * @param array $excludes
-     *            itens no array a serem removidos do json
-     */
-    private function convertToJson($data = array(), $excludes = array())
-    {
-        foreach ($excludes as $exclude) {
-            unset($data[$exclude]);
-        }
-        
-        return json_encode($data, JSON_UNESCAPED_UNICODE);
-    }
+    
 }
-

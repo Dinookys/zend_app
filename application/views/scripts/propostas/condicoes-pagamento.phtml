@@ -20,9 +20,8 @@
 			<table class="table table-striped table-condensed table-bordered" >
     			<tr>
     				<td>
-    					<?= $this->form->sinal ?>
-                    	<?= $this->form->parcelas ?>
-                    	<?= $this->form->id ?>
+    					<?= $this->form->sinal ?>                    	
+                    	<?= $this->form->id_cliente ?>
     				</td>
     			</tr>
     			<tr>    				
@@ -50,7 +49,10 @@
     					<?php if($this->form->parcelas->getValue()): ?>
     						<?php 
     						     $parcelas = json_decode($this->form->parcelas->getValue(), true);    						      
-    						  ?>    						
+    						  ?>     						  
+    						  <tr>
+    						  	<?= $this->form->parcelas ?>
+    						  </tr>					
     						<?php foreach ($parcelas as $key => $parcela): ?>
     							<tr>
         							<td>        								
@@ -135,10 +137,11 @@
 				bootbox.alert('Operação não permitida!!');
 			}
 		});
-
+<?php if (!empty($this->form)) : ?>
 		$("#salvar").click(function(e){
 			e.preventDefault();
-			$('#<?= $this->id; ?>').submit();
-		});		
+			$('#<?= $this->form->getId(); ?>').submit();
+		});
+<?php endif; ?>		
 		
 	</script>

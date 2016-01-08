@@ -13,24 +13,20 @@ class Application_Form_CondicoesPagamento extends Zend_Form
         $this->addElement('text','sinal', array(
             'Label' => 'Sinal',
             'required' => true,
-            
+            'filters'   =>  array('StringTrim'),
             'class'     => 'form-control',
             'decorators' => $this->setColSize(6)
         ));
         
         $this->addElement('hidden','parcelas', array(
             'Label' => '',
-            'required' => true,            
+            'required' => true,           
+            'filters'   =>  array('StringTrim'),
             'class'     => 'form-control',
             'decorators' => $this->setColSize(12)
         ));
-        
-        $this->addElement('hidden', 'data', array(
-            'value' => $data_now->toString('YYYY-MM-dd'),
-            'decorators' => $this->setColSize(12)
-        ));        
 
-        $this->addElement('hidden', 'id', array(
+        $this->addElement('hidden', 'id_cliente', array(
             'value' => '',
             'decorators' => $this->setColSize(12)
         ));

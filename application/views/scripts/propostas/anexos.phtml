@@ -18,7 +18,7 @@
 	<?= $this->render('common/message.phtml'); ?>
 </div>
 
-<?php if ($this->data): ?>	
+<?php if ($this->allow): ?>	
 <div class="container panel panel-body panel-default">		
 	<form id="ajaxUpload" class="form">
 		<?php if(isset($this->propostaId)): ?>

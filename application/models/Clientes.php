@@ -240,12 +240,32 @@ class Application_Model_Clientes
      * @param array $excludes
      * itens no array a serem removidos do json
      */
-    private function convertToJson($data = array(), $excludes = array())
+    protected function convertToJson($data = array(), $excludes = array())
     {
         foreach ($excludes as $exclude) {
             unset($data[$exclude]);
         }
         
         return json_encode($data, JSON_UNESCAPED_UNICODE);
+    }
+    
+    protected function clearData($data, $table)
+    {
+        if($table){
+            $table = $table;
+        }else{
+            $table = $this->name;
+        }
+        
+        $result = $this->db->describeTable($table);
+        $cols = array_keys($result);
+        $cleardata = array();
+        foreach ($data as $key => $value) {
+            if (in_array($key, $cols)) {
+                $cleardata[$key] = $value;
+            }
+        }
+    
+        return $cleardata;
     }
 }
