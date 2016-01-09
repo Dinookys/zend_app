@@ -126,7 +126,7 @@ class ClientesController extends Zend_Controller_Action
     {
         $form = new Application_Form_CadastroCliente();
         $model = new Application_Model_Clientes();
-        $request = $this->_request;
+        $request = $this->_request;        
         
         if ($request->isPost() && $form->isValid($request->getPost())) {
             
@@ -189,6 +189,11 @@ class ClientesController extends Zend_Controller_Action
         }
         
         $form->addFieldId($id);
+        // pegando data padrao Us para pt_BR
+        $data_desc = new Zend_Date($data['data']);
+        $form->getElement('data_desc')->setDescription(
+				'<label>Data</label><p>' . $data_desc->toString('dd/MM/yyyy') .'</p>'
+				);
         $this->view->barTitle = "Editando Cliente";
         $this->view->form = $form;
     }

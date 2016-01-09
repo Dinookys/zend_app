@@ -46,5 +46,5 @@ class Application_Model_Acl_Acl extends Zend_Acl{
     
     public function isAllowed() {
         return parent::isAllowed($this->_role, $this->_current_resource);
-    }
+    }   
 }

@@ -927,44 +927,44 @@ class Application_Form_Proposta extends Zend_Form
         
         $this->addElement('hidden', 'data_proposta', array(
             'value' => $data_now->toString('YYYY-MM-dd'),
-            'decorators' => $this->setColSize(12)
+            'decorators' => $this->setColSize(1, false)
         ));
         
         $this->addElement('hidden', 'data', array(
             'value' => $data_now->toString('YYYY-MM-dd'),
-            'decorators' => $this->setColSize(12)
+            'decorators' => $this->setColSize(1, false)
         ));
         
         $this->addElement('hidden', 'created_user_id', array(
             'value' => CURRENT_USER_ID,
-            'decorators' => $this->setColSize(12)
+            'decorators' => $this->setColSize(1, false)
         ));
         
         $this->addElement('hidden', 'id', array(
             'value' => '',
-            'decorators' => $this->setColSize(12)
+            'decorators' => $this->setColSize(1, false)
         ));
         
         $this->addElement('hidden', 'last_user_id', array(
             'value' => CURRENT_USER_ID,
-            'decorators' => $this->setColSize(12)
+            'decorators' => $this->setColSize(1, false)
         ));
         
         $this->addElement('hidden', 'locked', array(
             'value' => CURRENT_USER_ID,
-            'decorators' => $this->setColSize(12)
+            'decorators' => $this->setColSize(1, false)
         ));
         
         $this->addElement('hidden', 'locked_by', array(
             'value' => CURRENT_USER_ID,
-            'decorators' => $this->setColSize(12)
+            'decorators' => $this->setColSize(1, false)
         ));
         
         $this->addElement('submit', 'Enviar', array(
             'label' => 'Enviar',
             'ignore' => 'true',
             'class' => 'btn btn-success pull-right',
-            'decorators' => $this->setColSize(12, false)
+            'decorators' => $this->setColSize(1, false)
         ));
         
         $this->setDecorators(array(

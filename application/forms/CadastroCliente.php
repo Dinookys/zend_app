@@ -56,6 +56,11 @@ class Application_Form_CadastroCliente extends Zend_Form
         
         $options_sim_nao = array('Não','Sim');
         
+        $this->addElement('hidden', 'data', array(
+        		'value' => $data_now->toString('YYYY-MM-dd'),
+        		'decorators' => $this->setColSize(12)
+        ));
+        
         $this->addElement('select','imovel',array(
             'label'  =>  'Imóvel',
             'required'  =>  true,
@@ -67,8 +72,7 @@ class Application_Form_CadastroCliente extends Zend_Form
         ));
         
         // Adicionando tag HTML usando description do elemento
-        $this->addElement('hidden', 'data_desc', array(
-            'description' => '<label>Data</label><p>' . $data_now->toString('dd/MM/YYYY') .'</p>',
+        $this->addElement('hidden', 'data_desc', array(            
             'ignore' => true,
             'decorators' => array(
                 array('Description', array('escape'=>false, 'tag'=>'div', 'class' => "col-xs-2 pull-right")),
@@ -346,11 +350,6 @@ class Application_Form_CadastroCliente extends Zend_Form
             'cols'  => 80,
             'rows'  => 5,
             'decorators' => $this->setColSize()
-        ));
-        
-        $this->addElement('hidden', 'data', array(
-            'value' => $data_now->toString('YYYY-MM-dd'),
-            'decorators' => $this->setColSize(12)
         ));
         
         $this->addElement('hidden', 'created_user_id', array(

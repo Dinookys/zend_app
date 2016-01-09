@@ -2,7 +2,11 @@
 
 class Application_Model_Documentos
 {
-
+	/**
+	 * 
+	 * @param string $path
+	 * @param string $id
+	 */
     public function readDir($path, $id)
     {
         $dir = new DirectoryIterator($path);

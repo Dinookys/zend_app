@@ -52,13 +52,10 @@ class Application_Model_Clientes
     }
 
     /**
-     * selectById
-     *
-     * @param string $cpf            
-     * @param bool $userId            
-     * @param bool $parentId            
+     * 
+     * @param string|int $id
      * @throws Zend_Exception
-     * @return mixed|boolean
+     * @return mixed|bool
      */
     public function selectById($id)
     {

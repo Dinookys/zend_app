@@ -2,17 +2,39 @@
 
 <div class="container">
 	<?= $this->render('common/message.phtml'); ?>
-	
-<?php if (!empty($this->form)) : ?>
 
-	<?= $this->form; ?>
-	
-	<a href="<?= $this->baseUrl(). '/propostas/condicoes-pagamento/id/'. $this->form->id->getValue(); ?>"
-		class="btn btn-info">Condições de pagamento</a>
-	
-	
-	<?php if($this->anexos) :?>		
-			<table class='table table-stripped table-condensed'>
+	<?php if (!empty($this->form)) : ?>
+
+	<?= $this->form; ?>	
+	<?php if($this->parcelas) :?>
+		<h3>Sinal</h3>
+		<b>R$ <?php echo $this->sinal; ?></b>
+		<h3>Parcelas</h3>
+		<table class="table table-striped table-hover table-condensed">
+			<thead>
+				<tr>
+					<th>Valor</th>
+					<th>Vencimento</th>
+					<th>Tipo</th>
+				</tr>
+			</thead>			
+			<tbody>
+			<?php foreach ($this->parcelas as $key => $parcela): ?>
+				<tr>
+					<td><?php echo $parcela['valor'] ?></td>
+					<td><?php echo $parcela['vencimento'] ?></td>
+					<td><?php echo $parcela['tipo'] ?></td>
+				</tr>
+			<?php endforeach ?>
+			</tbody>
+		</table>
+	<?php endif;?>	
+	<p>
+		<a href="<?= $this->baseUrl(). '/propostas/condicoes-pagamento/id/'. $this->form->id->getValue(); ?>" class="btn btn-info">Adcionar Condições de pagamento</a>
+	</p> 
+	<?php if($this->anexos) :?>
+	<h3>Anexos</h3>
+	<table class='table table-striped table-hover table-condensed'>
 		<thead>
 			<tr>
 				<th>Nome</th>
@@ -21,36 +43,32 @@
 				<th>Modificado</th>
 				<th class="text-center">Remover</th>
 			</tr>
-		</thead>	
-    	<?php foreach ($this->anexos as $file) : ?>
-    		<tbody>
+		</thead>
+		<tbody>
+		<?php foreach ($this->anexos as $file) : ?>		
 			<tr>
 				<td><a target="_blank" class="btn btn-link"
-					href="<?= $this->baseUrl() .'/uploads/' . $file['name']; ?>">
-    						<?= $file['name']; ?>
-    					</a></td>
-				<td>
-    					<?= $this->gereDocs->formatSizeUnits($file['size']); ?>
-    				</td>
-				<td class="text-center">
-    					<?= $file['extension']; ?>
-    				</td>
-				<td>
-    					<?= date('d/m/Y H:i:s', $file['date'])?>
-    				</td>
+					href="<?= $this->baseUrl() .'/uploads/' . $file['name']; ?>"> <?= $file['name']; ?>
+				</a></td>
+				<td><?= $this->documentos->formatSizeUnits($file['size']); ?>
+				</td>
+				<td class="text-center"><?= $file['extension']; ?>
+				</td>
+				<td><?= date('d/m/Y H:i:s', $file['date'])?>
+				</td>
 				<td class="text-center"><a class="btn btn-danger removefile"
 					href="<?= $file['name'] ?>"> <i class="glyphicon glyphicon-remove"></i>
 				</a></td>
-			</tr>
+			</tr>		
+		<?php endforeach; ?>
 		</tbody>
-    	<?php endforeach; ?>
-    		</table>    	
+	</table>
 	<?php endif; ?>
-	
-	<a
-		href="<?= $this->baseUrl(). '/propostas/anexos/id/'. $this->form->id->getValue(); ?>"
-		class="btn btn-info">Adicionar anexos</a>
-<?php endif; ?>
+	<p>
+		<a href="<?= $this->baseUrl(). '/propostas/anexos/id/'. $this->form->id->getValue(); ?>" class="btn btn-info">Adicionar anexos</a>
+	</p>
+
+	<?php endif; ?>
 </div>
 <script>
 	$("#data_nasc, #conj_data_nasc").datetimepicker({
