@@ -1,0 +1,119 @@
+<?= $this->render('common/top-bar-add.phtml'); ?>
+<div class="container" >
+	<?= $this->render('common/message.phtml'); ?>
+	<div class="panel panel-body panel-default">
+		<form class="form " id="<?= $this->form->getId(); ?>" method="<?= $this->form->getMethod(); ?>" enctype="<?= $this->form->getEnctype(); ?>">
+			<div class="row">
+				<?= $this->form->getElement('nome'); ?>
+				<?= $this->form->getElement('logradouro'); ?>
+				<?= $this->form->getElement('categoria'); ?>
+				<?= $this->form->getElement('cad_corretagem'); ?>
+				<?= $this->form->getElement('incorporadora'); ?>
+				<?= $this->form->getElement('tipo'); ?>
+			</div>			
+			<table id="lista-unidades" class="table table-stripped table-condensed table-hover" >
+				<thead>
+					<tr>
+						<th>
+							BLOCO/QUADRA			
+						</th>
+						<th>
+							UNIDADE
+						</th>
+						<th>
+							<a id="add-unidades" class="btn btn-default" >
+								<i class="glyphicon glyphicon-plus" ></i>
+							</a>
+						</th>   
+					</tr>
+				</thead>
+				<tbody>
+				<tr>
+				  	<?= $this->form->unidades ?>
+			  	</tr>	
+				<?php if($this->form->unidades->getValue()): ?>
+					<?php 
+					     $unidades = json_decode($this->form->unidades->getValue(), true);    						      
+					  ?>			
+					<?php foreach ($unidades as $key => $unidade): ?>
+					<tr>
+						<td>
+							<input class="form-control" type="text" name="unidades[<?= $key ?>][bloco-quadra]" value="<?= $unidade['bloco-quadra']?>" >
+						</td>
+						<td>
+							<input class="form-control" type="text" name="unidades[<?= $key ?>][unidade]" value="<?= $unidade['unidade']?>">
+						</td>
+						<td>
+							<button class="remove-unidade btn btn-danger" >
+								<i class="glyphicon glyphicon-minus" ></i>
+							</button>
+						</td>
+					</tr>
+					<?php endforeach;?>
+				<?php else : ?>
+					<tr>
+						<td>
+							<input class="form-control" type="text" name="unidades[0][bloco-quadra]">
+						</td>
+						<td>
+							<input class="form-control" type="text" name="unidades[0][unidade]">
+						</td>
+						<td>
+							<button class="remove-unidade btn btn-danger" >
+								<i class="glyphicon glyphicon-minus" ></i>
+							</button>
+						</td>
+					</tr>
+				<?php endif; ?>
+				</tbody>
+			</table>
+			<div class="hidden">
+				<?= $this->form->getElement('created_user_id'); ?>
+			</div>
+		</form>
+	</div>	
+</div>
+<script>
+
+	var totalUnidades = $("#lista-unidades tr").length - 1;	
+		$("#add-unidades").click(function(e){
+			e.preventDefault();
+            totalUnidades++;
+            var tr = '<tr>';                       
+            tr +='<td>';            
+            tr +='<input class="form-control" type="text" name="unidades['+ totalUnidades +'][bloco-quadra]" value="" />';                        
+            tr +='</td>';            
+            tr +='<td>';            
+            tr +='<input class="form-control" type="text" name="unidades['+ totalUnidades +'][unidade]" value="" />';                        
+            tr +='</td>';            
+            tr +='<td>';
+            tr +='<a class="remove-unidade btn btn-danger" >';
+            tr +='<i class="glyphicon glyphicon-minus" ></i>';
+            tr +='</a>';
+            tr +='</td>';
+            tr +='</tr>';			
+            $('#lista-unidades').append(tr);
+
+            // Adicionando o date
+            $("input[id^=date").datetimepicker({
+        		format: 'DD/MM/YYYY'
+        	});  
+            
+		});		
+	
+		$('body').on('click','.remove-unidade', function(e){
+			e.preventDefault();
+			var self = $(this);
+			if(totalUnidades-1){
+				bootbox.confirm("Remover unidade?", function(result){
+					if(result){
+						self.parent().parent().remove();
+						totalUnidades--;
+					}
+				});
+			}else{
+				bootbox.alert('Operação não permitida!!');
+			}
+		});
+
+</script>

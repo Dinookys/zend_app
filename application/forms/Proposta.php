@@ -10,6 +10,7 @@ class Application_Form_Proposta extends Zend_Form
         $required->setType($required->getType() | Zend_Validate_NotEmpty::STRING | Zend_Validate_NotEmpty::ZERO);
         
         $data_now = new Zend_Date();
+        $imovel = new Application_Model_Empreendimentos();
         
         $options_estado_civil = array(
             '-- Selecione --',
@@ -23,12 +24,13 @@ class Application_Form_Proposta extends Zend_Form
             '-- Selecione --'
         );
         
-        $options_imovel = array(
-            '-- Selecione --',
-            'imovel01' => 'Imóvel 01',
-            'imovel02' => 'Imóvel 02',
-            'imovel03' => 'Imóvel 03'
-        );
+        $options_imovel = array('-- Selecione --');
+        
+        $dataImovies = $imovel->selectAll(1);
+        
+        foreach ($dataImovies as $imovel){
+            $options_imovel[$imovel->id] = $imovel->nome;
+        }
         
         $options_meio_comunicacao = array(
             '-- Selecione --',
@@ -96,7 +98,7 @@ class Application_Form_Proposta extends Zend_Form
                 'StringTrim'
             ),
             'class' => 'form-control',
-            'multiOptions' => $options_imovel,
+            'multiOptions' => $options_empty,
             'validators' => array(
                 $required
             ),
@@ -110,7 +112,7 @@ class Application_Form_Proposta extends Zend_Form
                 'StringTrim'
             ),
             'class' => 'form-control',
-            'multiOptions' => $options_imovel,
+            'multiOptions' => $options_empty,
             'validators' => array(
                 $required
             ),
@@ -989,7 +991,7 @@ class Application_Form_Proposta extends Zend_Form
         ));
         
         $this->setAttrib('class', 'form');
-        $this->setAttrib('id', 'ficha-atendimento');
+        $this->setAttrib('id', 'ficha-proposta');
         $this->setMethod('post');
     }
 

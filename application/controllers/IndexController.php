@@ -55,21 +55,20 @@ class IndexController extends Zend_Controller_Action
         switch (strtolower(CURRENT_USER_ROLE)){
             case 'gerente':
             case 'coordenador':
+                $this->redirect('propostas');
+                break;
             case 'corretor':
                 $this->redirect('clientes');
                 break;
-            case 'financeiro':
-                $this->redirect('financeiro');
+            case 'diretor':
+                $this->redirect('comissoes');
                 break;
             case 'financeiro':
                 $this->redirect('financeiro');
                 break;
             case 'administrador':
                 $this->redirect('usuarios');
-                break;
-            case 'financeiro':
-                $this->redirect('financeiro');
-                break;
+                break;            
         };
     }
 }

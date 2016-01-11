@@ -48,8 +48,7 @@ class PropostasController extends Zend_Controller_Action
 
 		$this->view->controllerName = $this->_controllerName = $this->getRequest()->getControllerName();
 		$this->view->actionName = $this->_actionName = $this->getRequest()->getActionName();
-		$this->view->user = $this->data_user;
-		$this->_FlashMessenger->clearMessages($this->_controllerName);
+		$this->view->user = $this->data_user;		
 
 		$this->view->date = new Zend_Date();
 		$this->view->model_user = new Application_Model_Usuarios();
@@ -135,6 +134,14 @@ class PropostasController extends Zend_Controller_Action
 			unset($data['dados_cliente']);
 		}
 		
+		if($data['locked'] == 1 && $data['locked_by'] != CURRENT_USER_ID && $data['locked_by'] != 0){
+		    $this->view->messages = array('Item bloqueado para edição');
+		    $this->view->form = '';
+		    return false;
+		}else{
+		    $model->lockRow($data['id'], CURRENT_USER_ID, 1);
+		}
+		
 		if (in_array($data['created_user_id'], $this->_ids) or $data['created_user_id'] == CURRENT_USER_ID or in_array(CURRENT_USER_ROLE, $this->_acl['fullControll'])) {		
 			$form->populate($data);
 			$this->view->barTitle = "Editando Proposta :: " . $data['nome'];
@@ -157,93 +164,7 @@ class PropostasController extends Zend_Controller_Action
 			);
 		$this->view->barTitle = 'Editando Proposta';
 		$this->view->form = '';
-	}
-
-	public function deleteAction()
-	{
-		$request = $this->_request;
-		$model = new Application_Model_Propostas();
-
-		if ($request->isPost()) {
-			$data = array_keys($request->getPost());
-			$totalData = count($data);
-
-			$textoRemovido = 'item removido';
-			if ($totalData > 1) {
-				$textoRemovido = 'itens removidos';
-			}
-
-			foreach ($data as $id) {
-				$model->delete($id);
-			}
-
-			$this->_FlashMessenger->setNamespace('index')->addMessage(sprintf('%s %s com sucesso!', $totalData, $textoRemovido));
-		}
-
-		$this->redirect('/propostas/index/filter/0');
-	}
-
-	public function trashAction()
-	{
-		$request = $this->_request;
-		$model = new Application_Model_Propostas();
-
-		if ($request->isPost()) {
-			$data = array_keys($request->getPost());
-			$totalData = count($data);
-
-			$textoRemovido = 'item movido para lixeira';
-			if ($totalData > 1) {
-				$textoRemovido = 'itens movidos para lixeira';
-			}
-
-			foreach ($data as $id) {
-				$model->trash($id, 0);
-			}
-
-			$this->_FlashMessenger->setNamespace('index')->addMessage(sprintf('%s %s com sucesso!', $totalData, $textoRemovido));
-		}
-
-		$this->redirect('/propostas/index');
-	}
-
-	public function restoreAction()
-	{
-		$request = $this->_request;
-		$model = new Application_Model_Propostas();
-
-		if ($request->isPost()) {
-			$data = array_keys($request->getPost());
-			$totalData = count($data);
-
-			$textoRemovido = 'item restaurado ';
-			if ($totalData > 1) {
-				$textoRemovido = 'itens restaurados';
-			}
-
-			foreach ($data as $id) {
-				$model->trash($id, 1);
-			}
-
-			$this->_FlashMessenger->setNamespace('index')->addMessage(sprintf('%s %s com sucesso!', $totalData, $textoRemovido));
-		}
-
-		$this->redirect('/propostas/index');
-	}
-
-	public function unlockAction()
-	{
-		$request = $this->_request;
-		$model = new Application_Model_Clientes();
-
-		if ($request->isPost()) {
-			$data = $request->getPost();
-			if (isset($data['locked_by']) == CURRENT_USER_ID) {
-				$model->lockRow($data['id'], 0, 0);
-			}
-		}
-		$this->redirect('/propostas/index');
-	}
+	}	
 
 	public function anexosAction()
 	{
@@ -321,8 +242,98 @@ class PropostasController extends Zend_Controller_Action
 		}
 		
 		$form->populate($data);
+		$this->view->selectOptions = array(
+		    'dinheiro' => 'Dinheiro',
+		    'cheque' => 'Cheque',
+		    'cartão' => 'Cartão'
+		);
 		$this->view->id = $id;
 		$this->view->form = $form;
 	}
 	
+    public function deleteAction()
+	{
+		$request = $this->_request;
+		$model = new Application_Model_Propostas();
+
+		if ($request->isPost()) {
+			$data = array_keys($request->getPost());
+			$totalData = count($data);
+
+			$textoRemovido = 'item removido';
+			if ($totalData > 1) {
+				$textoRemovido = 'itens removidos';
+			}
+
+			foreach ($data as $id) {
+				$model->delete($id);
+			}
+
+			$this->_FlashMessenger->setNamespace('index')->addMessage(sprintf('%s %s com sucesso!', $totalData, $textoRemovido));
+		}
+
+		$this->redirect('/'.$this->_controllerName.'/index/filter/0');
+	}
+
+	public function trashAction()
+	{
+		$request = $this->_request;
+		$model = new Application_Model_Propostas();
+
+		if ($request->isPost()) {
+			$data = array_keys($request->getPost());
+			$totalData = count($data);
+
+			$textoRemovido = 'item movido para lixeira';
+			if ($totalData > 1) {
+				$textoRemovido = 'itens movidos para lixeira';
+			}
+
+			foreach ($data as $id) {
+				$model->trash($id, 0);
+			}
+
+			$this->_FlashMessenger->setNamespace($this->_controllerName)->addMessage(sprintf('%s %s com sucesso!', $totalData, $textoRemovido));
+		}
+
+		$this->redirect('/'.$this->_controllerName);
+	}
+
+	public function restoreAction()
+	{
+		$request = $this->_request;
+		$model = new Application_Model_Propostas();
+
+		if ($request->isPost()) {
+			$data = array_keys($request->getPost());
+			$totalData = count($data);
+
+			$textoRemovido = 'item restaurado ';
+			if ($totalData > 1) {
+				$textoRemovido = 'itens restaurados';
+			}
+
+			foreach ($data as $id) {
+				$model->trash($id, 1);
+			}
+
+			$this->_FlashMessenger->setNamespace($this->_controllerName)->addMessage(sprintf('%s %s com sucesso!', $totalData, $textoRemovido));
+		}
+
+		$this->redirect('/'.$this->_controllerName);
+	}
+
+	public function unlockAction()
+	{
+		$request = $this->_request;
+		$model = new Application_Model_Clientes();
+
+		if ($request->isPost()) {
+			$data = $request->getPost();
+			if (isset($data['locked_by']) == CURRENT_USER_ID) {
+				$model->lockRow($data['id'], 0, 0);
+			}
+		}
+		$this->redirect('/'.$this->_controllerName);
+	}	
 }

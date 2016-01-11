@@ -1,0 +1,67 @@
+<?= $this->render('common/top-bar-list.phtml'); ?>
+<div class="container">
+<div class="row">
+<?= $this->render('common/message.phtml'); ?>
+</div>
+</div>
+<div class="container panel panel-default">	
+	<form name="empreendimentos-list" id="empreendimentos" action="" method="post">
+		<table class="table table-condensed table-hover table-striped">
+			<thead>
+				<tr>
+					<th>
+						<input type="checkbox" id="checkAll" title="Seleciona todos os itens">
+					</th>
+					<th>Nome</th>
+					<th>Categoria</th>
+					<th>Incorporadora</th>
+					<th>Tipo</th>
+					<th>Logradouro</th>					
+					<th class="text-center" >Criado</th>
+					<th class="text-center" >Alterado</th>
+				</tr>
+			</thead>
+			<tbody>
+    			<?php if($this->data) : ?>			
+    			<?php foreach ($this->data as $key => $data) : ?>
+    				<tr>
+    				<td><input class="checkbox" id="<?= $data->id; ?>" type="checkbox"
+    					name="<?= $data->id; ?>"></td>
+    				<td>						
+    					<?php if($data->locked == 1): ?>
+    						 <i title="Sendo editado por: <?= $this->model_user->selectNameById($data->locked_by) ?> " class="glyphicon glyphicon-lock"></i>
+    					<?php endif; ?>
+    
+    					<a href="<?= $this->baseUrl() ?>/<?= $this->controllerName; ?>/edit/id/<?= $data->id ?>">
+    						<?= $data->nome; ?>
+    					</a>
+    				</td>
+    				<td>
+    					<?= $data->categoria; ?>
+    				</td>
+    				<td>
+    					<?= $data->incorporadora; ?>
+    				</td>
+    				<td>
+    					<?= $data->tipo; ?>
+    				</td>
+    				<td>
+    					<?= $data->logradouro; ?>
+    				</td>
+    				<td>
+    					<?= $this->model_user->selectNameById($data->created_user_id); ?>
+    				</td>
+    				<td>
+    					<?= $this->model_user->selectNameById($data->last_user_id); ?>
+    				</td>    								
+    			</tr>
+    			<?php endforeach; ?>
+    			<?php endif; ?>
+			</tbody>
+		</table>
+	</form>
+	
+	<?php if(!$this->data) : ?>
+		<div class="alert alert-warning text-center" >Nenhum dado encontrado!</div>
+	<?php endif;?>
+</div>
