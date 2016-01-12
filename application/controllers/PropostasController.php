@@ -3,22 +3,22 @@
 class PropostasController extends Zend_Controller_Action
 {
 
-	protected $data_user = null;
+    protected $data_user = null;
 
-	protected $_custom = null;
+    protected $_custom = null;
 
-	protected $_acl = null;
+    protected $_acl = null;
 
-	protected $_actionName = null;
+    protected $_actionName = null;
 
-	protected $_controllerName = null;
+    protected $_controllerName = null;
 
-	protected $_FlashMessenger = null;
+    protected $_FlashMessenger = null;
 
-	protected $_ids = null;
+    protected $_ids = null;
 
-	public function init()
-	{
+    public function init()
+    {
 		$auth = Zend_Auth::getInstance();
 		$this->data_user = $auth->getIdentity();
 
@@ -61,10 +61,10 @@ class PropostasController extends Zend_Controller_Action
 					CURRENT_USER_ID
 			);
 		}
-	}
+    }
 
-	public function indexAction()
-	{
+    public function indexAction()
+    {
 		$model = new Application_Model_Propostas();
 		$request = $this->_request;
 		$filter = $request->getParam('filter');
@@ -85,10 +85,10 @@ class PropostasController extends Zend_Controller_Action
 		$this->view->messages = $this->_FlashMessenger->getMessages($this->_controllerName);
 		$this->view->data = $data;
 		$this->view->barTitle = "Propostas";
-	}
+    }
 
-	public function editAction()
-	{
+    public function editAction()
+    {
 		$request = $this->getRequest();
 		$id = $request->getParam('id');
 		$model = new Application_Model_Propostas();
@@ -164,10 +164,10 @@ class PropostasController extends Zend_Controller_Action
 			);
 		$this->view->barTitle = 'Editando Proposta';
 		$this->view->form = '';
-	}	
+    }
 
-	public function anexosAction()
-	{
+    public function anexosAction()
+    {
 		$request = $this->_request;
 		$model_cliente = new Application_Model_Clientes();
 
@@ -194,10 +194,10 @@ class PropostasController extends Zend_Controller_Action
 					'Sem permissão de acesso'
 			);
 		}
-	}
+    }
 
-	public function condicoesPagamentoAction()
-	{
+    public function condicoesPagamentoAction()
+    {
 		$form = new Application_Form_CondicoesPagamento();
 		$model = new Application_Model_Propostas();
 		$model_cliente = new Application_Model_Clientes();
@@ -249,10 +249,10 @@ class PropostasController extends Zend_Controller_Action
 		);
 		$this->view->id = $id;
 		$this->view->form = $form;
-	}
-	
+    }
+
     public function deleteAction()
-	{
+    {
 		$request = $this->_request;
 		$model = new Application_Model_Propostas();
 
@@ -273,10 +273,10 @@ class PropostasController extends Zend_Controller_Action
 		}
 
 		$this->redirect('/'.$this->_controllerName.'/index/filter/0');
-	}
+    }
 
-	public function trashAction()
-	{
+    public function trashAction()
+    {
 		$request = $this->_request;
 		$model = new Application_Model_Propostas();
 
@@ -297,10 +297,10 @@ class PropostasController extends Zend_Controller_Action
 		}
 
 		$this->redirect('/'.$this->_controllerName);
-	}
+    }
 
-	public function restoreAction()
-	{
+    public function restoreAction()
+    {
 		$request = $this->_request;
 		$model = new Application_Model_Propostas();
 
@@ -321,10 +321,10 @@ class PropostasController extends Zend_Controller_Action
 		}
 
 		$this->redirect('/'.$this->_controllerName);
-	}
+    }
 
-	public function unlockAction()
-	{
+    public function unlockAction()
+    {
 		$request = $this->_request;
 		$model = new Application_Model_Clientes();
 
@@ -335,5 +335,25 @@ class PropostasController extends Zend_Controller_Action
 			}
 		}
 		$this->redirect('/'.$this->_controllerName);
-	}	
+    }
+
+    public function alteraStateAction()
+    {
+        // ajax tpl
+        $this->_helper->layout->setLayout('ajax');
+        $request = $this->_request;
+        $model = new Application_Model_Propostas();
+        
+        if($request->isPost()){
+            $data = $request->getPost();            
+            $id = $data['id'];
+            echo $model->updateSample($id, array(
+                'status' => $data['status'],
+                'last_user_id' => $data['last_user_id']
+            ));
+        }        
+    }
+
+
 }
+

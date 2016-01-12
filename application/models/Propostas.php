@@ -144,6 +144,27 @@ class Application_Model_Propostas extends Application_Model_Clientes
 			throw new Exception($e->getMessage());
 		}
 	}
+	
+	/**
+	 * 
+	 * @param string|number $id
+	 * @param array $data
+	 * @throws Exception
+	 */
+	public function updateSample($id,$data){
+	    try {
+	        $where = $this->db->quoteInto('id_cliente = ?', $id);
+	        
+	        if(isset($data['id'])){
+	            unset($data['id']);
+	        }
+	        
+	        $result = $this->db->update($this->name, $data, $where);	        
+	        return $result;
+	    } catch (Zend_Db_Exception $e) {
+	        throw new Exception($e->getMessage());
+	    }
+	}
 
 	public function lockRow($id, $current_user_id, $value)
 	{

@@ -46,6 +46,14 @@
 						<?= $this->model_user->selectNameById($data->last_user_id); ?>
 					</td>					
 					<td>
+						<?php if(in_array(CURRENT_USER_ROLE, array('Administrador','Diretor','Gerente'))) : ?>
+							<select rel="<?= $data->id; ?>" class="form-control status" >
+								<option value="1" <?php if($data->status == '1') echo "Selected='Selected'" ?> >Aprovado</option>
+								<option value="2" <?php if($data->status == '2') echo "Selected='Selected'" ?> >Aguardando</option>
+								<option value="3" <?php if($data->status == '3') echo "Selected='Selected'" ?> >Negado</option>
+								<option value="4" <?php if($data->status == '4') echo "Selected='Selected'" ?> >Incompleto</option>
+							</select>
+						<?php else : ?>
 							<?php if($data->status == 1): ?>
 								Aprovado
 							<?php elseif($data->status == 2): ?>
@@ -55,6 +63,7 @@
 							<?php else: ?>
 								Incompleto
 							<?php endif; ?>
+						<?php endif; ?>
 					</td>
 				</tr>
 				<?php endforeach; ?>
@@ -68,3 +77,27 @@
 	<?php endif;?>
 	
 </div>
+<script type="text/javascript">
+	$('.status').blur(function(){		
+		var formdata = new FormData(),
+			id = $(this).attr('rel');
+		formdata.append('id', id);
+		formdata.append('status', $(this).val());
+		formdata.append('last_user_id', '<?= CURRENT_USER_ID; ?>');
+		// Solicitando que o resultado seja so das unidades;
+		formdata.append("unidades", true);	
+		
+		$.ajax({
+			type: 'POST',
+			url:'<?= $this->baseUrl() . '/' . $this->controllerName .'/altera-state' ?>',
+			data: formdata,
+			processData: false,
+			contentType: false,
+		}).success(function(data){
+			console.log(data);
+		});
+	});
+	
+</script>
+
+

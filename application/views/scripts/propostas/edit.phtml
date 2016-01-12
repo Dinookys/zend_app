@@ -70,7 +70,12 @@
 
 	<?php endif; ?>
 </div>
+
 <script>
+
+	
+	
+	
 	$("#data_nasc, #conj_data_nasc").datetimepicker({
 		format: 'DD/MM/YYYY'
 	});	
@@ -101,4 +106,119 @@
 			}
 		});
 	});
+	
+	var id_imovel = <?= $this->form->imovel->getValue(); ?>,
+		blocos,
+		unidades;
+
+
+	if(id_imovel){		
+		var formdata = new FormData();
+		formdata.append("id", id_imovel);
+		// Solicitando que o resultado seja so das unidades;
+		formdata.append("unidades", true);	
+		
+		$.ajax({
+			type: 'POST',
+			url:'<?= $this->baseUrl() . '/empreendimentos/get-imovel' ?>',
+			data: formdata,
+			processData: false,
+			contentType: false,
+		}).success(function(data){
+			var data = JSON.parse(data);			
+			setDataImovel(data, function(){				
+				$('#imovel_bloco_quadra option').remove();
+				$('#imovel_bloco_quadra').append('<option value="0">-- Selecione -- </option>');
+				$('#imovel_unidade option').remove();
+				$('#imovel_unidade').append('<option value="0">-- Selecione -- </option>');
+				
+				$.each(blocos, function(i,bloco){
+					if(bloco == '<?= $this->form->imovel_bloco_quadra->getValue(); ?>'){
+						$('#imovel_bloco_quadra').append('<option value="'+ bloco +'" selected="selected" >'+ bloco +'</option>');
+					}else{
+						$('#imovel_bloco_quadra').append('<option value="'+ bloco +'" >'+ bloco +'</option>');
+					}					
+				});
+
+				if('<?= $this->form->imovel_bloco_quadra->getValue(); ?>'){			
+					$.each(unidades['<?= $this->form->imovel_bloco_quadra->getValue(); ?>'], function(i,unidade){
+						if(unidade == '<?= $this->form->imovel_unidade->getValue(); ?>'){
+							$('#imovel_unidade').append('<option value="'+ unidade +'" selected="selected" >'+ unidade +'</option>');
+						}else{
+							$('#imovel_unidade').append('<option value="'+ unidade +'" >'+ unidade +'</option>');
+						}						
+					});
+				}
+				
+			});					
+			
+		});
+	}
+
+	$("#imovel").blur(function(e){
+		
+		var id = $(this).val();
+		var formdata = new FormData();
+
+		if(id){
+			
+			formdata.append("id", id);
+			// Solicitando que o resultado seja so das unidades;
+			formdata.append("unidades", true);	
+			
+			$.ajax({
+				type: 'POST',
+				url:'<?= $this->baseUrl() . '/empreendimentos/get-imovel' ?>',
+				data: formdata,
+				processData: false,
+				contentType: false,
+			}).success(function(data, textStatus){			
+				var data = JSON.parse(data);
+				
+				setDataImovel(data);
+
+				$('#imovel_bloco_quadra option').remove();
+				$('#imovel_bloco_quadra').append('<option value="0">-- Selecione -- </option>');
+				$('#imovel_unidade option').remove();
+				$('#imovel_unidade').append('<option value="0">-- Selecione -- </option>');
+				
+				$.each(blocos, function(i,bloco){
+					$('#imovel_bloco_quadra').append('<option value="'+ bloco +'" >'+ bloco +'</option>');
+				});			
+			});
+		}else{
+			$('#imovel_bloco_quadra option').remove();
+			$('#imovel_bloco_quadra').append('<option value="0">-- Selecione -- </option>');
+			$('#imovel_unidade option').remove();
+			$('#imovel_unidade').append('<option value="0">-- Selecione -- </option>');			
+		}
+		
+	});
+
+	$('#imovel_bloco_quadra').blur(function(){
+		$('#imovel_unidade option').remove();
+		$('#imovel_unidade').append('<option>-- Selecione -- </option>');
+		if($(this).val()){			
+			$.each(unidades[$(this).val()], function(i,unidade){
+				$('#imovel_unidade').append('<option value="'+ unidade +'" >'+ unidade +'</option>');
+			});
+		}	
+	});
+
+	var setDataImovel = function(data, callback){		
+		blocos = [];
+		unidades = [];		
+		for (var i = 0, total = data.length; i < total; i++) {
+			if(blocos.indexOf(data[i]['bloco-quadra']) == -1){
+				blocos.push(data[i]['bloco-quadra']);
+				unidades[data[i]['bloco-quadra']] = new Array();
+			}
+			unidades[data[i]['bloco-quadra']].push(data[i].unidade);
+		};
+
+		if(callback){
+			callback();
+		}
+	}
+		
 </script>

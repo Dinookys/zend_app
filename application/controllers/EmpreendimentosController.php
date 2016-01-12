@@ -157,7 +157,7 @@ class EmpreendimentosController extends Zend_Controller_Action
     }
 
     public function deleteAction()
-	{
+    {
 		$request = $this->_request;
 		$model = new Application_Model_Empreendimentos();
 
@@ -178,10 +178,10 @@ class EmpreendimentosController extends Zend_Controller_Action
 		}
 
 		$this->redirect('/'.$this->_controllerName.'/index/filter/0');
-	}
+    }
 
-	public function trashAction()
-	{
+    public function trashAction()
+    {
 		$request = $this->_request;
 		$model = new Application_Model_Empreendimentos();
 
@@ -202,10 +202,10 @@ class EmpreendimentosController extends Zend_Controller_Action
 		}
 
 		$this->redirect('/'.$this->_controllerName);
-	}
+    }
 
-	public function restoreAction()
-	{
+    public function restoreAction()
+    {
 		$request = $this->_request;
 		$model = new Application_Model_Empreendimentos();
 
@@ -226,10 +226,10 @@ class EmpreendimentosController extends Zend_Controller_Action
 		}
 
 		$this->redirect('/'.$this->_controllerName);
-	}
+    }
 
-	public function unlockAction()
-	{
+    public function unlockAction()
+    {
 		$request = $this->_request;
 		$model = new Application_Model_Empreendimentos();
 		if ($request->isPost()) {		    
@@ -239,12 +239,32 @@ class EmpreendimentosController extends Zend_Controller_Action
 			}
 		}
 		$this->redirect('/'.$this->_controllerName);
-	}
+    }
+
+    public function getImovelAction()
+    {
+        $request = $this->_request;
+        $model = new Application_Model_Empreendimentos();
+        $this->_helper->layout->setLayout('ajax');
+        
+        if($request->isPost()){            
+            $data = $request->getPost();
+            $result = $model->selectById($data['id']);       
+            if($data['unidades']){
+                $return = array();
+                $result = json_decode($result['unidades']);
+                // Formatando index
+                foreach ($result as $unidade){
+                    $return[] = $unidade;
+                }
+                echo json_encode($return);
+                return false;
+            }            
+            echo json_encode($result);
+        }
+    }
+
 }
-
-
-
-
 
 
 
