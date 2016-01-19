@@ -66,7 +66,9 @@ class FinanceiroController extends Zend_Controller_Action
 
     public function indexAction()
     {
-        // action body
+        $model_proposta = new Application_Model_Propostas();
+        $data = $model_proposta->getPropostasAutorizadas();        
+        $this->view->data = $model_proposta->convertData($data, 'dados_extras');
     }
 
     public function parcelasAction()
@@ -74,6 +76,13 @@ class FinanceiroController extends Zend_Controller_Action
         // action body
     }
 
+    public function editAction()
+    {
+        // action body
+    }
+
 
 }
+
+
 

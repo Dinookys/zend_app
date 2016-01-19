@@ -12,12 +12,14 @@
 				<tr>
 					<th>
 						<input type="checkbox" id="checkAll" title="Seleciona todos os itens">
-					</th>					
+					</th>
 					<th>Nome</th>
 					<th>CPF</th>
+					<th>Data de criação</th>
 					<th>Criado</th>
-					<th>Alterado</th>
-					<th>Status</th>	
+					<th>Modificado</th>
+					<th>Status</th>
+					<th title="Autorizar pagamento?">Autorizado</th>
 				</tr>
 			</thead>
 			<tbody>			
@@ -39,6 +41,9 @@
 					<td>
 						<?= $data->cpf; ?>
 					</td>
+					<td>
+						<?php $create = new Zend_Date($data->data); echo $create->toString('d/M/Y'); ?>
+					</td>					
 					<td>
 						<?= $this->model_user->selectNameById($data->created_user_id); ?>
 					</td>
@@ -65,6 +70,16 @@
 							<?php endif; ?>
 						<?php endif; ?>
 					</td>
+					<td>
+						<?php if(in_array(CURRENT_USER_ROLE, array('Administrador','Diretor'))) : ?>
+							<select <?php if(in_array($data->status, array('2','3'))) echo 'disabled' ?> rel="<?= $data->id; ?>" class="form-control autorizado" >
+								<option value="0" <?php if($data->autorizado == '0') echo "Selected='Selected'" ?> >Não</option>
+								<option value="1" <?php if($data->autorizado == '1') echo "Selected='Selected'" ?> >Sim</option>
+							</select>
+							<?php else: ?>
+							<?= $data->autorizado ? 'Sim' : 'Não' ; ?>
+						<?php endif; ?>
+					</td>
 				</tr>
 				<?php endforeach; ?>
 				<?php endif; ?>
@@ -77,27 +92,86 @@
 	<?php endif;?>
 	
 </div>
+<?php if(in_array(CURRENT_USER_ROLE, array('Administrador','Diretor','Gerente'))) : ?>
 <script type="text/javascript">
-	$('.status').blur(function(){		
-		var formdata = new FormData(),
-			id = $(this).attr('rel');
-		formdata.append('id', id);
-		formdata.append('status', $(this).val());
-		formdata.append('last_user_id', '<?= CURRENT_USER_ID; ?>');
-		// Solicitando que o resultado seja so das unidades;
-		formdata.append("unidades", true);	
-		
-		$.ajax({
-			type: 'POST',
-			url:'<?= $this->baseUrl() . '/' . $this->controllerName .'/altera-state' ?>',
-			data: formdata,
-			processData: false,
-			contentType: false,
-		}).success(function(data){
-			console.log(data);
+	var statusBefore;
+	$('.status').on('focus',function(){
+		statusBefore = $(this).val();
+	}).change(function(e){
+		var self = $(this);		
+		bootbox.confirm('Alterar status da proposta?',function(result){
+			if(result){				
+				var formdata = new FormData(),
+					id = self.attr('rel');
+
+				if(self.val() == '2' || self.val() == '3'){
+					$('.autorizado[rel='+id+']').val('0');
+					$('.autorizado[rel='+id+']').attr('disabled','');					
+		    	}else{
+		    		$('.autorizado[rel='+id+']').removeAttr('disabled');
+		    	}
+		    	
+    			formdata.append('id', id);
+    			formdata.append('status', self.val());
+    			formdata.append('autorizado', $('.autorizado[rel='+id+']').val());
+    			formdata.append('last_user_id', '<?= CURRENT_USER_ID; ?>');
+    			
+    			$.ajax({
+    				type: 'POST',
+    				url:'<?= $this->baseUrl() . '/' . $this->controllerName .'/altera-state' ?>',
+    				data: formdata,
+    				processData: false,
+    				contentType: false,
+    			}).success(function(data){
+    				if(data){
+        				console.log('alterado com sucesso');
+        			}
+    			});    			
+			}else{
+				self.val(statusBefore);						
+			}			
+		});
+    	
+	});
+	
+</script>
+<?php endif; ?>
+
+<?php if(in_array(CURRENT_USER_ROLE, array('Administrador','Diretor'))) : ?>
+<script type="text/javascript">
+	var autorizadoBefore;
+	$('.autorizado').on('focus',function(){
+		autorizadoBefore = $(this).val();
+	}).change(function(e){
+		var self = $(this);		
+		bootbox.confirm('Mudar autorização da proposta?',function(result){
+			if(result){
+				var formdata = new FormData(),
+				id = self.attr('rel');
+								
+    			formdata.append('id', id);
+    			formdata.append('autorizado', self.val());
+    			formdata.append('last_user_id', '<?= CURRENT_USER_ID; ?>');
+    			
+    			$.ajax({
+    				type: 'POST',
+    				url:'<?= $this->baseUrl() . '/' . $this->controllerName .'/altera-state' ?>',
+    				data: formdata,
+    				processData: false,
+    				contentType: false,
+    			}).success(function(data){
+        			if(data){
+        				console.log('alterado com sucesso');
+        			}
+    				
+    			});    			
+			}else{
+				self.val(statusBefore);						
+			}			
 		});
 	});
 	
 </script>
+<?php endif; ?>
 
 

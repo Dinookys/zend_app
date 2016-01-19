@@ -16,17 +16,19 @@ class Application_Model_Propostas extends Application_Model_Clientes
 		if (empty($this->selectByClientId($data['id']))) {
 			
 			$data_proposta = array();
+			$data_proposta['id_cliente'] = $data['id'];
 			$data_proposta['locked'] = $data['locked'];
 			$data_proposta['locked_by'] = $data['locked_by'];
 			$data_proposta['status'] = '2';
-			$data_proposta['state'] = '1';
-			$data_proposta['id_cliente'] = $data['id'];
+			$data_proposta['state'] = '1';			
+			$data_proposta['created_user_id'] = $data['created_user_id'];
 			
 			unset($data['id']);			
 			unset($data['locked']);
 			unset($data['locked_by']);
 			unset($data['status']);
 			unset($data['state']);
+			unset($data['created_user_id']);
 			
 			$data_proposta['dados_extras'] = json_encode($data);
 			
@@ -54,6 +56,21 @@ class Application_Model_Propostas extends Application_Model_Clientes
 			throw new Zend_Exception($e->getMessage());
 			return false;
 		}
+	}
+	
+	
+	public function getPropostasAutorizadas(){
+	    $sql = 'SELECT * FROM ' 
+	           . $this->name .' AS pr LEFT JOIN ' 
+               . $this->name_valores . ' AS pv ON pr.id_cliente = pv.id_cliente WHERE pr.autorizado = 1 ORDER BY pr.id DESC';
+	    
+        try {
+            $this->db->setFetchMode(Zend_Db::FETCH_OBJ);
+            return $this->db->fetchAll($sql);
+        }catch (Zend_Exception $e){
+            throw new Zend_Exception($e->getMessage());
+            return false;
+        }
 	}
 
 	/**
@@ -227,22 +244,6 @@ class Application_Model_Propostas extends Application_Model_Clientes
 		return $this->db->lastInsertId($this->name);
 	}
 
-	public function convertData($data)
-	{
-		foreach ($data as $key => $value) {
-			foreach ($data[$key] as $inkey => $invalue) {
-				if ($inkey == 'dados_cliente') {
-					$toArray = json_decode($invalue, true);
-					foreach ($toArray as $toArrayKey => $toArrayValue) {
-						$data[$key]->$toArrayKey = $toArrayValue;
-					}
-					unset($data[$key]->$inkey);
-				}
-			}
-		}
-
-		return $data;
-	}
 
 	/**
 	 * @param string $id

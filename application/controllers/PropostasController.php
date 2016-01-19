@@ -126,9 +126,11 @@ class PropostasController extends Zend_Controller_Action
 					$data = array_merge($data, $dadosExtras);
 					unset($data['dados_extras']);
 				}				
-			}else{
+			}else{			    
 				// Recuperando dados do cliente
-				$data = $modelCliente->selectById($id);
+				$data = $modelCliente->selectById($id);				
+				// removendo id de quem criou a ficha do cliente
+				unset($data['created_user_id']);
 			}			
 			$data = array_merge($data, json_decode($data['dados_cliente'], true));
 			unset($data['dados_cliente']);
@@ -347,8 +349,10 @@ class PropostasController extends Zend_Controller_Action
         if($request->isPost()){
             $data = $request->getPost();            
             $id = $data['id'];
+            
             echo $model->updateSample($id, array(
                 'status' => $data['status'],
+                'autorizado' => $data['autorizado'],
                 'last_user_id' => $data['last_user_id']
             ));
         }        

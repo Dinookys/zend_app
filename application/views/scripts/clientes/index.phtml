@@ -14,9 +14,9 @@
 					</th>
 					<th>Nome</th>
 					<th>CPF</th>
+					<th>Data do cadastro</th>
 					<th>Criado</th>
-					<th>Alterado</th>
-					<th class="text-center" >Data do cadastro</th>
+					<th>Modificado</th>
 					<th class="text-center" >Proposta</th>
 				</tr>
 			</thead>
@@ -39,14 +39,14 @@
 						<?= $data->cpf; ?>
 					</td>
 					<td>
+						<?php $this->date->set($data->data);?>
+						<?= $this->date->get('dd/MM/YYYY') ?>
+					</td>
+					<td>
 						<?= $this->model_user->selectNameById($data->created_user_id); ?>
 					</td>
 					<td>
 						<?= $this->model_user->selectNameById($data->last_user_id); ?>
-					</td>
-					<td class="text-center" >
-						<?php $this->date->set($data->data);?>
-						<?= $this->date->get('dd/MM/YYYY') ?>
 					</td>
 					<td class="text-center" >
 						<a class="btn btn-info" href="<?= $this->baseUrl()?>/propostas/edit/id/<?= $data->id ?>" >

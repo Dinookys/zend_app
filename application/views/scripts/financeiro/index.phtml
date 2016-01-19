@@ -1,0 +1,53 @@
+<?= $this->render('common/top-bar-list.phtml'); ?>
+<div class="container">
+<div class="row">
+<?= $this->render('common/message.phtml'); ?>
+</div>
+</div>
+<div class="container panel panel-default">	
+	<form name="financeiro-list" id="financeiro" action="" method="post">
+		<table class="table table-condensed table-hover table-striped">
+			<thead>
+				<tr>
+					<th>
+						<input type="checkbox" id="checkAll" title="Seleciona todos os itens">
+					</th>
+					<th>Nome</th>
+					<th>CPF</th>
+					<th>Data da Proposta</th>
+					<th>Criado</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php if($this->data) : ?>			
+				<?php foreach ($this->data as $key => $data) : ?>
+					<tr>
+					<td><input class="checkbox" id="<?= $data->id; ?>" type="checkbox"
+						name="<?= $data->id; ?>"></td>
+					<td>
+						<a href="<?= $this->baseUrl() ?>/<?= $this->controllerName; ?>/edit/id/<?= $data->id ?>">
+							<?= $data->nome; ?>
+						</a>
+					</td>
+					<td>
+						<?= $data->cpf; ?>
+					</td>
+					<td>
+						<?php $this->date->set($data->data);?>
+						<?= $this->date->get('dd/MM/YYYY') ?>
+					</td>
+					<td>
+						<?= $this->model_user->selectNameById($data->created_user_id); ?>
+					</td>				
+				</tr>
+				<?php endforeach; ?>
+				<?php endif; ?>
+		</tbody>
+		</table>			
+	</form>
+	
+	<?php if(!$this->data) : ?>
+		<div class="alert alert-warning text-center" >Nenhum dado encontrado!</div>
+	<?php endif;?>
+	
+</div>

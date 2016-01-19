@@ -201,23 +201,6 @@ class Application_Model_Clientes
     {
         return $this->db->lastInsertId($this->name);
     }
-
-    public function convertData($data)
-    {
-        foreach ($data as $key => $value) {
-            foreach ($data[$key] as $inkey => $invalue) {
-                if ($inkey == 'dados_cliente') {
-                    $toArray = json_decode($invalue, true);
-                    foreach ($toArray as $toArrayKey => $toArrayValue) {
-                        $data[$key]->$toArrayKey = $toArrayValue;
-                    }
-                    unset($data[$key]->$inkey);
-                }
-            }
-        }
-        
-        return $data;
-    }
     
     public function lockRow($id, $current_user_id, $value){
         try {
@@ -228,6 +211,34 @@ class Application_Model_Clientes
             throw new Zend_Db_Exception($e->getMessage());
             return false;
         }
+    }
+    
+    /**
+     * Methodo para converter um determinado valor em json para um array dentro de um array multidimensional
+     * @param array com valor stdClass $data
+     * @param string $findKey chave do valor a ser convertido para array
+     * @return stdClass | boolean
+     */
+    public function convertData($data, $findKey = 'dados_cliente')
+    {
+        
+        if(!empty($data)){
+            foreach ($data as $key => $value) {
+                foreach ($data[$key] as $inkey => $invalue) {
+                    if ($inkey == $findKey) {
+                        $toArray = json_decode($invalue, true);
+                        foreach ($toArray as $toArrayKey => $toArrayValue) {
+                            $data[$key]->$toArrayKey = $toArrayValue;
+                        }
+                        unset($data[$key]->$inkey);
+                    }
+                }
+            }
+            
+            return $data;
+        }
+        
+        return false;        
     }
 
     /**

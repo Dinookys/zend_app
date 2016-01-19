@@ -155,7 +155,7 @@
 		});
 	}
 
-	$("#imovel").blur(function(e){
+	$("#imovel").change(function(e){
 		
 		var id = $(this).val();
 		var formdata = new FormData();
@@ -195,7 +195,7 @@
 		
 	});
 
-	$('#imovel_bloco_quadra').blur(function(){
+	$('#imovel_bloco_quadra').change(function(){
 		$('#imovel_unidade option').remove();
 		$('#imovel_unidade').append('<option>-- Selecione -- </option>');
 		if($(this).val()){			
