@@ -9,9 +9,11 @@
 		<ul class="nav navbar-nav">
         	<?php foreach ($this->menu[strtolower($this->user->role)] as $key => $name) : ?>
 				
-			<?php if($key == $this->controllerName) : ?>
+			<?php if($key == $this->controllerName .'/'. $this->actionName ) : ?>
 				<li class="active" >
-			<?php else : ?>
+			<?php elseif($key == $this->controllerName AND $this->actionName == 'index') : ?>
+				<li class="active" >
+			<?php else: ?>
         		<li>
         	<?php endif; ?>
         			<a href="<?= $this->baseUrl() ?>/<?= $key ?>"><?= $name ?></a>

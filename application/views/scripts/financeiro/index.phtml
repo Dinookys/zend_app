@@ -1,4 +1,4 @@
-<?= $this->render('common/top-bar-list.phtml'); ?>
+<?= $this->render('common/top-bar-list-sample.phtml'); ?>
 <div class="container">
 <div class="row">
 <?= $this->render('common/message.phtml'); ?>
@@ -19,25 +19,32 @@
 				</tr>
 			</thead>
 			<tbody>
-				<?php if($this->data) : ?>			
-				<?php foreach ($this->data as $key => $data) : ?>
+				<?php if($this->paginator) : ?>	
+				<?php foreach ($this->paginator as $key => $data) :
+				    $data = array_merge($data, json_decode($data['dados_extras'], true));				    
+				?>
 					<tr>
 					<td><input class="checkbox" id="<?= $data->id; ?>" type="checkbox"
-						name="<?= $data->id; ?>"></td>
+						name="<?= $data['id_cliente']; ?>"></td>
 					<td>
-						<a href="<?= $this->baseUrl() ?>/<?= $this->controllerName; ?>/edit/id/<?= $data->id ?>">
-							<?= $data->nome; ?>
+						
+						<?php if($data['locked'] == 1): ?>
+							 <i title="Sendo editado por: <?= $this->model_user->selectNameById($data['locked_by']) ?> " class="glyphicon glyphicon-lock"></i>
+						<?php endif; ?>
+					
+						<a title="Clique para visualizar parcelas de: <?= $data['nome']; ?>" href="<?= $this->baseUrl() ?>/<?= $this->controllerName; ?>/edit/id/<?= $data['id_cliente'] ?>">
+							<?= $data['nome']; ?>
 						</a>
 					</td>
 					<td>
-						<?= $data->cpf; ?>
+						<?= $data['cpf']; ?>
 					</td>
 					<td>
-						<?php $this->date->set($data->data);?>
+						<?php $this->date->set($data['data']);?>
 						<?= $this->date->get('dd/MM/YYYY') ?>
 					</td>
 					<td>
-						<?= $this->model_user->selectNameById($data->created_user_id); ?>
+						<?= $this->model_user->selectNameById($data['created_user_id']); ?>
 					</td>				
 				</tr>
 				<?php endforeach; ?>
@@ -46,8 +53,12 @@
 		</table>			
 	</form>
 	
-	<?php if(!$this->data) : ?>
-		<div class="alert alert-warning text-center" >Nenhum dado encontrado!</div>
-	<?php endif;?>
+	<?php if($this->paginator) : ?>
+    	<?= $this->paginationControl($this->paginator, 'Sliding', 'common/pagination.phtml'); ?>	
+    <?php endif; ?>
+    
+    <?php if(!$this->paginator) : ?>
+    	<div class="alert alert-warning text-center" >Nenhum dado encontrado!</div>
+    <?php endif;?>
 	
 </div>

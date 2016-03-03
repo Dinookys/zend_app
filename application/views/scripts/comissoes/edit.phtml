@@ -1,0 +1,134 @@
+<?= $this->render('common/top-bar-edit.phtml'); ?>
+<div class="container" >
+	<?= $this->render('common/message.phtml'); ?>
+	<?php if(!$this->hide) : ?>
+	<div class="panel panel-body panel-default">		
+		<form class="form " id="<?= $this->form->getId(); ?>" method="<?= $this->form->getMethod(); ?>" enctype="<?= $this->form->getEnctype(); ?>">
+			<table class="table table-condensed" >
+			<thead>
+				<tr>
+					<th title="Número da parcela" >Nº</th>
+					<th>
+						VALOR
+					</th>	
+					<th title="Comissões" >
+						COMISSÃO
+					</th>				
+					<th title="Data do recebimento" >
+						RECEBIDO
+					</th>
+					<th>
+						TIPO
+					</th>
+					<th class="text-center">
+						LIBERAR
+					</th>				
+				</tr>    							
+			</thead>
+		<tbody id="lista-parcelas" >
+		<?php if(!empty($this->form->parcelas_pagas->getValue())): ?>
+			<?php 
+			     $parcelas = json_decode($this->form->parcelas_pagas->getValue(), true);
+			     $comissao = json_decode($this->form->comissao->getValue(), true);
+			?>
+			<?php foreach ($parcelas as $key => $parcela): ?>	
+				<tr>
+					<td>
+						<?php echo $key + 1; ?>						
+					</td>
+					<td>        								
+						<div class="form-group" >
+							<div class="input-group">
+								<span class="input-group-addon" >Valor recebido R$</span>
+								<input id="valor-<?php echo $key; ?>" type="hidden" name="parcelas_pagas[<?php echo $key; ?>][valor]" value="<?php echo $parcela['valor'] ?>" />
+								<input class="form-control valor" type="text" value="<?php echo $parcela['valor'] ?>" disabled />
+							</div>
+							<div class="input-group">
+								<span class="input-group-addon" title="Saldo restante da parcela" >Valor restante R$</span>	
+								<input id="restante_hide-<?php echo $key; ?>" type="hidden" name="parcelas_pagas[<?php echo $key; ?>][restante]" value="<?php echo isset($parcela['restante']) ? $parcela['restante'] : $parcela;['valor']  ?>" />
+								<input id="restante-<?php echo $key; ?>"  class="form-control valor" type="text" value="<?php echo isset($parcela['restante']) ? $parcela['restante'] : $parcela['valor'];  ?>" disabled />
+							</div>
+						</div>
+					</td>										
+					<td>
+						<div class="form-group" >
+							<div class="input-group">
+								<span class="input-group-addon" >Empresa</span>
+								<input class="form-control currency" data-id="<?php echo $key; ?>" type="text" id="empresa-<?php echo $key; ?>" name="comissao[<?php echo $key ?>][empresa]" value="<?php echo $comissao[$key]['empresa'] ?>" />
+							</div>
+						</div>
+						<div class="form-group" >
+							<div class="input-group">
+								<span class="input-group-addon" >Diretor</span>
+								<input class="form-control currency" data-id="<?php echo $key; ?>" type="text" id="diretor-<?php echo $key; ?>" name="comissao[<?php echo $key ?>][diretor]" value="<?php echo $comissao[$key]['diretor'] ?>" />
+							</div>
+						</div>
+						<div class="form-group" >
+							<div class="input-group">
+								<span class="input-group-addon" >Gerente</span>
+								<input class="form-control currency" data-id="<?php echo $key; ?>" type="text" id="gerente-<?php echo $key; ?>" name="comissao[<?php echo $key ?>][gerente]" value="<?php echo $comissao[$key]['gerente'] ?>" />
+							</div>
+						</div>
+						<div class="form-group" >
+							<div class="input-group">
+								<span class="input-group-addon" >Coordenador</span>
+								<input class="form-control currency" data-id="<?php echo $key; ?>" type="text" id="coordenador-<?php echo $key; ?>" name="comissao[<?php echo $key ?>][coordenador]" value="<?php echo $comissao[$key]['coordenador'] ?>" />
+							</div>
+						</div>
+						<div class="form-group" >
+							<div class="input-group">
+								<span class="input-group-addon" >Corretor</span>
+								<input class="form-control currency" data-id="<?php echo $key; ?>" type="text" id="corretor-<?php echo $key; ?>" name="comissao[<?php echo $key ?>][corretor]" value="<?php echo $comissao[$key]['corretor'] ?>" />
+							</div>
+						</div>
+					</td>
+					<td width="16%">
+						<div class="form-group relative" >
+							<input type="hidden" name="parcelas_pagas[<?php echo $key; ?>][vencimento]" value="<?php echo $parcela['vencimento'] ?>" />        									      								
+							<input id="date-<?= $key;?>" class="form-control" type="text" value="<?php echo $parcela['vencimento'] ?>" disabled />							            								
+						</div>
+					</td>
+					<td width="10%">
+						<input id="date-<?= $key;?>" type="hidden" name="parcelas_pagas[<?php echo $key; ?>][tipo]" value="<?php echo $parcela['tipo']?>" />
+						<input  class="form-control"  type="text" value="<?php echo $this->selectOptions[$parcela['tipo']] ?>" disabled >						
+					</td>
+					<td width="15%">						
+						<select class="form-control liberar" name="parcelas_pagas[<?php echo $key ?>][liberado]" >
+							<option <?php echo $parcela['liberado'] == 'true' ? 'selected' : ''; ?> value="true" >Sim</option>
+							<option <?php echo $parcela['liberado'] == 'false' ? 'selected' : ''; ?> value="false" >Não</option>
+						</select>
+					</td>											
+				</tr>						
+			<?php endforeach; ?>	
+		</tbody>
+		<?php endif;?>
+		</table>
+		<div class="form-group col-xs-6" >
+			<label>Total R$</label>
+			<input id="totalContrato" class="form-control" type="text" name="total" value="<?= $this->data['total']; ?>" disabled />
+		</div>
+		<div class="form-group col-xs-6" >
+			<label for="recebido">
+				Recebido R$
+			</label>
+			<input id="recebido" class="form-control" type="text" value="<?= $this->form->recebido->getValue(); ?>" disabled>
+		</div>
+		<div class="form-group col-xs-6" >
+			<label for="restante">
+				Restante R$
+			</label>
+			<input id="restante" class="form-control" name="totalrestante" value="<?= $this->form->restante->getValue(); ?>" type="text" disabled>
+		</div>
+		<input type="hidden" name="id_cliente" value="<?= $this->form->id_cliente->getValue(); ?>">			
+		<input type="hidden" name="locked_by" value="<?= $this->form->locked_by->getValue(); ?>">			
+		<input type="hidden" name="nome" value="<?= $this->form->nome->getValue(); ?>">
+		<input type="hidden" name="recebido" value="<?= $this->form->recebido->getValue(); ?>">
+		<input type="hidden" name="restante" value="<?= $this->form->restante->getValue(); ?>">
+		<input type="hidden" name="sinal" value="<?= $this->form->sinal->getValue(); ?>">							
+		<input type="hidden" name="total" value="<?= $this->data['total']; ?>">						
+		</form>
+	</div>	
+</div>
+	<script type="text/javascript" src="<?php echo $this->baseUrl(); ?>/js/helper.js" ></script>		
+	<script type="text/javascript" src="<?php echo $this->baseUrl(); ?>/js/helper/comissoes.js" ></script>		
+<?php endif; ?>

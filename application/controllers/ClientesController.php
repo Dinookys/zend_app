@@ -33,6 +33,7 @@ class ClientesController extends Zend_Controller_Action
         
         $this->view->user = $this->data_user;
         $this->view->model_user = new Application_Model_Usuarios();
+        $this->view->model = new Application_Model_Clientes();  
         
         $this->_modelUsers = new Application_Model_Usuarios();
         $config = Zend_Controller_Front::getInstance()->getParam('bootstrap');
@@ -55,7 +56,7 @@ class ClientesController extends Zend_Controller_Action
         
         if ($this->data_user->childrens_ids) {
             $this->_ids = $this->data_user->childrens_ids;
-            $this->_ids[] = CURRENT_USER_ID;
+            $this->_ids[] = CURRENT_USER_ID;            
         } else {
             $this->_ids = array(
                 CURRENT_USER_ID
@@ -75,16 +76,20 @@ class ClientesController extends Zend_Controller_Action
         }
         
         // Recuperando dados do clientes baseado no Perfil ativo.
-        if (in_array(CURRENT_USER_ROLE, $this->_acl['fullControll'])) {
-            $data = $model->selectAll($filter);
+        if (in_array(CURRENT_USER_ROLE, $this->_acl['fullControl'])) {            
+            $select = $model->selectAll($filter);
         } else {
             $ids = implode(',', $this->_ids);
-            $data = $model->selectByUsersIds($filter, $ids);
+            $select = $model->selectByUsersIds($filter, $ids);
         }
         
-        $data = $model->convertData($data);
-        $this->view->messages = $this->_FlashMessenger->getMessages($this->_controllerName);
-        $this->view->data = $data;
+        $paginator = new Zend_Paginator(new Zend_Paginator_Adapter_DbSelect($select));
+        $paginator->setItemCountPerPage($this->_custom['itemCountPerPage'])
+        ->setCurrentPageNumber($this->_getParam('page',1));
+        
+        $this->view->paginator = $paginator;
+        
+        $this->view->messages = $this->_FlashMessenger->getMessages($this->_controllerName);        
         $this->view->barTitle = "Clientes";
     }
 
@@ -111,7 +116,7 @@ class ClientesController extends Zend_Controller_Action
                         'Cadastro realizado com sucesso'
                     );
                     $this->view->message_type = 'alert-success';
-                    $this->redirect($this->_controllerName . 'edit/id/' . $model->lastInserId());
+                    $this->redirect($this->_controllerName . '/edit/id/' . $model->lastInserId());
                 } else {
                     $form->populate($data);
                 }
@@ -168,7 +173,7 @@ class ClientesController extends Zend_Controller_Action
             $data['locked'] = $result['locked'];
             $data['locked_by'] = $result['locked_by'];
             
-            if($data['locked'] == 1 && $data['locked_by'] != CURRENT_USER_ID && $data['locked_by'] != 0){
+            if($data['locked'] == 1 && $data['locked_by'] != CURRENT_USER_ID && $data['locked_by'] != 0 && in_array(CURRENT_USER_ROLE, $this->_acl['fullControl']) == false){
                 $this->view->messages = array('Item bloqueado para edição');
                 $this->view->form = '';
                 return false;
@@ -176,7 +181,7 @@ class ClientesController extends Zend_Controller_Action
                 $model->lockRow($data['id'], CURRENT_USER_ID, 1);
             }
             
-            if ($result['created_user_id'] == CURRENT_USER_ID or in_array(CURRENT_USER_ROLE, $this->_acl['fullControll']) or in_array($result['created_user_id'], $this->_ids)) {                
+            if ($result['created_user_id'] == CURRENT_USER_ID or in_array(CURRENT_USER_ROLE, $this->_acl['fullControl']) or in_array($result['created_user_id'], $this->_ids)) {                
                 $form->populate($data);
             } else {
                 $this->view->form = '';

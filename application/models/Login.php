@@ -39,7 +39,14 @@ class Application_Model_Login
             $userchildrens = $db->fetchCol('SELECT id FROM '. $model->name .' WHERE parent_id = ?', $contents->id);
             
             if($userchildrens){
-                $contents->childrens_ids = $userchildrens;
+                $contents->childrens_ids = $userchildrens;              
+                
+                foreach ($userchildrens AS $children){
+                    $childrens = $db->fetchCol('SELECT id FROM '. $model->name .' WHERE parent_id = ?', $children);                    
+                    if($childrens){
+                        $contents->childrens_ids = array_merge($contents->childrens_ids, $childrens);
+                    }
+                }
             }
             
             $contents = (object) array_merge((array) $contents,(array)$result);

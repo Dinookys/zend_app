@@ -138,10 +138,29 @@ class Application_Model_Usuarios
     public function selectAll($filterState = 1)
     {
         try {
-            $filterState = $this->db->quoteInto('state = ?', $filterState);
-            $result = $this->db->fetchAll('SELECT u.id, u.nome, u.email, u.id_perfil, u.acesso, u.state, p.role FROM ' . $this->name . ' AS u LEFT JOIN ' . $this->namePerfis . ' AS p ON u.id_perfil = p.id WHERE ' . $filterState . ' ORDER BY id DESC', NULL, Zend_Db::FETCH_OBJ);
             
-            return $result;
+            /* $filterState = $this->db->quoteInto('state = ?', $filterState);
+            $result = $this->db->fetchAll('SELECT u.id, u.nome, u.email, u.id_perfil, u.acesso, u.state, p.role FROM ' . $this->name . ' AS u LEFT JOIN ' . $this->namePerfis . ' AS p ON u.id_perfil = p.id WHERE ' . $filterState . ' ORDER BY id DESC', NULL, Zend_Db::FETCH_OBJ); */
+            
+            $select = new Zend_Db_Select($this->db);
+            
+            $select->from(
+                array('u' => $this->name), 
+                array('id', 'nome', 'email','id_perfil','acesso','state')
+            );
+            
+            $select->joinLeft(
+                array('p' => $this->namePerfis),
+                'u.id_perfil = p.id',
+                'role'
+            );
+            
+            $select->where('u.state = ?', $filterState);
+            $select->order('u.id DESC');
+            
+            return $select;
+            
+            //return $result;
         } catch (Zend_Db_Adapter_Exception $e) {
             throw new Zend_Exception($e->getMessage());
         }

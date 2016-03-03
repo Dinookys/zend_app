@@ -1,0 +1,760 @@
+<style>
+
+
+	td .title{
+		font-size: 10px;
+		font-weight: bold;
+		margin-top: -4px;		
+	}
+
+	td .content{
+		font-size: 12px;
+		min-height: 5px
+	}
+
+	@media print{
+		.container{
+			display: none;
+		}
+
+		.container.print{
+			display: initial;			
+		}
+		
+		b{
+			 font-size: 8pt;
+    }
+
+		td .title{
+			font-size: 6pt;
+			font-weight: bold;
+			margin-top: -5px;		
+		}
+		
+		td .content{
+			font-size: 8pt;
+			height: 8px
+		}	
+		
+	}
+
+
+</style>
+<div class="container print" >
+	<table class="table table-bordered" >
+		<tbody>
+			<tr>
+				<td colspan="10" >
+					<img style="width: 100%;" alt="" src="<?= $this->baseUrl(); ?>/images/header_proposta_print.png">
+				</td>				
+			</tr>
+			<tr>
+				<td colspan="10" style="background: #eee;" >
+					<b>Proponente</b>	
+				</td>
+			</tr>
+			<tr>
+				<td colspan="10" >
+					<div class="title">
+						NOME
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['nome']) ? $this->data['nome'] : ''; ?>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="5">
+					<div class="title">
+						FILIAÇÃO: PAI
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['filiacao_pai']) ? $this->data['filiacao_pai'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="5">
+					<div class="title">
+						MÃE
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['filiacao_mae']) ? $this->data['filiacao_mae'] : ''; ?>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="7">
+					<div class="title">
+						ENDEREÇO RESIDENCIAL
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['endereco']) ? $this->data['endereco'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="3">
+					<div class="title">
+						FONE
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['fone_cel']) ? $this->data['fone_cel'] : ''; ?>
+						<?php if($this->data['fone_resid']){
+							echo '| ' . $this->data['fone_resid'];
+						} ?>						
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" >
+					<div class="title">
+						COMPLEMENTO END.
+					</div>
+					<div class="content"></div>
+				</td>
+				<td colspan="3" >
+					<div class="title">
+						BAIRRO
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['bairro']) ? $this->data['bairro'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="2" >
+					<div class="title">
+						CIDADE
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['cidade']) ? $this->data['cidade'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="1" >
+					<div class="title">
+						ESTADO
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['estado']) ? $this->data['estado'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="2" >
+					<div class="title">
+						CEP
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['cep']) ? $this->data['cep'] : ''; ?>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="5" >
+					<div class="title">
+						EMAIL
+					</div>						
+					<div class="content">
+						<?php echo isset($this->data['email']) ? $this->data['email'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="5" >
+					<div class="title">
+						SITE
+					</div>
+					<div class="content"></div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="4" >
+					<div class="title">
+						NACIONALIDADE
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['nacionalidade']) ? $this->data['nacionalidade'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="4" >
+					<div class="title">
+						NATURALIDADE
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['naturalidade']) ? $this->data['naturalidade'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="1" >
+					<div class="title">
+						ESTADO
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['naturalidade_estado']) ? $this->data['naturalidade_estado'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="1" >
+					<div class="title">
+						SEXO
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['sexo']) ? $this->data['sexo'] : ''; ?>
+					</div>
+				</td>				
+			</tr>
+			<tr>
+				<td colspan="3">
+					<div class="title">
+						PROFISSÃO
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['profissao']) ? $this->data['profissao'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="2">
+					<div class="title">
+						ESTADO CIVIL
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['estado_civil']) ? $this->data['estado_civil'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="3">
+					<div class="title">
+						REGIME DE CASAMENTO
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['regime_casamento']) ? $this->data['regime_casamento'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="2">
+					<div class="title">
+						DATA DE NASCIMENTO
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['data_nasc']) ? $this->data['data_nasc'] : ''; ?>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="4">
+					<div class="title">
+						CPF/CNPJ
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['cpf']) ? $this->data['cpf'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="1">
+					<div class="title">
+						CONTROLE
+					</div>
+					<div class="content"></div>
+				</td>
+				<td colspan="2">
+					<div class="title">
+						IDENTIDADE
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['rg']) ? $this->data['rg'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="3">
+					<div class="title">
+						ORGÃO EXPEDIDOR
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['rg_orgao_expeditor']) ? $this->data['rg_orgao_expeditor'] : ''; ?>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="4">
+					<div class="title">
+						EMPRESA
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['empresa_trabalha']) ? $this->data['empresa_trabalha'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="3">
+					<div class="title">
+						CARGO
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['cargo']) ? $this->data['cargo'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="3">
+					<div class="title">
+						RENDA
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['renda_pessoal']) ? $this->data['renda_pessoal'] : ''; ?>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="8">
+					<div class="title">
+						ENDEREÇO COMERCIAL
+					</div>
+					<div class="content"></div>
+				</td>
+				<td colspan="2">
+					<div class="title">
+						FONE
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['fone_com']) ? $this->data['fone_com'] : ''; ?>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="3">
+					<div class="title">
+						COMPLEMENTO ENDEREÇO
+					</div>
+					<div class="content"></div>
+				</td>
+				<td colspan="2">
+					<div class="title">
+						BAIRRO
+					</div>
+					<div class="content"></div>
+				</td>
+				<td colspan="2">
+					<div class="title">
+						CIDADE
+					</div>
+					<div class="content"></div>
+				</td>
+				<td colspan="1">
+					<div class="title">
+						ESTADO
+					</div>
+					<div class="content"></div>
+				</td>
+				<td colspan="2">
+					<div class="title">
+						CEP
+					</div>
+					<div class="content"></div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="10" style="background: #eee;" >
+					<b>Conjugue ou Segundo Proponente</b>	
+				</td>
+			</tr>
+						<tr>
+				<td colspan="10" >
+					<div class="title">
+						NOME
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['conj_nome']) ? $this->data['conj_nome'] : ''; ?>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="5">
+					<div class="title">
+						FILIAÇÃO: PAI
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['conj_filiacao_pai']) ? $this->data['conj_filiacao_pai'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="5">
+					<div class="title">
+						MÃE
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['conj_filiacao_mae']) ? $this->data['conj_filiacao_mae'] : ''; ?>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="7">
+					<div class="title">
+						ENDEREÇO RESIDENCIAL
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['conj_endereco']) ? $this->data['conj_endereco'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="3">
+					<div class="title">
+						FONE
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['conj_fone_cel']) ? $this->data['conj_fone_cel'] : ''; ?>
+						<?php if($this->data['conj_fone_resid']){
+							echo '| ' . $this->data['conj_fone_resid'];
+						} ?>						
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" >
+					<div class="title">
+						COMPLEMENTO END.
+					</div>
+					<div class="content"></div>
+				</td>
+				<td colspan="3" >
+					<div class="title">
+						BAIRRO
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['conj_bairro']) ? $this->data['conj_bairro'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="2" >
+					<div class="title">
+						CIDADE
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['conj_cidade']) ? $this->data['conj_cidade'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="1" >
+					<div class="title">
+						ESTADO
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['conj_estado']) ? $this->data['conj_estado'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="2" >
+					<div class="title">
+						CEP
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['conj_cep']) ? $this->data['conj_cep'] : ''; ?>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="5" >
+					<div class="title">
+						EMAIL
+					</div>						
+					<div class="content">
+						<?php echo isset($this->data['conj_email']) ? $this->data['conj_email'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="5" >
+					<div class="title">
+						SITE
+					</div>
+					<div class="content"></div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="4" >
+					<div class="title">
+						NACIONALIDADE
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['conj_nacionalidade']) ? $this->data['conj_nacionalidade'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="4" >
+					<div class="title">
+						NATURALIDADE
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['conj_naturalidade']) ? $this->data['conj_naturalidade'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="1" >
+					<div class="title">
+						ESTADO
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['conj_naturalidade_estado']) ? $this->data['conj_naturalidade_estado'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="1" >
+					<div class="title">
+						SEXO
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['conj_sexo']) ? $this->data['conj_sexo'] : ''; ?>
+					</div>
+				</td>				
+			</tr>
+			<tr>
+				<td colspan="3">
+					<div class="title">
+						PROFISSÃO
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['conj_profissao']) ? $this->data['conj_profissao'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="2">
+					<div class="title">
+						ESTADO CIVIL
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['conj_estado_civil']) ? $this->data['conj_estado_civil'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="3">
+					<div class="title">
+						REGIME DE CASAMENTO
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['conj_regime_casamento']) ? $this->data['conj_regime_casamento'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="2">
+					<div class="title">
+						DATA DE NASCIMENTO
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['conj_data_nasc']) ? $this->data['conj_data_nasc'] : ''; ?>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="4">
+					<div class="title">
+						CPF/CNPJ
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['conj_cpf']) ? $this->data['conj_cpf'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="1">
+					<div class="title">
+						CONTROLE
+					</div>
+					<div class="content"></div>
+				</td>
+				<td colspan="2">
+					<div class="title">
+						IDENTIDADE
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['conj_rg']) ? $this->data['conj_rg'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="3">
+					<div class="title">
+						ORGÃO EXPEDIDOR
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['conj_rg_orgao_expeditor']) ? $this->data['conj_rg_orgao_expeditor'] : ''; ?>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="4">
+					<div class="title">
+						EMPRESA
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['conj_empresa_trabalha']) ? $this->data['conj_empresa_trabalha'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="3">
+					<div class="title">
+						CARGO
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['conj_cargo']) ? $this->data['conj_cargo'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="3">
+					<div class="title">
+						RENDA
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['conj_renda_pessoal']) ? $this->data['conj_renda_pessoal'] : ''; ?>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="8">
+					<div class="title">
+						ENDEREÇO COMERCIAL
+					</div>
+					<div class="content"></div>
+				</td>
+				<td colspan="2">
+					<div class="title">
+						FONE
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['conj_fone_com']) ? $this->data['conj_fone_com'] : ''; ?>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="3">
+					<div class="title">
+						COMPLEMENTO ENDEREÇO
+					</div>
+					<div class="content"></div>
+				</td>
+				<td colspan="2">
+					<div class="title">
+						BAIRRO
+					</div>
+					<div class="content"></div>
+				</td>
+				<td colspan="2">
+					<div class="title">
+						CIDADE
+					</div>
+					<div class="content"></div>
+				</td>
+				<td colspan="1">
+					<div class="title">
+						ESTADO
+					</div>
+					<div class="content"></div>
+				</td>
+				<td colspan="2">
+					<div class="title">
+						CEP
+					</div>
+					<div class="content"></div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="10" style="background: #eee;" >
+					<b>Imóvel</b>					
+				</td>
+			</tr>
+			<tr>
+				<td colspan="5">
+					<div class="title">
+						IMÓVEL
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['imovel']) ? $this->data['imovel'] : ''; ?>
+					</div>
+				</td>		
+				<td colspan="3">
+					<div class="title">
+						BLOCO/QUADRA
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['imovel_bloco_quadra']) ? $this->data['imovel_bloco_quadra'] : ''; ?>
+					</div>
+				</td>		
+				<td colspan="2">
+					<div class="title">
+						UNIDADE
+					</div>
+					<div class="content">
+						<?php echo isset($this->data['imovel_unidade']) ? $this->data['imovel_unidade'] : ''; ?>
+					</div>
+				</td>		
+			</tr>
+			<tr>
+				<td colspan="10" style="background: #eee;" >
+					<b>Condições de Pagamento</b>	
+				</td>
+			</tr>
+			<tr>
+				<td colspan="5">
+					<div class="title">
+						VALOR NESTA DATA
+					</div>
+					<div class="content"></div>
+				</td>		
+				<td colspan="5">
+					<div class="title">
+						VALOR DO SINAL
+					</div>
+					<div class="content"></div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<div class="title">
+						Nº DE PARCELAS
+					</div>					
+				</td>
+				<td colspan="2">
+					<div class="title">
+						VALOR
+					</div>					
+				</td>
+				<td colspan="2">
+					<div class="title">
+						PERIODICIDADE
+					</div>					
+				</td>			
+				<td colspan="2">
+					<div class="title">
+						VENCIMENTO
+					</div>					
+				</td>			
+				<td colspan="2">
+					<div class="title">
+						TIPO
+					</div>					
+				</td>			
+			</tr>
+			<?php $count = 1; if(!empty($this->data['parcelas'])) : foreach ($this->data['parcelas'] as $key => $parcela) : ?>
+				<tr>
+					<td colspan="2">						
+						<div class="content">
+							<?= $count++; ?>
+						</div>
+					</td>
+					<td colspan="2">						
+						<div class="content">
+							<?= $parcela['valor']; ?>
+						</div>
+					</td>
+					<td colspan="2">						
+						<div class="content">
+							
+						</div>
+					</td>			
+					<td colspan="2">
+						<div class="content">
+							<?= $parcela['vencimento']; ?>
+						</div>
+					</td>			
+					<td colspan="2">
+						<div class="content">
+							<?= $parcela['tipo']; ?>
+						</div>
+					</td>			
+				</tr>
+			<?php endforeach; endif; ?>
+
+			<tr>
+				<td colspan="2">
+					<div class="title">
+						ÍNDICE ATÉ O HABITE-SE
+					</div>
+					<div class="content"></div>
+				</td>			
+				<td colspan="2">
+					<div class="title">
+						JUROS ATÉ A ENTREGA
+					</div>
+					<div class="content"></div>
+				</td>	
+				<td colspan="2">
+					<div class="title">
+						ÍNDICE APÓS A ENTREGA
+					</div>
+					<div class="content"></div>
+				</td>	
+				<td colspan="2">
+					<div class="title">
+						JUROS APÓS A ENTREGA
+					</div>
+					<div class="content"></div>
+				</td>	
+				<td colspan="2">
+					<div class="title">
+						DATA DE ASSINATURA DE CONTRATO
+					</div>
+					<div class="content"></div>
+				</td>	
+			</tr>					
+		</tbody>
+	</table>
+</div>

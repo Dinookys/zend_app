@@ -84,9 +84,14 @@
 			<?= $this->barTitle; ?>
 		</div>	
 		<div class="navbar-right" >
-			<a id="verlixeira" href="<?= $this->baseUrl() . '/' . $this->controllerName ?>/index/filter/0" class="btn btn-default navbar-btn">Ver lixeira</a>		
+			<a id="verlixeira" href="<?= $this->baseUrl() . '/' . $this->controllerName ?>/index/filter/0" class="btn btn-default navbar-btn">Ver lixeira</a>
+			<?php 
+			     // Pemissão para exclusão do item
+			     if($this->user->role != 'Corretor') : 
+			 ?>			
 			<a style="display: none;" href="#" id="remove" class="btn btn-danger navbar-btn" title="Remover definitivamente item(s) selecionados" ><i class="glyphicon glyphicon-remove-sign" ></i> Remover</a>
-			<a style="display: none;" href="#" id="restore" class="btn btn-success navbar-btn" title="Restaura item(s) selecionados" ><i class="glyphicon glyphicon-retweet" ></i> Restaurar</a>	
+			<?php endif; ?>
+			<a style="display: none;" href="#" id="restore" class="btn btn-success navbar-btn" title="Restaura item(s) selecionados" ><i class="glyphicon glyphicon-retweet" ></i> Restaurar</a>				
 			<a href="#" id="lixeira" class="btn btn-warning navbar-btn" title="Enviar item(s) selecionados para Lixeira" ><i class="glyphicon glyphicon-trash" ></i> Lixeira</a>
 			<a href="#" id="edit" class="btn btn-info navbar-btn" title="Editar item selecionado" ><i class="glyphicon glyphicon-edit" ></i> Editar</a>
 			<a class="btn btn-success navbar-btn" href="<?= $this->baseUrl() . '/' . $this->controllerName ?>/add" title="Adicionar" ><i class="glyphicon glyphicon-plus-sign"></i> Adicionar</a>

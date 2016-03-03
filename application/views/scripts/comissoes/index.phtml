@@ -1,4 +1,55 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>Comissoes</b> and script/action name <b>index</b></p>
+<?= $this->render('common/top-bar-list-sample.phtml'); ?>
+<div class="container">
+<div class="row">
+<?= $this->render('common/message.phtml'); ?>
+</div>
+</div>
+<div class="container panel panel-default">	
+	<form name="comissoes-list" id="financeiro" action="" method="post">
+		<table class="table table-condensed table-hover table-striped">
+			<thead>
+				<tr>
+					<th>
+						<input type="checkbox" id="checkAll" title="Seleciona todos os itens">
+					</th>
+					<th>Nome</th>
+					<th>CPF</th>					
+				</tr>
+			</thead>
+			<tbody>
+				<?php if($this->paginator) : ?>		
+				<?php foreach ($this->paginator as $key => $data) :
+				    $data = array_merge($data, json_decode($data['dados_extras'], true));
+				?>
+					<tr>
+					<td><input class="checkbox" id="<?= $data['id_cliente']; ?>" type="checkbox"
+						name="<?= $data['id_cliente']; ?>"></td>
+					<td>
+						
+						<?php if($data['locked'] == 1): ?>
+							 <i title="Sendo editado por: <?= $this->model_user->selectNameById($data['locked_by']) ?> " class="glyphicon glyphicon-lock"></i>
+						<?php endif; ?>
+					
+						<a href="<?= $this->baseUrl() ?>/<?= $this->controllerName; ?>/edit/id/<?= $data['id_cliente'] ?>">
+							<?= $data['nome']; ?>
+						</a>
+					</td>
+					<td>
+						<?= $data['cpf']; ?>
+					</td>							
+				</tr>
+				<?php endforeach; ?>
+				<?php endif; ?>
+		</tbody>
+		</table>			
+	</form>
+	
+	<?php if($this->paginator) : ?>
+    	<?= $this->paginationControl($this->paginator, 'Sliding', 'common/pagination.phtml'); ?>	
+    <?php endif; ?>
+    
+    <?php if(!$this->paginator) : ?>
+    	<div class="alert alert-warning text-center" >Nenhum dado encontrado!</div>
+    <?php endif;?>
+	
 </div>

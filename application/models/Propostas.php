@@ -13,7 +13,9 @@ class Application_Model_Propostas extends Application_Model_Clientes
 	 */
 	public function insert(array $data)
 	{
-		if (empty($this->selectByClientId($data['id']))) {
+		$cliente = $this->selectByClientId($data['id']);
+
+		if (empty($cliente)) {
 			
 			$data_proposta = array();
 			$data_proposta['id_cliente'] = $data['id'];
@@ -23,7 +25,8 @@ class Application_Model_Propostas extends Application_Model_Clientes
 			$data_proposta['state'] = '1';			
 			$data_proposta['created_user_id'] = $data['created_user_id'];
 			
-			unset($data['id']);			
+			unset($data['id']);
+			unset($data['last_insert_id']);
 			unset($data['locked']);
 			unset($data['locked_by']);
 			unset($data['status']);
@@ -46,7 +49,21 @@ class Application_Model_Propostas extends Application_Model_Clientes
 	 */
 	public function selectAll($filter = 1)
 	{
-		$sql = "SELECT * FROM " . $this->name . " as p LEFT JOIN " . $this->_cliente_table . " as c ON p.id_cliente = c.id WHERE p.state = ? ORDER BY p.id DESC";
+		/* $sql = "SELECT * FROM " . $this->name . " as p LEFT JOIN " . $this->_cliente_table . " as c ON p.id_cliente = c.id WHERE p.state = ? ORDER BY p.id DESC"; */
+	    
+		$select = new Zend_Db_Select($this->db);
+		
+		$select->from(
+		    array('p' => $this->name));
+		$select->joinLeft(
+		    array('c' => $this->_cliente_table), 
+		    'p.id_cliente = c.id');
+		
+		$select->where('p.state = ?', $filter);
+		$select->order('p.id DESC');
+		
+		return $select;
+		
 		try {
 			$result = $this->db->fetchAll($sql, array(
 					$filter
@@ -57,21 +74,6 @@ class Application_Model_Propostas extends Application_Model_Clientes
 			return false;
 		}
 	}
-	
-	
-	public function getPropostasAutorizadas(){
-	    $sql = 'SELECT * FROM ' 
-	           . $this->name .' AS pr LEFT JOIN ' 
-               . $this->name_valores . ' AS pv ON pr.id_cliente = pv.id_cliente WHERE pr.autorizado = 1 ORDER BY pr.id DESC';
-	    
-        try {
-            $this->db->setFetchMode(Zend_Db::FETCH_OBJ);
-            return $this->db->fetchAll($sql);
-        }catch (Zend_Exception $e){
-            throw new Zend_Exception($e->getMessage());
-            return false;
-        }
-	}
 
 	/**
 	 *
@@ -80,8 +82,20 @@ class Application_Model_Propostas extends Application_Model_Clientes
 	 * @return mixed | boolean
 	 */
 	public function selectByUsersIds($ids, $filter = 1)
-	{
-		$sql = "SELECT * FROM " . $this->name . " as p LEFT JOIN " . $this->_cliente_table . " as c ON p.id_cliente = c.id WHERE c.created_user_id IN (" . $ids . ") AND p.state = ? ORDER BY p.id DESC";
+	{    
+	    $select = new Zend_Db_Select($this->db);
+	    
+	    $select->from(
+	        array('p' => $this->name));
+	    $select->joinLeft(
+	        array('c' => $this->_cliente_table),
+	        'p.id_cliente = c.id');
+	    
+        $select->where('p.state = ?', $filter);
+        $select->where('c.created_user_id IN ('. $ids .')');
+        $select->order('p.id DESC');
+    
+        return $select;
 
 		try {
 			$result = $this->db->fetchAll($sql, array(
@@ -119,6 +133,42 @@ class Application_Model_Propostas extends Application_Model_Clientes
 			return false;
 		}
 	}
+	
+	public function getPropostasAutorizadas($filter = 1, $liberarPagamento = false){
+	             
+	            try {
+	                
+	                $select = new Zend_Db_Select($this->db);
+	                $select->from(
+	                    array('pr' => $this->name),
+	                    array('id_cliente', 'created_user_id', 'dados_extras', 'locked', 'locked_by'));
+	                $select->joinLeft(array('pv' => $this->name_valores), 'pr.id_cliente = pv.id_cliente', array('liberar'));
+	                $select->where('pr.autorizado = 1');
+	                if($liberarPagamento){
+	                    $select->where('pv.liberar = 1');
+	                }
+	                $select->where('pr.state = ?', $filter);
+	                $select->order('pr.id DESC');
+	                
+	                return $select;
+	                
+	            }catch (Zend_Exception $e){
+	                throw new Zend_Exception($e->getMessage());
+	                return false;
+	            }
+	}
+	
+	public function getPropostaAutorizada($id){
+	    $sql = 'SELECT pv.*, pr.locked, pr.locked_by, pr.id_cliente, pr.created_user_id, pr.dados_extras FROM '
+	        . $this->name .' AS pr LEFT JOIN '
+	            . $this->name_valores . ' AS pv ON pr.id_cliente = pv.id_cliente WHERE pr.autorizado = 1 AND pr.id_cliente = ?';
+	            try {
+	                return $this->db->fetchRow($sql, array($id), Zend_Db::FETCH_ASSOC);
+	            }catch (Zend_Exception $e){
+	                throw new Zend_Exception($e->getMessage());
+	                return false;
+	            }
+	}
 
 	/**
 	 *
@@ -127,7 +177,7 @@ class Application_Model_Propostas extends Application_Model_Clientes
 	 * @throws Exception
 	 */
 	public function update($id, $data)
-	{
+	{   
 		$data_proposta = array();
 
 		if(isset($data['descricao'])){
@@ -136,6 +186,8 @@ class Application_Model_Propostas extends Application_Model_Clientes
 
 		$data_proposta['locked'] = $data['locked'];
 		$data_proposta['locked_by'] = $data['locked_by'];
+		$data_proposta['last_user_id'] = $data['last_user_id'];
+		$data_proposta['created_user_id'] = $data['created_user_id'];
 
 		if(isset($data['status'])){
 			$data_proposta['status'] = $data['status'];
@@ -144,18 +196,23 @@ class Application_Model_Propostas extends Application_Model_Clientes
 			$data_proposta['state'] = $data['state'];
 		}
 
+		unset($data['id']);
+		unset($data['last_user_id']);
+		unset($data['created_user_id']);
 		unset($data['descricao']);
 		unset($data['locked']);
 		unset($data['locked_by']);
 		unset($data['status']);
-		unset($data['state']);
+		unset($data['state']);	
+		unset($data['locked']);
+		unset($data['locked_by']);
 
 		$data_proposta['dados_extras'] = json_encode($data);
 
 		try {
 			$where = $this->db->quoteInto('id_cliente = ?', $id);
 			$result = $this->db->update($this->name, $data_proposta, $where);
-			parent::update($id, $data);
+			//parent::update($id, $data);
 			return $result;
 		} catch (Zend_Db_Exception $e) {
 			throw new Exception($e->getMessage());

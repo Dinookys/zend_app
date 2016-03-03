@@ -13,9 +13,32 @@ class Application_Model_Empreendimentos
     }
 
     /**
-     * Retorna um array com informações do empreendimentos cadastrados
+     * Retorna uma query com informações do empreendimentos cadastrados
      * 
      * @param number $filter            
+     * @throws Zend_Db_Exception
+     * @return mixed|boolean
+     */
+    public function selectQueryList($filter = 1)
+    {
+        try {
+            
+            $select = new Zend_Db_Select($this->db);
+            $select->from($this->name);
+            $select->where('state=?', $filter);
+            $select->order('id DESC');            
+            return $select;
+            
+        } catch (Zend_Db_Exception $e) {
+            throw new Zend_Db_Exception($e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Retorna um array com informações do empreendimentos cadastrados
+     *
+     * @param number $filter
      * @throws Zend_Db_Exception
      * @return mixed|boolean
      */
@@ -26,6 +49,7 @@ class Application_Model_Empreendimentos
             return $this->db->fetchAll($sql, array(
                 $filter
             ), Zend_Db::FETCH_OBJ);
+    
         } catch (Zend_Db_Exception $e) {
             throw new Zend_Db_Exception($e->getMessage());
             return false;

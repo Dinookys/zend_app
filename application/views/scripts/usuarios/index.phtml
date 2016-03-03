@@ -20,23 +20,23 @@
 				</tr>
 			</thead>
 			<tbody>	
-				<?php foreach ($this->data as $key => $data) : ?>
+				<?php foreach ($this->paginator as $key => $data) : ?>
 					<tr>
-					<td><input class="checkbox" id="<?= $data->id; ?>" type="checkbox"
+					<td><input class="checkbox" id="<?= $data['id']; ?>" type="checkbox"
 						name="<?= $data->id; ?>"></td>
 					<td>
-						<a href="<?= $this->baseUrl() ?>/usuarios/edit/id/<?= $data->id ?>">
-							<?= $data->nome; ?>
+						<a href="<?= $this->baseUrl() ?>/usuarios/edit/id/<?= $data['id'] ?>">
+							<?= $data['nome']; ?>
 						</a>
 					</td>
 					<td>
-							<?= $data->email; ?>
+							<?= $data['email']; ?>
 						</td>
 					<td>
-							<?= $data->role; ?>
+							<?= $data['role']; ?>
 						</td>
 					
-							<?php if($data->acesso) : ?>
+							<?php if($data['acesso']) : ?>
 					<td class="success text-center" >
 								<i class="glyphicon glyphicon-ok-sign"></i>
 							<?php else : ?>
@@ -49,4 +49,13 @@
 		</tbody>
 		</table>		
 	</form>
+	
+	<?php if($this->paginator) : ?>
+    	<?= $this->paginationControl($this->paginator, 'Sliding', 'common/pagination.phtml'); ?>	
+    <?php endif; ?>
+    
+    <?php if(!$this->paginator) : ?>
+    	<div class="alert alert-warning text-center" >Nenhum dado encontrado!</div>
+    <?php endif;?>
+	
 </div>

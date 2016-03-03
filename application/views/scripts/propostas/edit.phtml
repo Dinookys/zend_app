@@ -1,10 +1,9 @@
 <?= $this->render('common/top-bar-edit.phtml')?>
-
 <div class="container">
-	<?= $this->render('common/message.phtml'); ?>
-
-	<?php if (!empty($this->form)) : ?>
-
+	<?= $this->render('common/message.phtml'); ?>	
+</div>
+<?php if (!$this->hide) : ?>
+<div class="container">
 	<?= $this->form; ?>	
 	<?php if($this->parcelas) :?>
 		<h3>Sinal</h3>
@@ -48,7 +47,7 @@
 		<?php foreach ($this->anexos as $file) : ?>		
 			<tr>
 				<td><a target="_blank" class="btn btn-link"
-					href="<?= $this->baseUrl() .'/uploads/' . $file['name']; ?>"> <?= $file['name']; ?>
+					href="<?= $this->baseUrl() .'uploads/' . $file['name']; ?>"> <?= $file['name']; ?>
 				</a></td>
 				<td><?= $this->documentos->formatSizeUnits($file['size']); ?>
 				</td>
@@ -66,19 +65,40 @@
 	<?php endif; ?>
 	<p>
 		<a href="<?= $this->baseUrl(). '/propostas/anexos/id/'. $this->form->id->getValue(); ?>" class="btn btn-info">Adicionar anexos</a>
-	</p>
-
-	<?php endif; ?>
+	</p>	
 </div>
 
 <script>
-
-	
-	
-	
 	$("#data_nasc, #conj_data_nasc").datetimepicker({
 		format: 'DD/MM/YYYY'
 	});	
+
+	if(document.getElementById('conj_estado')){
+		new dgCidadesEstados({
+	        cidade: document.getElementById('conj_cidade'),
+	        estado: document.getElementById('conj_estado'),
+	        estadoVal: '<?= $this->form->conj_estado->getValue(); ?>',		    	
+        	cidadeVal: '<?= $this->form->conj_cidade->getValue(); ?>'		        
+      	});	
+	}	
+
+	if(document.getElementById('naturalidade_estado')){
+		new dgCidadesEstados({
+	        cidade: document.getElementById('naturalidade'),
+	        estado: document.getElementById('naturalidade_estado'),
+	        estadoVal: '<?= $this->form->naturalidade_estado->getValue(); ?>',		    	
+        	cidadeVal: '<?= $this->form->naturalidade->getValue(); ?>'		        
+      	});	
+	}
+
+	if(document.getElementById('conj_naturalidade_estado')){
+		new dgCidadesEstados({
+			cidade: document.getElementById('conj_naturalidade'),		        
+	        estado: document.getElementById('conj_naturalidade_estado'),
+	        estadoVal: '<?= $this->form->conj_naturalidade_estado->getValue(); ?>',		    	
+        	cidadeVal: '<?= $this->form->conj_naturalidade->getValue(); ?>'		        		        
+      	});	
+	}
 
 	$(".removefile").click(function(e){		
 		e.preventDefault();
@@ -107,7 +127,7 @@
 		});
 	});
 	
-	var id_imovel = <?= $this->form->imovel->getValue(); ?>,
+	var id_imovel = '<?= $this->form->imovel->getValue(); ?>',
 		blocos,
 		unidades;
 
@@ -222,3 +242,5 @@
 	}
 		
 </script>
+
+<?php endif; ?>

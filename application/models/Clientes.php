@@ -19,12 +19,12 @@ class Application_Model_Clientes
     public function selectAll($filterState = 1)
     {
         try {
+            $select = new Zend_Db_Select($this->db);
+            $select->from('' . $this->name . '')
+                          ->where('state=?', $filterState)
+                          ->order('id DESC');        
+          return $select;
             
-            $result = $this->db->fetchAll("SELECT * FROM " . $this->name . " WHERE state = ? ORDER BY id DESC", array(
-                $filterState
-            ), Zend_Db::FETCH_OBJ);
-            
-            return $result;
         } catch (Zend_Exception $e) {
             throw new Zend_Exception($e->getMessage());
             return false;
@@ -40,11 +40,13 @@ class Application_Model_Clientes
     {
         try {
             
-            $result = $this->db->fetchAll("SELECT * FROM " . $this->name . " WHERE state = ? AND created_user_id IN (" . $ids . ") ORDER BY id DESC", array(
-                $filterState
-            ), Zend_Db::FETCH_OBJ);
-            
-            return $result;
+            $select = new Zend_Db_Select($this->db);
+            $select->from('' . $this->name . '')
+            ->where('state=?', $filterState)
+            ->where('created_user_id IN ( '. $ids .' )')
+            ->order('id DESC');
+            return $select;
+
         } catch (Zend_Exception $e) {
             throw new Zend_Exception($e->getMessage());
             return false;
@@ -111,7 +113,7 @@ class Application_Model_Clientes
         $bind['created_user_id'] = $data['created_user_id'];
         $bind['dados_cliente'] = $this->convertToJson($data, array(
             'cpf',
-            'last_user',
+            'last_user_id',
             'created_user_id',
             'locked',
             'locked_by',
@@ -137,15 +139,15 @@ class Application_Model_Clientes
     {
         $bind = array();
         $bind['cpf'] = $data['cpf'];
-        $bind['last_user_id'] = $data['last_user_id'];
-        $bind['created_user_id'] = $data['created_user_id'];
+        $bind['last_user_id'] = $data['last_user_id'];        
         $bind['dados_cliente'] = $this->convertToJson($data, array(
             'cpf',
-            'last_user',
+            'last_user_id',
             'created_user_id',
             'locked',
             'locked_by',
-            'Enviar'
+            'Enviar',
+            'id'
         ));
         
         try {
@@ -254,7 +256,7 @@ class Application_Model_Clientes
             unset($data[$exclude]);
         }
         
-        return json_encode($data, JSON_UNESCAPED_UNICODE);
+        return json_encode($data);
     }
     
     protected function clearData($data, $table)

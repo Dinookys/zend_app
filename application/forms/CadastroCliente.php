@@ -23,28 +23,21 @@ class Application_Form_CadastroCliente extends Zend_Form
             '-- Selecione --',            
         );
         
-        $options_imovel = array(
-            '-- Selecione --',
-            'imovel01' => 'Imóvel 01',
-            'imovel02' => 'Imóvel 02',
-            'imovel03' => 'Imóvel 03',
-        );
-        
         $options_meio_comunicacao = array(
             '-- Selecione --',
-            'imovel01' => 'Telefone',
-            'tv' => 'TV',
-            'local' => 'Pass. no Local',
-            'radio' => 'Rádio',
-            'faixas' => 'Faixas',
-            'email' => 'Email',
-            'panfletagem' => 'Panfletagem',
-            'mala direta' => 'Mala direta',
-            'indicação' => 'Indicação',
-            'internet' => 'Internet',
+            'Telefone' => 'Telefone',
+            'Tv' => 'TV',
+            'Local' => 'Pass. no Local',
+            'Radio' => 'Rádio',
+            'Faixas' => 'Faixas',
+            'Email' => 'Email',
+            'Panfletagem' => 'Panfletagem',
+            'Mala direta' => 'Mala direta',
+            'Indicação' => 'Indicação',
+            'Internet' => 'Internet',
             'Jornal' => 'Jornal',
-            'outdoor' => 'Outdoor',
-            'outros' => 'Outros',            
+            'Outdoor' => 'Outdoor',
+            'Outros' => 'Outros'
         );
         
         $options_renda = array(
@@ -61,14 +54,11 @@ class Application_Form_CadastroCliente extends Zend_Form
         		'decorators' => $this->setColSize(12)
         ));
         
-        $this->addElement('select','imovel',array(
-            'label'  =>  'Imóvel',
-            'required'  =>  true,
+        $this->addElement('hidden','imovel',array(
+            'label'  =>  '',            
             'filters'   =>  array('StringTrim'),
             'class'     => 'form-control',
-            'multiOptions' => $options_imovel,
-            'validators' => array($required),
-            'decorators' => $this->setColSize(3)
+            'decorators' => $this->setColSize(12)
         ));
         
         // Adicionando tag HTML usando description do elemento
@@ -81,7 +71,7 @@ class Application_Form_CadastroCliente extends Zend_Form
         
         // Adicionando tag HTML usando description do elemento
         $this->addElement('hidden', 'header3', array(
-            'description' => '<h3>DADOS CADASTRAIS</h3>',
+            'description' => '<h3>FICHA DE ATENDIMENTO AO CLIENTE</h3>',
             'ignore' => true,
             'decorators' => array(
                 array('Description', array('escape'=>false, 'tag'=>'div', 'class' => "col-xs-12")),

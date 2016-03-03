@@ -10,6 +10,7 @@
 				<?= $this->form->getElement('cad_corretagem'); ?>
 				<?= $this->form->getElement('incorporadora'); ?>
 				<?= $this->form->getElement('tipo'); ?>
+				<?= $this->form->getElement('comissao'); ?>
 			</div>			
 			<table id="lista-unidades" class="table table-stripped table-condensed table-hover" >
 				<thead>
@@ -73,7 +74,17 @@
 		</form>
 	</div>	
 </div>
+<script type="text/javascript" src="<?php echo $this->baseUrl(); ?>/js/helper.js" ></script>
 <script>
+
+	$('#comissao').keyup(function(e){
+		var valor = currency_br($(this).val());
+
+		if(valor != undefined){
+			$(this).val(valor);
+		}
+		
+	});
 
 	var totalUnidades = $("#lista-unidades tr").length - 1;	
 		$("#add-unidades").click(function(e){

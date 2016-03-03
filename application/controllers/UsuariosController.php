@@ -61,11 +61,16 @@ class UsuariosController extends Zend_Controller_Action
         $filter = $request->getParam('filter');
         
         if($filter == '0'){
-            $this->view->data = $this->_modelUsers->selectAll('0');
+            $select = $this->_modelUsers->selectAll('0');
         }else{
-            $this->view->data = $this->_modelUsers->selectAll('1');
+            $select = $this->_modelUsers->selectAll('1');
         }
         
+        $paginator = new Zend_Paginator(new Zend_Paginator_Adapter_DbSelect($select));
+        $paginator->setItemCountPerPage($this->_custom['itemCountPerPage'])
+                  ->setCurrentPageNumber($this->_getParam('page',1));
+        
+        $this->view->paginator = $paginator;
         $this->view->barTitle = 'Usuários';       
     }
 
@@ -106,8 +111,8 @@ class UsuariosController extends Zend_Controller_Action
                 $checkData = $this->_modelUsers->select($data['email']);
                 
                 if ($checkData->id != $data['id'] && $checkData->email == $data['email']) {
-                    $this->view->messages = array('O email <b>' . $data['email'] . '</b> já está cadastrado');                    
-                } else {
+                        $this->view->messages = array('O email <b>' . $data['email'] . '</b> já está cadastrado');
+                }else {
                     $this->_modelUsers->update($data);                    
                     $this->view->message_type = 'alert-success';
                     $this->view->messages = array('Atualizado com sucesso!');                    
@@ -126,9 +131,9 @@ class UsuariosController extends Zend_Controller_Action
         }
         
         if(in_array($data['role'], array('Corretor','Supervisor'))){
-            $roleName = 'Gerente';
-        }else if(in_array($data['role'], array('Gerente'))){
             $roleName = 'Coordenador';
+        }else if(in_array($data['role'], array('Coordenador'))){
+            $roleName = 'Gerente';
         }else{
             $roleName = '';
         }

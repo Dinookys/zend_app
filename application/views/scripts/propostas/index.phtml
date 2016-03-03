@@ -20,50 +20,56 @@
 					<th>Modificado</th>
 					<th>Status</th>
 					<th title="Autorizar pagamento?">Autorizado</th>
+					<th></th>
 				</tr>
 			</thead>
 			<tbody>			
-				<?php if($this->data) : ?>			
-				<?php foreach ($this->data as $key => $data) : ?>
+				<?php if($this->paginator) : ?>			
+				<?php foreach ($this->paginator as $key => $data) :
+				    $data = array_merge($data, json_decode($data['dados_cliente'], true));
+				    $data = array_merge($data, json_decode($data['dados_extras'], true));
+				    unset($data['dados_extra']);
+				    unset($data['dados_cliente']);
+				?>
 					<tr>
-					<td><input class="checkbox" id="<?= $data->id; ?>" type="checkbox"
-						name="<?= $data->id; ?>"></td>
+					<td><input class="checkbox" id="<?= $data['id']; ?>" type="checkbox"
+						name="<?= $data['id']; ?>"></td>
 					<td>
 						
-						<?php if($data->locked == 1): ?>
-							 <i title="Sendo editado por: <?= $this->model_user->selectNameById($data->locked_by) ?> " class="glyphicon glyphicon-lock"></i>
+						<?php if($data['locked'] == 1): ?>
+							 <i title="Sendo editado por: <?= $this->model_user->selectNameById($data['locked_by']) ?> " class="glyphicon glyphicon-lock"></i>
 						<?php endif; ?>
 
-						<a href="<?= $this->baseUrl() ?>/<?= $this->controllerName; ?>/edit/id/<?= $data->id ?>">
-							<?= $data->nome; ?>
+						<a href="<?= $this->baseUrl() ?>/<?= $this->controllerName; ?>/edit/id/<?= $data['id'] ?>">
+							<?= $data['nome']; ?>
 						</a>
 					</td>
 					<td>
-						<?= $data->cpf; ?>
+						<?= $data['cpf']; ?>
 					</td>
 					<td>
-						<?php $create = new Zend_Date($data->data); echo $create->toString('d/M/Y'); ?>
+						<?php $create = new Zend_Date($data['data']); echo $create->toString('d/M/Y'); ?>
 					</td>					
 					<td>
-						<?= $this->model_user->selectNameById($data->created_user_id); ?>
+						<?= $this->model_user->selectNameById($data['created_user_id']); ?>
 					</td>
 					<td>
-						<?= $this->model_user->selectNameById($data->last_user_id); ?>
+						<?= $this->model_user->selectNameById($data['last_user_id']); ?>
 					</td>					
 					<td>
 						<?php if(in_array(CURRENT_USER_ROLE, array('Administrador','Diretor','Gerente'))) : ?>
-							<select rel="<?= $data->id; ?>" class="form-control status" >
-								<option value="1" <?php if($data->status == '1') echo "Selected='Selected'" ?> >Aprovado</option>
-								<option value="2" <?php if($data->status == '2') echo "Selected='Selected'" ?> >Aguardando</option>
-								<option value="3" <?php if($data->status == '3') echo "Selected='Selected'" ?> >Negado</option>
-								<option value="4" <?php if($data->status == '4') echo "Selected='Selected'" ?> >Incompleto</option>
+							<select rel="<?= $data['id']; ?>" class="form-control status" >
+								<option value="1" <?php if($data['status'] == '1') echo "Selected='Selected'" ?> >Aprovado</option>
+								<option value="2" <?php if($data['status'] == '2') echo "Selected='Selected'" ?> >Aguardando</option>
+								<option value="3" <?php if($data['status'] == '3') echo "Selected='Selected'" ?> >Negado</option>
+								<option value="4" <?php if($data['status'] == '4') echo "Selected='Selected'" ?> >Incompleto</option>
 							</select>
 						<?php else : ?>
-							<?php if($data->status == 1): ?>
+							<?php if($data['status'] == 1): ?>
 								Aprovado
-							<?php elseif($data->status == 2): ?>
+							<?php elseif($data['status'] == 2): ?>
 								Aguardando
-							<?php elseif($data->status == 3): ?>
+							<?php elseif($data['status'] == 3): ?>
 								Negado
 							<?php else: ?>
 								Incompleto
@@ -72,24 +78,33 @@
 					</td>
 					<td>
 						<?php if(in_array(CURRENT_USER_ROLE, array('Administrador','Diretor'))) : ?>
-							<select <?php if(in_array($data->status, array('2','3'))) echo 'disabled' ?> rel="<?= $data->id; ?>" class="form-control autorizado" >
-								<option value="0" <?php if($data->autorizado == '0') echo "Selected='Selected'" ?> >Não</option>
-								<option value="1" <?php if($data->autorizado == '1') echo "Selected='Selected'" ?> >Sim</option>
+							<select <?php if(in_array($data['status'], array('2','3'))) echo 'disabled' ?> rel="<?= $data['id']; ?>" class="form-control autorizado" >
+								<option value="0" <?php if($data['autorizado'] == '0') echo "Selected='Selected'" ?> >Não</option>
+								<option value="1" <?php if($data['autorizado'] == '1') echo "Selected='Selected'" ?> >Sim</option>
 							</select>
 							<?php else: ?>
-							<?= $data->autorizado ? 'Sim' : 'Não' ; ?>
+							<?= $data['autorizado'] ? 'Sim' : 'Não' ; ?>
 						<?php endif; ?>
 					</td>
-				</tr>
+					<td>
+						<a title="Imprimir proposta" href="<?= $this->baseUrl() ?>/<?= $this->controllerName; ?>/proposta/id/<?= $data['id'] ?>" class="btn btn-warning">
+    						<i class="glyphicon glyphicon-print" ></i>
+    					</a>
+					</td>
+				</tr>				
 				<?php endforeach; ?>
 				<?php endif; ?>
 		</tbody>
 		</table>		
 	</form>
 	
-	<?php if(!$this->data) : ?>
-		<div class="alert alert-warning text-center" >Nenhum dado encontrado!</div>
-	<?php endif;?>
+	<?php if($this->paginator) : ?>
+    	<?= $this->paginationControl($this->paginator, 'Sliding', 'common/pagination.phtml'); ?>	
+    <?php endif; ?>
+    
+    <?php if(!$this->paginator) : ?>
+    	<div class="alert alert-warning text-center" >Nenhum dado encontrado!</div>
+    <?php endif;?>
 	
 </div>
 <?php if(in_array(CURRENT_USER_ROLE, array('Administrador','Diretor','Gerente'))) : ?>

@@ -24,20 +24,10 @@
 			new dgCidadesEstados({
 		        cidade: document.getElementById('cidade'),
 		        estado: document.getElementById('estado'),
-		        estadoVal: 'GO',
-	        	cidadeVal: 'Goiânia'
+		        estadoVal: '<?= isset($this->form->estado) ? $this->form->estado->getValue() : ''; ?>',		    	
+	        	cidadeVal: '<?= isset($this->form->cidade) ? $this->form->cidade->getValue() : ''; ?>'
 	      	});	
-		}	
-
-		if(document.getElementById('conj_estado')){
-			new dgCidadesEstados({
-		        cidade: document.getElementById('conj_cidade'),
-		        estado: document.getElementById('conj_estado'),
-		        estadoVal: 'GO',
-	        	cidadeVal: 'Goiânia'
-	      	});	
-		}	
-
+		}
 
 		$('#cep').on('blur', function(){
 			

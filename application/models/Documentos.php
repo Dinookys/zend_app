@@ -9,6 +9,11 @@ class Application_Model_Documentos
 	 */
     public function readDir($path, $id)
     {
+        
+        if(!is_dir($path)){
+            return false;
+        };
+        
         $dir = new DirectoryIterator($path);
         $fileArray = array();
         

@@ -34,19 +34,19 @@ class Application_Form_Proposta extends Zend_Form
         
         $options_meio_comunicacao = array(
             '-- Selecione --',
-            'imovel01' => 'Telefone',
-            'tv' => 'TV',
-            'local' => 'Pass. no Local',
-            'radio' => 'Rádio',
-            'faixas' => 'Faixas',
-            'email' => 'Email',
-            'panfletagem' => 'Panfletagem',
-            'mala direta' => 'Mala direta',
-            'indicação' => 'Indicação',
-            'internet' => 'Internet',
+            'Telefone' => 'Telefone',
+            'Tv' => 'TV',
+            'Local' => 'Pass. no Local',
+            'Radio' => 'Rádio',
+            'Faixas' => 'Faixas',
+            'Email' => 'Email',
+            'Panfletagem' => 'Panfletagem',
+            'Mala direta' => 'Mala direta',
+            'Indicação' => 'Indicação',
+            'Internet' => 'Internet',
             'Jornal' => 'Jornal',
-            'outdoor' => 'Outdoor',
-            'outros' => 'Outros'
+            'Outdoor' => 'Outdoor',
+            'Outros' => 'Outros'
         );
         
         $options_renda = array(
@@ -169,6 +169,16 @@ class Application_Form_Proposta extends Zend_Form
             'decorators' => $this->setColSize(3)
         ));
         
+        $this->addElement('text', 'regime_casamento', array(
+            'label' => 'Regime de casamento',
+            'required' => false,
+            'filters' => array(
+                'StringTrim'
+            ),
+            'class' => 'form-control',
+            'decorators' => $this->setColSize(5)
+        ));
+        
         $this->addElement('text', 'email', array(
             'label' => 'E-mail',
             'required' => false,
@@ -180,7 +190,7 @@ class Application_Form_Proposta extends Zend_Form
         ));
         
         $this->addElement('text', 'data_nasc', array(
-            'label' => 'Dt de Nascimento',
+            'label' => 'Data de nascimento',
             'required' => false,
             'description' => '<span class="glyphicon glyphicon-calendar"></span>',
             'filters' => array(
@@ -198,7 +208,7 @@ class Application_Form_Proposta extends Zend_Form
                 'StringTrim'
             ),
             'class' => 'form-control',
-            'decorators' => $this->setColSize(3)
+            'decorators' => $this->setColSize(2)
         ));
         
         $this->addElement('text', 'rg_orgao_expeditor', array(
@@ -209,6 +219,50 @@ class Application_Form_Proposta extends Zend_Form
                 'StringTrim'
             ),
             'class' => 'form-control',
+            'decorators' => $this->setColSize(2)
+        ));
+        
+        $this->addElement('text', 'nacionalidade', array(
+            'label' => 'Nacionalidade',
+            'required' => false,
+            'description' => '',
+            'filters' => array(
+                'StringTrim'
+            ),
+            'class' => 'form-control',
+            'decorators' => $this->setColSize(2)
+        ));
+        
+        $this->addElement('select', 'naturalidade_estado', array(
+            'label' => 'Estado',
+            'required' => false,
+            'filters' => array(
+                'StringTrim'
+            ),
+            'class' => 'form-control',
+            'multiOptions' => array(),
+            'decorators' => $this->setColSize(2)
+        ));
+        
+        $this->addElement('select', 'naturalidade', array(
+            'label' => 'Naturalidade',
+            'required' => false,
+            'filters' => array(
+                'StringTrim'
+            ),
+            'class' => 'form-control',
+            'multiOptions' => array(),
+            'decorators' => $this->setColSize(2)
+        ));
+        
+        $this->addElement('select', 'sexo', array(
+            'label' => 'Sexo',
+            'required' => false,
+            'filters' => array(
+                'StringTrim'
+            ),
+            'class' => 'form-control',
+            'multiOptions' => array('M' => 'M', 'F' => 'F'),            
             'decorators' => $this->setColSize(2)
         ));
         
@@ -534,6 +588,16 @@ class Application_Form_Proposta extends Zend_Form
             'decorators' => $this->setColSize(3)
         ));
         
+        $this->addElement('text', 'conj_regime_casamento', array(
+            'label' => 'Regime de casamento',
+            'required' => false,
+            'filters' => array(
+                'StringTrim'
+            ),
+            'class' => 'form-control',
+            'decorators' => $this->setColSize(5)
+        ));
+        
         $this->addElement('text', 'conj_email', array(
             'label' => 'E-mail',
             'required' => false,
@@ -545,7 +609,7 @@ class Application_Form_Proposta extends Zend_Form
         ));
         
         $this->addElement('text', 'conj_data_nasc', array(
-            'label' => 'Dt de Nascimento',
+            'label' => 'Data de nascimento',
             'required' => false,
             'description' => '<span class="glyphicon glyphicon-calendar"></span>',
             'filters' => array(
@@ -563,7 +627,7 @@ class Application_Form_Proposta extends Zend_Form
                 'StringTrim'
             ),
             'class' => 'form-control',
-            'decorators' => $this->setColSize(3)
+            'decorators' => $this->setColSize(2)
         ));
         
         $this->addElement('text', 'conj_rg_orgao_expeditor', array(
@@ -574,6 +638,50 @@ class Application_Form_Proposta extends Zend_Form
                 'StringTrim'
             ),
             'class' => 'form-control',
+            'decorators' => $this->setColSize(2)
+        ));
+        
+        $this->addElement('text', 'conj_nacionalidade', array(
+            'label' => 'Nacionalidade',
+            'required' => false,
+            'description' => '',
+            'filters' => array(
+                'StringTrim'
+            ),
+            'class' => 'form-control',
+            'decorators' => $this->setColSize(2)
+        ));
+        
+        $this->addElement('select', 'conj_naturalidade_estado', array(
+            'label' => 'Estado',
+            'required' => false,
+            'filters' => array(
+                'StringTrim'
+            ),
+            'class' => 'form-control',
+            'multiOptions' => array(),
+            'decorators' => $this->setColSize(2)
+        ));        
+        
+        $this->addElement('select', 'conj_naturalidade', array(
+            'label' => 'Naturalidade',
+            'required' => false,
+            'filters' => array(
+                'StringTrim'
+            ),
+            'class' => 'form-control',
+            'multiOptions' => array(),            
+            'decorators' => $this->setColSize(2)
+        ));
+        
+        $this->addElement('select', 'conj_sexo', array(
+            'label' => 'Sexo',
+            'required' => false,
+            'filters' => array(
+                'StringTrim'
+            ),
+            'class' => 'form-control',
+            'multiOptions' => array('M' => 'M', 'F' => 'F'),
             'decorators' => $this->setColSize(2)
         ));
         

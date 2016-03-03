@@ -70,6 +70,14 @@ class Application_Form_Empreendimento extends Zend_Form
             'decorators' => $this->setColSize(6)
         ));
         
+        $this->addElement('text','comissao',array(
+            'label'  =>  'Comissão do empreendimento',
+            'required'  =>  true,
+            'filters'   =>  array('StringTrim'),
+            'class'     => 'form-control',
+            'decorators' => $this->setColSize(6)
+        ));
+        
         $this->addElement('hidden','unidades',array(
             'label' =>'',
             'decorators' => $this->setColSize(1)

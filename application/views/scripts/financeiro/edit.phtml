@@ -1,4 +1,177 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>Financeiro</b> and script/action name <b>edit</b></p>
+<?= $this->render('common/top-bar-edit.phtml'); ?>
+<div class="container" >
+	<?= $this->render('common/message.phtml'); ?>
+	<?php if(!$this->hide) : ?>	
+	<div class="panel panel-body panel-default">		
+		<form class="form " id="<?= $this->form->getId(); ?>" method="<?= $this->form->getMethod(); ?>" enctype="<?= $this->form->getEnctype(); ?>">
+			<table class="table" >
+			<thead>
+				<tr>
+					<th>
+						<div class="form-group" >
+							<label>Solicitar liberação de pagamento</label>
+							<select class="form-control" name="liberar" >
+								<option value="1" <?= $this->form->liberar->getValue() ? 'selected' : '' ?> >Sim</option>
+								<option value="0" <?= $this->form->liberar->getValue() ? '' : 'selected' ?> >Não</option>
+							</select>
+						</div>
+					</th>
+				</tr>
+				<tr>
+					<th title="Número da parcela" >Nº</th>
+					<th title="Valor da parcela" >
+						VALOR
+					</th>
+					<th title="Data do recebimento" >
+						RECEBIDO
+					</th>
+					<th title="Forma de recebimento da parcela" >
+						TIPO
+					</th>
+					<th class="text-center" title="Situação da parcela" >
+						LIBERADO
+					</th>				
+					<th>
+						<a title="Adicion uma nova parcela" id="add-parcelas" class="btn btn-default" >
+							<i class="glyphicon glyphicon-plus" ></i>
+						</a>
+					</th>    							
+				</tr>    							
+			</thead>
+		<tbody id="lista-parcelas" >
+		<?php $parcelas = $this->form->parcelas_pagas->getValue(); if(!empty($parcelas)): ?>
+			<?php 
+			     $parcelas = json_decode($parcelas, true);			     
+			     $comissoes = json_decode($this->form->comissao->getValue(), true);
+			?>
+			<?php foreach ($parcelas as $key => $parcela): ?>
+				<tr>
+					<td>
+						<?php echo $key + 1; ?>
+					</td>
+					<td>        								
+						<div class="form-group" >
+							<div class="input-group">
+								<span class="input-group-addon" >R$</span>
+								<?php if($parcela['liberado'] == 'true') : ?>
+									<input type="hidden" name="parcelas_pagas[<?php echo $key; ?>][valor]" value="<?php echo $parcela['valor'] ?>"/>
+									<input class="form-control valor" type="text" value="<?php echo $parcela['valor'] ?>" disabled />
+								<?php else : ?>
+									<input class="form-control valor" type="text" name="parcelas_pagas[<?php echo $key; ?>][valor]" value="<?php echo $parcela['valor'] ?>" />
+								<?php endif; ?>
+							</div>
+						</div>
+					</td>    							
+					<td width="15%">
+						<div class="form-group relative" >
+							<?php if($parcela['liberado'] == 'true') : ?>
+								<input type="hidden" name="parcelas_pagas[<?php echo $key; ?>][vencimento]" value="<?php echo $parcela['vencimento'] ?>"/>
+								<input class="form-control" type="text" value="<?php echo $parcela['vencimento'] ?>" disabled />
+							<?php else : ?>
+							<input id="date-<?= $key;?>" class="form-control date" type="text" name="parcelas_pagas[<?php echo $key; ?>][vencimento]" value="<?php echo $parcela['vencimento'] ?>" />
+							<div class="input-group-addon" >
+								<span class="glyphicon glyphicon-calendar"></span>
+							</div>            								
+							<?php endif; ?>
+						</div>
+					</td>
+					<td width="15%" >
+						<?php if($parcela['liberado'] == 'true') : ?>
+							<input type="hidden" name="parcelas_pagas[<?php echo $key; ?>][tipo]" value="<?php echo $parcela['tipo']; ?>"/>
+							<input class="form-control" type="text" value="<?php echo $this->selectOptions[$parcela['tipo']]; ?>" disabled />
+						<?php else : ?>
+						<select class="form-control" name="parcelas_pagas[<?php echo $key; ?>][tipo]" >
+						<?php foreach ($this->selectOptions as $k => $option) : ?>
+							<option <?php echo $parcela['tipo'] == $k ? 'selected ' : '' ?> value="<?= $k; ?>" ><?= $option ?></option>
+						<?php endforeach;?>
+						</select>
+						<?php endif; ?>
+					</td>
+					<td class="text-center" >
+						<input type="hidden" name="parcelas_pagas[<?php echo $key ?>][liberado]" value="<?php echo $parcela['liberado']; ?>" />
+						<?php if($parcela['liberado'] == 'true') : ?>
+							Sim
+						<?php else: ?>
+							Não
+						<?php endif; ?>					
+					</td>
+					<td>
+						<button title="Remove parcela" data-key="<?= $key; ?>"  class="remove-parcela btn btn-danger" <?php echo $parcela['liberado'] == 'true' ? 'disabled' : ''; ?> >
+							<i class="glyphicon glyphicon-minus" ></i>
+						</button>
+					</td> 							
+				</tr>
+			<?php endforeach; ?>	
+		</tbody>
+		<?php endif;?>
+		</table>
+		<div class="form-group col-xs-6" >
+			<label>Total R$</label>
+			<input id="totalContrato" class="form-control" type="text" name="total" value="<?= $this->data['total']; ?>" disabled />
+		</div>
+		<div class="form-group col-xs-6" >
+			<label for="recebido">
+				Recebido R$
+			</label>
+			<input id="recebido" class="form-control" name="recebido" type="text" value="<?= $this->form->recebido->getValue(); ?>" disabled>
+		</div>
+		<div class="form-group col-xs-6" >
+			<label for="restante">
+				Restante R$
+			</label>
+			<input id="restante" class="form-control" name="totalrestante" value="<?= $this->form->restante->getValue(); ?>" type="text" disabled>
+		</div>
+		
+		<?php if(!empty($comissoes)): ?>
+			<div id="comissoes-pagas" class="col-xs-12">
+				<h3 class="page-header" >Comissões</h3>
+				<ul class="list-group" >
+				<?php foreach ($comissoes as $key => $comissao) : ?>
+					<li class="list-group-item" id="comissao-<?= $key ?>" >
+						<p>
+							<b>Parcela Nº <?php echo $key + 1; ?></b>
+						</p>
+						<p>
+							<b>Empresa: </b>R$ <?= !empty($comissao['empresa']) ? $comissao['empresa'] : '00,00' ?>
+							<input type="hidden" name="comissao[<?= $key ?>][empresa]" value="<?= $comissao['empresa'] ?>">
+						</p>
+						<p>
+							<b>Diretor: </b>R$ <?= !empty($comissao['diretor']) ? $comissao['diretor'] : '00,00' ?>
+							<input type="hidden" name="comissao[<?= $key ?>][diretor]" value="<?= $comissao['diretor'] ?>">
+						</p>
+						<p>
+							<b>Gerente: </b>R$ <?= !empty($comissao['gerente']) ? $comissao['gerente'] : '00,00' ?>
+							<input type="hidden" name="comissao[<?= $key ?>][gerente]" value="<?= $comissao['gerente'] ?>">
+						</p>
+						<p>
+							<b>Coordenador: </b>R$ <?= !empty($comissao['coordenador']) ? $comissao['coordenador'] : '00,00' ?>
+							<input type="hidden" name="comissao[<?= $key ?>][coordenador]" value="<?= $comissao['coordenador'] ?>">
+						</p>
+						<p>
+							<b>Corretor: </b>R$ <?= !empty($comissao['corretor']) ? $comissao['corretor'] : '00,00' ?>
+							<input type="hidden" name="comissao[<?= $key ?>][corretor]" value="<?= $comissao['corretor'] ?>">
+						</p>
+						<hr>
+						<p><b>Valor total : </b>R$ <?= isset($parcelas[$key]['valor']) ? $parcelas[$key]['valor'] : '00,00' ?> </p>
+						<p><b>Valor restante desta parcela : </b>R$ <?= isset($parcelas[$key]['restante']) ? $parcelas[$key]['restante'] : '00,00' ?> </p>
+					</li>
+				<?php endforeach; ?>
+				</ul>
+			</div>
+		<?php endif; ?>
+		<input type="hidden" name="id_cliente" value="<?= $this->form->id_cliente->getValue(); ?>">			
+		<input type="hidden" name="locked_by" value="<?= $this->form->locked_by->getValue(); ?>">			
+		<input type="hidden" name="nome" value="<?= $this->form->nome->getValue(); ?>">
+		<input type="hidden" name="recebido" value="<?= $this->form->recebido->getValue(); ?>">
+		<input type="hidden" name="restante" value="<?= $this->form->restante->getValue(); ?>">
+		<input type="hidden" name="sinal" value="<?= $this->form->sinal->getValue(); ?>">								
+		<input type="hidden" name="total" value="<?= $this->data['total']?>">						
+		</form>
+	</div>	
 </div>
+	<script type="text/javascript" src="<?php echo $this->baseUrl(); ?>/js/helper.js" ></script>
+	<script>
+		var selectOptions = <?php echo json_encode($this->selectOptions); ?>;
+	</script>
+	<script type="text/javascript" src="<?php echo $this->baseUrl(); ?>/js/helper/financeiro.js" ></script>	
+<?php endif; ?>

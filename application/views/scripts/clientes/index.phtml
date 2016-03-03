@@ -21,35 +21,37 @@
 				</tr>
 			</thead>
 			<tbody>
-				<?php if($this->data) : ?>			
-				<?php foreach ($this->data as $key => $data) : ?>
+				<?php if($this->paginator) : ?>			
+				<?php foreach ($this->paginator as $key => $data) :
+				    $data = array_merge($data, json_decode($data['dados_cliente'], true));
+				?>
 					<tr>
-					<td><input class="checkbox" id="<?= $data->id; ?>" type="checkbox"
-						name="<?= $data->id; ?>"></td>
+					<td><input class="checkbox" id="<?= $data['id']; ?>" type="checkbox"
+						name="<?= $data['id']; ?>"></td>
 					<td>						
-						<?php if($data->locked == 1): ?>
-							 <i title="Sendo editado por: <?= $this->model_user->selectNameById($data->locked_by) ?> " class="glyphicon glyphicon-lock"></i>
+						<?php if($data['locked'] == 1): ?>
+							 <i title="Sendo editado por: <?= $this->model_user->selectNameById($data['locked_by']) ?> " class="glyphicon glyphicon-lock"></i>
 						<?php endif; ?>
 
-						<a href="<?= $this->baseUrl() ?>/<?= $this->controllerName; ?>/edit/id/<?= $data->id ?>">
-							<?= $data->nome; ?>
+						<a href="<?= $this->baseUrl() ?>/<?= $this->controllerName; ?>/edit/id/<?= $data['id']; ?>">
+							<?= $data['nome']; ?>
 						</a>
 					</td>
 					<td>
-						<?= $data->cpf; ?>
+						<?= $data['cpf']; ?>
 					</td>
 					<td>
-						<?php $this->date->set($data->data);?>
+						<?php $this->date->set($data['data']);?>
 						<?= $this->date->get('dd/MM/YYYY') ?>
 					</td>
 					<td>
-						<?= $this->model_user->selectNameById($data->created_user_id); ?>
+						<?= $this->model_user->selectNameById($data['created_user_id']); ?>
 					</td>
 					<td>
-						<?= $this->model_user->selectNameById($data->last_user_id); ?>
+						<?= $this->model_user->selectNameById($data['last_user_id']); ?>
 					</td>
 					<td class="text-center" >
-						<a class="btn btn-info" href="<?= $this->baseUrl()?>/propostas/edit/id/<?= $data->id ?>" >
+						<a class="btn btn-info" href="<?= $this->baseUrl()?>/propostas/edit/id/<?= $data['id'] ?>" >
 							<i class="glyphicon glyphicon-info-sign" ></i>
 						</a>
 					</td>				
@@ -60,7 +62,11 @@
 		</table>			
 	</form>
 	
-	<?php if(!$this->data) : ?>
+	<?php if($this->paginator) : ?>
+		<?= $this->paginationControl($this->paginator, 'Sliding', 'common/pagination.phtml'); ?>	
+	<?php endif; ?>
+	
+	<?php if(!$this->paginator) : ?>
 		<div class="alert alert-warning text-center" >Nenhum dado encontrado!</div>
 	<?php endif;?>
 	

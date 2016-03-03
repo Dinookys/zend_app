@@ -29,9 +29,7 @@ class PropostasController extends Zend_Controller_Action
 			if (! $acl->isAllowed()) {
 				$this->redirect('/error/forbidden');
 			}
-		}
-
-		$this->view->user = $this->data_user;
+		}	
 
 		$this->_modelUsers = new Application_Model_Usuarios();
 		$config = Zend_Controller_Front::getInstance()->getParam('bootstrap');
@@ -60,7 +58,7 @@ class PropostasController extends Zend_Controller_Action
 			$this->_ids = array(
 					CURRENT_USER_ID
 			);
-		}
+		}		
     }
 
     public function indexAction()
@@ -74,16 +72,19 @@ class PropostasController extends Zend_Controller_Action
 		}
 
 		// Recuperando dados do clientes baseado no Perfil ativo.
-		if (in_array(CURRENT_USER_ROLE, $this->_acl['fullControll'])) {
-			$data = $model->selectAll($filter);
+		if (in_array(CURRENT_USER_ROLE, $this->_acl['fullControl'])) {
+			$select = $model->selectAll($filter);
 		} else {
 			$ids = implode(',', $this->_ids);
-			$data = $model->selectByUsersIds($ids, $filter);
+			$select = $model->selectByUsersIds($ids, $filter);
 		}
 
-		$data = $model->convertData($data);
-		$this->view->messages = $this->_FlashMessenger->getMessages($this->_controllerName);
-		$this->view->data = $data;
+		$paginator = new Zend_Paginator(new Zend_Paginator_Adapter_DbSelect($select));
+        $paginator->setItemCountPerPage($this->_custom['itemCountPerPage'])
+        ->setCurrentPageNumber($this->_getParam('page',1));
+		
+		$this->view->paginator = $paginator;
+		$this->view->messages = $this->_FlashMessenger->getMessages($this->_controllerName);		
 		$this->view->barTitle = "Propostas";
     }
 
@@ -121,7 +122,7 @@ class PropostasController extends Zend_Controller_Action
 			$dataProposta = $model->selectByClientId($id);
 			if($dataProposta){
 				$data = $dataProposta;
-				if(!empty($data['dados_extas'])){
+				if(!empty($data['dados_extras'])){
 					$dadosExtras = json_decode($data['dados_extras'], true);
 					$data = array_merge($data, $dadosExtras);
 					unset($data['dados_extras']);
@@ -130,7 +131,7 @@ class PropostasController extends Zend_Controller_Action
 				// Recuperando dados do cliente
 				$data = $modelCliente->selectById($id);				
 				// removendo id de quem criou a ficha do cliente
-				unset($data['created_user_id']);
+				$data['created_user_id'] = CURRENT_USER_ID;
 			}			
 			$data = array_merge($data, json_decode($data['dados_cliente'], true));
 			unset($data['dados_cliente']);
@@ -138,14 +139,18 @@ class PropostasController extends Zend_Controller_Action
 		
 		if($data['locked'] == 1 && $data['locked_by'] != CURRENT_USER_ID && $data['locked_by'] != 0){
 		    $this->view->messages = array('Item bloqueado para edição');
+		    $this->view->hide = true;
 		    $this->view->form = '';
 		    return false;
 		}else{
 		    $model->lockRow($data['id'], CURRENT_USER_ID, 1);
 		}
 		
-		if (in_array($data['created_user_id'], $this->_ids) or $data['created_user_id'] == CURRENT_USER_ID or in_array(CURRENT_USER_ROLE, $this->_acl['fullControll'])) {		
+		if (in_array($data['created_user_id'], $this->_ids) or $data['created_user_id'] == CURRENT_USER_ID or in_array(CURRENT_USER_ROLE, $this->_acl['fullControl'])) {
 			$form->populate($data);
+			
+			print_r($data);
+			
 			$this->view->barTitle = "Editando Proposta :: " . $data['nome'];
 			$this->view->form = $form;
 			
@@ -185,7 +190,7 @@ class PropostasController extends Zend_Controller_Action
 		$cliente = $model_cliente->selectById($data['id']);
 		$cliente_data = json_decode($cliente['dados_cliente'], true);
 
-		if (in_array($cliente['created_user_id'], $this->_ids) or $cliente['created_user_id'] == CURRENT_USER_ID or in_array(CURRENT_USER_ROLE, $this->_acl['fullControll'])) {
+		if (in_array($cliente['created_user_id'], $this->_ids) or $cliente['created_user_id'] == CURRENT_USER_ID or in_array(CURRENT_USER_ROLE, $this->_acl['fullControl'])) {
 			$this->view->barTitle = 'Anexar arquivos para :: ' . strtoupper($cliente_data['nome']);
 			$this->view->propostaId = $data['id'];
 			$this->view->allow = true;
@@ -358,6 +363,59 @@ class PropostasController extends Zend_Controller_Action
         }        
     }
 
+    public function propostaAction()
+    {
+        $model = new Application_Model_Propostas();
+		$modelCliente = new Application_Model_Clientes();
+		$modelImovel = new Application_Model_Empreendimentos();
+		$request = $this->_request;
+		$id = $request->getParam('id');
+
+		if($id){
+			$data = $model->selectByClientId($id);
+			
+			if($data['dados_extras']){
+			    $data = json_decode($data['dados_extras'], true);
+			    $empreendimento = $modelImovel->selectById($data['imovel']);
+			    $condicoes = $model->selectCondicoesPagamento($id);
+			    $data['imovel'] = $empreendimento['nome'];
+			    $data['parcelas'] = json_decode($condicoes['parcelas'],true);
+			    $this->view->data = $data;			    
+			}else{
+			    $this->view->data = array();
+			}
+			
+		}
+
+    }
+
+    public function mediacaoAction()
+    {
+    	$model = new Application_Model_Propostas();
+		$modelCliente = new Application_Model_Clientes();
+		$modelImovel = new Application_Model_Empreendimentos();
+		$request = $this->_request;
+		$id = $request->getParam('id');
+
+		if($id){
+			$data = $model->selectByClientId($id);
+			
+			if($data['dados_extras']){
+			    $data = json_decode($data['dados_extras'], true);
+			    $empreendimento = $modelImovel->selectById($data['imovel']);
+			    $condicoes = $model->selectCondicoesPagamento($id);
+			    $data['imovel'] = $empreendimento['nome'];
+			    $data['cad_corretagem'] = $empreendimento['cad_corretagem'];
+			    $data['parcelas'] = json_decode($condicoes['parcelas'],true);
+			    $this->view->data = $data;			    
+			}else{
+			    $this->view->data = array();
+			}
+			
+		}
+    }
 
 }
+
+
 

@@ -70,13 +70,19 @@ class EmpreendimentosController extends Zend_Controller_Action
         
         $filter = $request->getParam('filter');
         if(isset($filter)){
-            $data = $model->selectAll(0);
+            $select = $model->selectQueryList(0);
         }else{
-            $data = $model->selectAll(1);
+            $select = $model->selectQueryList(1);
         }        
         $this->view->controllerName = $this->_controllerName;
         $this->view->model_user = new Application_Model_Usuarios();
-        $this->view->data = $data;
+        
+        $paginator = new Zend_Paginator(new Zend_Paginator_Adapter_DbSelect($select));
+        $paginator->setItemCountPerPage($this->_custom['itemCountPerPage'])
+        ->setCurrentPageNumber($this->_getParam('page',1));
+        
+        $this->view->paginator = $paginator;
+        
         $this->view->barTitle = "Empreendimentos";
         $this->view->messages = $this->_FlashMessenger->getMessages($this->_controllerName);
     }
@@ -144,6 +150,7 @@ class EmpreendimentosController extends Zend_Controller_Action
         if($data['locked'] == 1 && $data['locked_by'] != CURRENT_USER_ID && $data['locked_by'] != 0){
             $this->view->messages = array('Item bloqueado para edição');
             $this->view->form = '';
+            $this->view->hide = true;
             return false;
         }else{
             $model->lockRow($data['id'], CURRENT_USER_ID, 1);

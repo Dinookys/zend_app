@@ -15,7 +15,7 @@ set_include_path(implode(PATH_SEPARATOR, array(
 )));
 
 define('BASE_PATH', realpath(dirname(__DIR__)));
-define('PUBLIC_PATH', BASE_PATH.'/public');
+define('PUBLIC_PATH', BASE_PATH.'/public_html/delano/');
 
 /** Zend_Application */
 require_once 'Zend/Application.php';
