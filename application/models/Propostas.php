@@ -18,14 +18,14 @@ class Application_Model_Propostas extends Application_Model_Clientes
 		if (empty($cliente)) {
 			
 			$data_proposta = array();
-			$data_proposta['id_cliente'] = $data['id'];
+			$data_proposta['id_cliente'] = $data['id_cliente'];
 			$data_proposta['locked'] = $data['locked'];
 			$data_proposta['locked_by'] = $data['locked_by'];
 			$data_proposta['status'] = '2';
 			$data_proposta['state'] = '1';			
 			$data_proposta['created_user_id'] = $data['created_user_id'];
 			
-			unset($data['id']);
+			unset($data['id_cliente']);
 			unset($data['last_insert_id']);
 			unset($data['locked']);
 			unset($data['locked_by']);
@@ -48,17 +48,9 @@ class Application_Model_Propostas extends Application_Model_Clientes
 	 * @throws Zend_Exception
 	 */
 	public function selectAll($filter = 1)
-	{
-		/* $sql = "SELECT * FROM " . $this->name . " as p LEFT JOIN " . $this->_cliente_table . " as c ON p.id_cliente = c.id WHERE p.state = ? ORDER BY p.id DESC"; */
-	    
-		$select = new Zend_Db_Select($this->db);
-		
-		$select->from(
-		    array('p' => $this->name));
-		$select->joinLeft(
-		    array('c' => $this->_cliente_table), 
-		    'p.id_cliente = c.id');
-		
+	{    
+		$select = new Zend_Db_Select($this->db);		
+		$select->from( array('p' => $this->name));
 		$select->where('p.state = ?', $filter);
 		$select->order('p.id DESC');
 		
@@ -108,6 +100,22 @@ class Application_Model_Propostas extends Application_Model_Clientes
 		}
 	}
 	
+	public function selectById($id)
+	{
+	    try {
+	
+	        $sql = "SELECT * FROM " . $this->name . " WHERE id = ?";
+	        $result = $this->db->fetchRow($sql, array(
+	            $id
+	        ), Zend_Db::FETCH_ASSOC);
+	
+	        return $result;
+	    } catch (Zend_Exception $e) {
+	        throw new Zend_Exception($e->getMessage());
+	        return false;
+	    }
+	}
+	
 	/**
 	 * Retorna um array
 	 * @param string|int $clientId
@@ -119,9 +127,9 @@ class Application_Model_Propostas extends Application_Model_Clientes
 	{
 		try {
 			if ($ids) {
-				$sql = 'SELECT * FROM ' . $this->name . ' as p LEFT JOIN ' . $this->_cliente_table . ' as c ON p.id_cliente = c.id WHERE c.id = ? AND c.created_user_id IN (' . $ids . ')';
+				$sql = 'SELECT p.* FROM ' . $this->name . ' as p LEFT JOIN ' . $this->_cliente_table . ' as c ON p.id_cliente = c.id WHERE c.id = ? AND p.created_user_id IN (' . $ids . ')';
 			} else {
-				$sql = 'SELECT * FROM ' . $this->name . ' as p LEFT JOIN ' . $this->_cliente_table . ' as c ON p.id_cliente = c.id WHERE c.id = ?';
+				$sql = 'SELECT p.* FROM ' . $this->name . ' as p LEFT JOIN ' . $this->_cliente_table . ' as c ON p.id_cliente = c.id WHERE c.id = ?';
 			}
 
 			$result = $this->db->fetchRow($sql, array(
@@ -141,8 +149,8 @@ class Application_Model_Propostas extends Application_Model_Clientes
 	                $select = new Zend_Db_Select($this->db);
 	                $select->from(
 	                    array('pr' => $this->name),
-	                    array('id_cliente', 'created_user_id', 'dados_extras', 'locked', 'locked_by'));
-	                $select->joinLeft(array('pv' => $this->name_valores), 'pr.id_cliente = pv.id_cliente', array('liberar'));
+	                    array('id','id_cliente', 'created_user_id', 'dados_extras', 'locked', 'locked_by'));
+	                $select->joinLeft(array('pv' => $this->name_valores), 'pr.id = pv.id_proposta', array('liberar','restante','recebido','last_modified','last_user_id'));
 	                $select->where('pr.autorizado = 1');
 	                if($liberarPagamento){
 	                    $select->where('pv.liberar = 1');
@@ -159,9 +167,9 @@ class Application_Model_Propostas extends Application_Model_Clientes
 	}
 	
 	public function getPropostaAutorizada($id){
-	    $sql = 'SELECT pv.*, pr.locked, pr.locked_by, pr.id_cliente, pr.created_user_id, pr.dados_extras FROM '
+	    $sql = 'SELECT pv.*, pr.locked, pr.locked_by, pr.id, pr.id_cliente, pr.created_user_id, pr.dados_extras FROM '
 	        . $this->name .' AS pr LEFT JOIN '
-	            . $this->name_valores . ' AS pv ON pr.id_cliente = pv.id_cliente WHERE pr.autorizado = 1 AND pr.id_cliente = ?';
+	            . $this->name_valores . ' AS pv ON pr.id = pv.id_proposta WHERE pr.autorizado = 1 AND pr.id = ?';
 	            try {
 	                return $this->db->fetchRow($sql, array($id), Zend_Db::FETCH_ASSOC);
 	            }catch (Zend_Exception $e){
@@ -210,9 +218,8 @@ class Application_Model_Propostas extends Application_Model_Clientes
 		$data_proposta['dados_extras'] = json_encode($data);
 
 		try {
-			$where = $this->db->quoteInto('id_cliente = ?', $id);
+			$where = $this->db->quoteInto('id = ?', $id);
 			$result = $this->db->update($this->name, $data_proposta, $where);
-			//parent::update($id, $data);
 			return $result;
 		} catch (Zend_Db_Exception $e) {
 			throw new Exception($e->getMessage());
@@ -227,7 +234,7 @@ class Application_Model_Propostas extends Application_Model_Clientes
 	 */
 	public function updateSample($id,$data){
 	    try {
-	        $where = $this->db->quoteInto('id_cliente = ?', $id);
+	        $where = $this->db->quoteInto('id = ?', $id);
 	        
 	        if(isset($data['id'])){
 	            unset($data['id']);
@@ -243,12 +250,11 @@ class Application_Model_Propostas extends Application_Model_Clientes
 	public function lockRow($id, $current_user_id, $value)
 	{
 		try {
-			$where = $this->db->quoteInto('id_cliente = ?', $id);
+			$where = $this->db->quoteInto('id = ?', $id);
 			$result = $this->db->update($this->name, array(
 					'locked' => $value,
 					'locked_by' => $current_user_id
-			), $where);
-			parent::lockRow($id, $current_user_id, $value);
+			), $where);			
 			return $result;
 		} catch (Zend_Db_Exception $e) {
 			throw new Zend_Db_Exception($e->getMessage());
@@ -266,7 +272,7 @@ class Application_Model_Propostas extends Application_Model_Clientes
 	public function delete($id)
 	{
 		try {
-			$where = $this->db->quoteInto('id_cliente = ?', $id);
+			$where = $this->db->quoteInto('id = ?', $id);
 			$this->db->delete($this->name_valores, $where);
 			$this->db->delete($this->name, $where);
 			return true;
@@ -285,7 +291,7 @@ class Application_Model_Propostas extends Application_Model_Clientes
 	public function trash($id, $state = 0)
 	{
 		try {
-			$where = $this->db->quoteInto('id_cliente = ?', $id);
+			$where = $this->db->quoteInto('id = ?', $id);
 			$bind = array(
 					'state' => $state
 			);
@@ -310,7 +316,7 @@ class Application_Model_Propostas extends Application_Model_Clientes
 	public function selectCondicoesPagamento($id){
 		try{
 			if($id){
-				$sql = 'SELECT * FROM '. $this->name_valores . ' WHERE id_cliente = ?';
+				$sql = 'SELECT * FROM '. $this->name_valores . ' WHERE id_proposta = ?';
 				$result = $this->db->fetchRow($sql, array($id), Zend_Db::FETCH_ASSOC);
 				return $result;	
 			}else{
@@ -346,7 +352,7 @@ class Application_Model_Propostas extends Application_Model_Clientes
 	public function updateCondicoesPagamento($id, array $data){
 		try{
 			if($id){
-				$where = $this->db->quoteInto('id_cliente = ?', $id);
+				$where = $this->db->quoteInto('id_proposta = ?', $id);
 				$result = $this->db->update($this->name_valores, $data, $where);
 				return $result;
 			}else{
@@ -355,6 +361,19 @@ class Application_Model_Propostas extends Application_Model_Clientes
 		}catch (Zend_Db_Exception $e){
 			throw new Zend_Db_Exception($e->getMessage());
 		}
+	}
+	/**
+	 * Recuperar da table proposta_valores comissões baseadas em um array de ids do usuarios
+	 * @param array $uids
+	 */
+	public function getPagamentosByUser($uids = array()){	    
+	    $select = new Zend_Db_Select($this->db);
+	    $select->from(array('v' => $this->name_valores), array('id','id_proposta','comissao','last_modified','last_user_id'));
+	    $select->join(array('c' => $this->name), 'v.id_proposta = c.id', 'dados_extras');
+	    $select->where('c.created_user_id IN ('. implode(',', $uids) .')');
+	    $select->order('v.last_modified DESC');    
+	    
+	    return $select;
 	}
 
 }

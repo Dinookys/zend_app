@@ -8,6 +8,8 @@ class ComissoesController extends Zend_Controller_Action
     protected $_custom = null;
 
     protected $_acl = null;
+    
+    protected $_acl_model = null;
 
     protected $_actionName = null;
 
@@ -25,8 +27,8 @@ class ComissoesController extends Zend_Controller_Action
         if (! $auth->hasIdentity()) {
             $this->redirect('/login');
         } else {
-            $acl = new Application_Model_Acl_Acl();
-            if (! $acl->isAllowed()) {
+            $this->_acl_model = new Application_Model_Acl_Acl();
+            if (! $this->_acl_model->isAllowed()) {
                 $this->redirect('/error/forbidden');
             }
         }
@@ -99,21 +101,28 @@ class ComissoesController extends Zend_Controller_Action
         unset($data['dados_extras']);
         
         // Se estiver zerado sera gerado um erro informando a situação
-        $empreendimento = $model_imovel->selectById($dados_extras['imovel']);
+        $empreendimento = $model_imovel->selectById($dados_extras['imovel']);                                
         
-        if (empty($empreendimento['comissao'])) {
+        if (empty($empreendimento)) {
             $this->view->messages = array(
-                'Valor da comissão do empreendimento: <b>' . $empreendimento['nome'] . '</b> não informado!'
+                'Empreendimento não informado na proposta!'
             );
             $this->view->message_type = 'alert-warning';
             $this->view->hide = true;
             return false;
         } else {
+            $unidades = json_decode($empreendimento['unidades'],true);
             // Passando o valor da comissão do imóvel
-            $data['total'] = $empreendimento['comissao'];
+            foreach ($unidades as $unidade){
+                if($unidade['bloco-quadra'] == $dados_extras['imovel_bloco_quadra']){
+                    $data['total'] = $unidade['comissao'];
+                }
+            }
         }
         
-        if ($data['locked'] == 1 && $data['locked_by'] != CURRENT_USER_ID && $data['locked_by'] != 0) {
+        $is_locked = $this->_acl_model->checkLocked($data['locked'],$data['locked_by']);
+            
+        if ($is_locked) {
             $this->view->messages = array(
                 'Item bloqueado para edição'
             );
@@ -121,20 +130,14 @@ class ComissoesController extends Zend_Controller_Action
             $this->view->hide = true;
             return false;
         } else {
-            $model_proposta->lockRow($data['id_cliente'], CURRENT_USER_ID, 1);
+            $model_proposta->lockRow($data['id_proposta'], CURRENT_USER_ID, 1);
         }
         
         if ($request->isPost()) {
             $data = $request->getPost();
-            
-            if (isset($data['parcelas_pagas'])) {
-                $data['parcelas_pagas'] = json_encode($data['parcelas_pagas']);
-            }
-            
-            if (isset($data['comissao'])) {
-                $data['comissao'] = json_encode($data['comissao']);
-            }
-            
+            $data['parcelas_pagas'] = isset($data['parcelas_pagas']) ? json_encode($data['parcelas_pagas']) : array();
+            $data['comissao'] = isset($data['comissao']) ? json_encode($data['comissao']) : json_encode(array());
+
             if ($form->valid($data)) {
                 $dataUpdate = $data;
                 
@@ -142,12 +145,18 @@ class ComissoesController extends Zend_Controller_Action
                 unset($dataUpdate['locked_by']);
                 unset($dataUpdate['nome']);
                 unset($dataUpdate['total']);
+                $dataUpdate['last_modified'] = date('Y-d-m h:i:s', time());
                 
                 if ($model_proposta->updateCondicoesPagamento($id, $dataUpdate)) {
                     $this->view->messages = array(
                         'Atualizado com sucesso!'
                     );
                     $this->view->message_type = 'alert-success';
+                }else{
+                    $this->view->messages = array(
+                        'Sem alterações!'
+                    );
+                    $this->view->message_type = 'alert-info';
                 }
             }
         }
@@ -220,7 +229,7 @@ class ComissoesController extends Zend_Controller_Action
         if ($request->isPost()) {
             $data = $request->getPost();
             if (isset($data['locked_by']) == CURRENT_USER_ID) {
-                $model->lockRow($data['id_cliente'], 0, 0);
+                $model->lockRow($data['id_proposta'], 0, 0);
             }
         }
         $this->redirect('/' . $this->_controllerName);

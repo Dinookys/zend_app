@@ -20,4 +20,9 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
      
     }
     
+    public function _initTranslate() {
+        $translator = new Zend_Translate ( array ('adapter' => 'array', 'content' => '../resources/languages', 'locale' => 'pt_BR', 'scan' => Zend_Translate::LOCALE_DIRECTORY ) );
+        Zend_Validate_Abstract::setDefaultTranslator ( $translator );
+    }
+    
 }

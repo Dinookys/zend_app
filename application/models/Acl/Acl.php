@@ -3,6 +3,7 @@ class Application_Model_Acl_Acl extends Zend_Acl{
     
     protected $_role;
     protected $_current_resource;
+    protected $_acl;
     
     function __construct()
     {        
@@ -13,6 +14,7 @@ class Application_Model_Acl_Acl extends Zend_Acl{
         $this->_current_resource = $request->getControllerName() . ':' . $request->getActionName();        
  
         $aclResources = $config->getOption('acl');
+        $this->_acl = $aclResources;
         $resources = $aclResources[$user->role];
         $this->_role = $user->role;
         $this->addRole($this->_role);
@@ -46,5 +48,30 @@ class Application_Model_Acl_Acl extends Zend_Acl{
     
     public function isAllowed() {
         return parent::isAllowed($this->_role, $this->_current_resource);
-    }   
+    }
+    
+    /**
+     * Retorna true caso o item eteja bloqueado
+     * @param int|string $locked
+     * @param int|string $locked_by
+     */
+    public function checkLocked($locked, $locked_by) {        
+       if ($locked == 1 && $locked_by != CURRENT_USER_ID && $locked_by != 0 && in_array(CURRENT_USER_ROLE, $this->_acl['fullControl']) == false) {                
+            return true;
+        }        
+        return false;
+    }
+    /**
+     * Verifica se tem permissão para acessar o conteudo baseado no id ou em ACL
+     * @param string $id
+     * @param array $ids
+     * @return boolean
+     */
+    public function autorized($id, $ids = array()){
+        if(in_array($id, $ids) OR in_array(CURRENT_USER_ROLE, $this->_acl['fullControl'])){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }

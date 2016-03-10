@@ -65,8 +65,7 @@ class Application_Model_Usuarios
         $bind = $this->clearData($data);
         if (isset($bind['password'])) {
             $bind['password'] = sha1($bind['password']);
-        }
-        ;
+        };
         
         unset($bind['id']);
         
@@ -138,9 +137,6 @@ class Application_Model_Usuarios
     public function selectAll($filterState = 1)
     {
         try {
-            
-            /* $filterState = $this->db->quoteInto('state = ?', $filterState);
-            $result = $this->db->fetchAll('SELECT u.id, u.nome, u.email, u.id_perfil, u.acesso, u.state, p.role FROM ' . $this->name . ' AS u LEFT JOIN ' . $this->namePerfis . ' AS p ON u.id_perfil = p.id WHERE ' . $filterState . ' ORDER BY id DESC', NULL, Zend_Db::FETCH_OBJ); */
             
             $select = new Zend_Db_Select($this->db);
             

@@ -26,7 +26,7 @@
 				</tr>    							
 			</thead>
 		<tbody id="lista-parcelas" >
-		<?php if(!empty($this->form->parcelas_pagas->getValue())): ?>
+		<?php $parcelas_pagas = $this->form->parcelas_pagas->getValue();  if(!empty($parcelas_pagas)): ?>
 			<?php 
 			     $parcelas = json_decode($this->form->parcelas_pagas->getValue(), true);
 			     $comissao = json_decode($this->form->comissao->getValue(), true);
@@ -45,7 +45,7 @@
 							</div>
 							<div class="input-group">
 								<span class="input-group-addon" title="Saldo restante da parcela" >Valor restante R$</span>	
-								<input id="restante_hide-<?php echo $key; ?>" type="hidden" name="parcelas_pagas[<?php echo $key; ?>][restante]" value="<?php echo isset($parcela['restante']) ? $parcela['restante'] : $parcela;['valor']  ?>" />
+								<input id="restante_hide-<?php echo $key; ?>" type="hidden" name="parcelas_pagas[<?php echo $key; ?>][restante]" value="<?php echo isset($parcela['restante']) ? $parcela['restante'] : $parcela['valor']  ?>" />
 								<input id="restante-<?php echo $key; ?>"  class="form-control valor" type="text" value="<?php echo isset($parcela['restante']) ? $parcela['restante'] : $parcela['valor'];  ?>" disabled />
 							</div>
 						</div>
@@ -118,9 +118,10 @@
 				Restante R$
 			</label>
 			<input id="restante" class="form-control" name="totalrestante" value="<?= $this->form->restante->getValue(); ?>" type="text" disabled>
-		</div>
-		<input type="hidden" name="id_cliente" value="<?= $this->form->id_cliente->getValue(); ?>">			
-		<input type="hidden" name="locked_by" value="<?= $this->form->locked_by->getValue(); ?>">			
+		</div>					
+		<input type="hidden" name="locked_by" value="<?= $this->form->locked_by->getValue(); ?>">
+		<input type="hidden" name="id_proposta" value="<?= $this->form->id_proposta->getValue(); ?>">
+		<input type="hidden" name="last_user_id" value="<?= CURRENT_USER_ID; ?>">			
 		<input type="hidden" name="nome" value="<?= $this->form->nome->getValue(); ?>">
 		<input type="hidden" name="recebido" value="<?= $this->form->recebido->getValue(); ?>">
 		<input type="hidden" name="restante" value="<?= $this->form->restante->getValue(); ?>">

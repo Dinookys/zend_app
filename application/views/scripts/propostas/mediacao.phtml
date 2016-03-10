@@ -1,3 +1,236 @@
-<pre>
-<?php print_r($this->data); ?>
-</pre>
+<?= $this->render('common/top-bar-back.phtml'); ?>	
+<div class="container">
+	<?= $this->render('common/message.phtml'); ?>	
+</div>
+<?php if(!empty($this->data)) : ?>
+<div id="mediacao" class="container print">
+	<h4>CONTRATO PARTICULAR DE CORRETAGEM/MEDIAÇAO CONTRATANTE(S)- CLIENTE(S)</h4>
+	<div class="group">
+		<div style="width: 8%" class="title" > Nome:</div>
+		<div style="width: 91%" class="underline" ><?php echo $this->data['nome']; ?></div>
+	</div>
+	<div class="group">
+		<div class="title" >Naturalidade:</div>
+		<div style="width: 38%" class="underline" ><?php echo $this->data['naturalidade']; ?></div>
+		<div class="title" >Estado Civil:</div>
+		<div style="width: 37%" class="underline" ><?php echo $this->data['estado_civil']; ?></div>
+	</div>	
+	<div class="group">
+		<div class="title" >Profissão:</div>
+		<div style="width: 44%" class="underline" ><?php echo $this->data['profissao']; ?></div>
+		<div class="title" >C.I nº:</div>
+		<div style="width: 39%" class="underline" ><?php echo $this->data['rg']; ?></div>
+	</div>
+	<div class="group">
+		<div class="title" >Órgão Emissor:</div>
+		<div style="width: 30%" class="underline" ><?php echo $this->data['rg_orgao_expeditor']; ?></div>
+		<div class="title" >CPF/MF nº:</div>
+		<div style="width: 43%" class="underline" ><?php echo $this->data['cpf']; ?></div>
+	</div>
+	<div class="group">
+		<div class="title" >
+			Conjugue ou Segundo Contratante:
+		</div>
+		<div style="width: 67%" class="underline" >
+			<?php echo $this->data['conj_nome']; ?>
+		</div>
+	</div>
+	<div class="group">
+		<div class="title" >C.I nº:</div>
+		<div style="width: 20%" class="underline" ><?php echo $this->data['conj_rg']; ?></div>
+		<div class="title" >Órgão Emissor:</div>
+		<div style="width: 21%" class="underline" ><?php echo $this->data['conj_rg_orgao_expeditor']; ?></div>
+		<div class="title" >CPF/MF nº:</div>
+		<div style="width: 25%" class="underline" ><?php echo $this->data['conj_cpf']; ?></div>
+	</div>
+	<div class="group">
+		<div class="title">
+			Endereço Residencial:
+		</div>
+		<div  class="underline" >
+			<?php echo empty($this->data['endereco']) ? '' : $this->data['endereco']; ?> 
+			<?php echo empty($this->data['bairro']) ? '' : ' - ' . $this->data['bairro']; ?> 
+			<?php echo empty($this->data['cidade']) ? '' : ' - ' . $this->data['cidade']; ?> 
+			<?php echo empty($this->data['estado']) ? '' : ' - ' . $this->data['estado']; ?> 		
+			
+		</div>		
+	</div>
+	<div class="group">
+		<div class="title">
+			Telefones de Contato:			
+		</div>
+		<div class="underline">
+			<?php echo $this->data['fone_resid']; ?> 		
+			<?php echo empty($this->data['fone_com']) ? '' : ' / ' . $this->data['fone_com']; ?> 		
+			<?php echo empty($this->data['fone_cel']) ? '' : ' / ' . $this->data['fone_cel']; ?> 		
+		</div>
+	</div>
+	<div class="group">
+		<p><b>
+			CONTRATADOS – CORRETORES: Delano Lançamentos e Empreendimentos Imobiliários Ltda.
+		</b></p>
+		<p>
+			Pessoa jurídica de direito privado, escrita no CNPJ/MF sob o nº 10.654.651/0001-59, estabelecida na Rua São Carlos Qd.28 Lt.1 Jardim Planalto Goiânia -GO e os Corretores de Imóveis abaixo assinados.
+		</p>
+		<p><b style="text-decoration: underline">CLAUSULA PRIMEIRA:</b> O presente contrato tem <b style="text-decoration: underline" >
+			como objetivo a assinatura do Contrato Particular de Compra e Venda do Imóvel a frente descrito:
+		</b></p>
+		<p>
+			<textarea style="max-width: 100%; min-width: 100%; width: 100%; text-decoration: underline;" name="" id="" cols="30" rows="3"></textarea>			
+		</p>
+	</div>
+	<div class="group">
+		<p><b style="text-decoration: underline">CLAUSULA SEGUNDA:</b> Depois de escolhida a unidade do imóvel supra descrita pelo(s) CLIENTE(S) e <b style="text-decoration: underline">antes</b> da assinatura da “Proposta de Compra e Venda” que devera levada a aprovação do proprietário-vendedor, o(s) CLIENTE(S) será levado(s) pelos CORRETORES ao “Correspondente Bancário” , escolhido pelo proprietário-vendedor, que tratará da montagem de todo o processo para financiamento de parte e/ou integralidade do preço do imóvel do preço do imóvel, ficando claro que não há responsabilidade alguma dos CORRETORES em relação ao “Correspondente Bancário” .</p>
+	</div>
+	<div class="group">
+		<p>
+			<b style="text-decoration: underline">Parágrafo Primeiro:</b> Na oportunidade da visita ao “Correspondente Bancário” este fará e mostrará ao(s) CLIENTE(S) simulação(ões)  de financiamento do preço parcial ou integral do imóvel e informará ao(s) CLIENTE(S) a lista de documentos e condições ( principalmente financeiras) para efetivação do financiamento, caso resolva(m) contratar a compra e venda com o proprietário-vendedor do imóvel. 
+		</p>
+	</div>
+	<div class="group">
+		<p>
+			<b style="text-decoration: underline">Parágrafo Segundo:</b> Fica esclarecido que, os CORRETORES <b style="text-decoration: underline">não são responsáveis pelo processo de financiamento e que a “simulação” feita pelo  “Correspondente Bancário” não implica em aprovação do agente financiador (banco) da forma e valores exatos em que foi feita a “simulação” pelo “Correspondente bancário”</b> (o que inclui o valor a ser financiado, valor das parcelas mensais, valor da entrada etc), tendo em vista que, o saldo devedor do contrato de compra e venda é sempre corrigido/atualizado na data do financiamento e somente depois da analise pelo agente financiador( banco) dos documentos entregues pelo(s) CLIENTE(S) e de sua situação financeira ( comprovação de renda comprometimento de renda etc) é que o agente financiador ( banco) emitira sua resposta ao processo de financiamento. Fica esclarecido que a simulação também não garante que o pedido de financiamento seja aprovado pelo agente financiador (banco).
+		</p>
+	</div>
+	<div class="group">
+		<p>
+			<b style="text-decoration: underline">Parágrafo Terceiro:</b> Aceitas todas as condições do negocio, inclusive de financiamento, pelo(s) CLIENTE(S) o(s) mesmo(s) deverão firmar a Proposta de Compra e Venda do Imóvel a qual deverá ser levada pelos CORRETORES a aprovação do proprietário-vendedor.Aceita a proposta, o(s)CLIENTE(S) deverão firmar diretamente com o proprietário-vendedor o respectivo Contrato Particular de Compra e Venda do Imóvel escolhido e manter sua capacidade de comprovação e pagamento do preço a ser financiado ate a data em que tiver que ser feito o financiamento bancário.
+		</p>
+	</div>
+	<div class="group">
+		<p>
+			<b style="text-decoration: underline">Parágrafo Quarto:</b> O(S) CLIENTE(S) reconhece(m), expressamente,<b style="text-decoration: underline"> que após a assinatura do Contrato Particular de Compra e Venda com o proprietário-vendedor, </b> os CORRETOR(ES) terão cumprido o objetivo deste contrato, <b style="text-decoration: underline">sendo devido o pagamento da quantia relativa a Comissão de Corretagem, sem direito a arrependimento ou desistência por se tratar de serviço prestado e concluído, mesmo que o Contrato Particular de Compra e Venda firmado com o proprietário-vendedor seja, posteriormente, rescindido, ou o financiamento bancário seja aprovado de forma diferente da simulação, com alterações de valores ( o que ficou claro, pode acontecer depois da analise de todos os documentos do(s) CLIENTE(S) pelo banco) ou mesmo que não seja aprovado.</b> A presente condição se dá nos termos do artigo 725 do Código Civil, abaixo transcrito para ciência do(s) CLIENTE(S):
+		</p>
+	</div>
+	<div class="group">
+		<p>
+			“Art.725. A remuneração é devida ao corretor uma vez que tenha conseguido o resultado previsto no contrato de mediação, ou ainda que este não se efetive em virtude de arrependimento das partes.”
+		</p>
+	</div>
+	<div class="group">
+		<p>
+			<b style="text-decoration: underline">Parágrafo Quinto:</b> Esclarecem os CORRETORES que o “Correspondente Bancário” é escolhido pelo proprietário-vendedor, sem responsabilidade e/ou vinculo algum com os CORRETORES. Caso o(s) CLIENTE(S) optem pelo pedido de financiamento através de outro “Correspondente Bancário” ou diretamente com qualquer instituição financeira a sua escolha, poderá comunicar por escrito ao proprietário-vendedor, ficando certo que deverá seguir os mesmos requisitos e prazos contidos no contrato de compra e venda que tiver assinado com o proprietário-vendedor.
+		</p>
+	</div>
+	<div class="group">
+		<p>
+			<b style="text-decoration: underline">Parágrafo Sexto:</b>
+			<b>
+				Em qualquer hipótese, o(s) CLIENTES são únicos responsáveis pelas informações que postarem aos CORRETORES e ao “Correspondente Bancário”, e também, pelo encaminhamento de toda a documentação necessária a aprovação do financiamento. Os CORRETORES não são responsáveis por montagem de processo com pedido de financiamento bancário, simulação de financiamento e muito menos por garantir sua aprovação.
+			</b>
+		</p>
+	</div>
+	<div class="group">
+		<p>
+			<b style="text-decoration: underline">Parágrafo Sétimo:</b> As disposições acima se aplicam no forem compatíveis a compra e venda com financiamento do preço diretamente com o Vendedor-Proprietário (sem financiamento bancário).
+		</p>
+	</div>
+	<div class="group">
+		<p>
+			CLAUSULA TERCEIRA: Em função da corretagem pelos CORRETORES o(s) CLIENTE(S) pagará (ão) a quantia de R$ <input style="max-width: 150px; min-width: 150px; width: 150px; text-decoration: underline;" type="text">(<textarea style="min-width: 100px; max-width: 100%; width: 350px; max-height: 22px; height: 22px; text-decoration: underline;"></textarea>) nas condições abaixo:
+		</p>
+	</div>
+	<?php if(!empty($this->data['parcelas'])) : ?>
+	<div class="group">
+		<?php foreach ($this->data['parcelas'] as $key => $parcela): ?>
+			<p><?php echo $key + 1 ?>) R$ <b class="underline" style="width: 150px;">
+				<?php echo $parcela['valor']; ?>
+			</b>(<b class="underline" style="width: 100px; text-transform: capitalize;">
+				<?php echo $parcela['tipo']; ?>
+			</b>), vencível em <b class="underline" style="width: 150px;"><?php echo $parcela['vencimento'] ?></b></p>
+		<?php endforeach ?>
+	</div>
+	<?php endif; ?>
+	<div class="group">
+		a) R$<textarea style="min-width: 100px; max-width: 100%; width: 100px; max-height: 22px; height: 22px; text-decoration: underline;"></textarea>(<textarea style="min-width: 100px; max-width: 100%; width: 100px; max-height: 22px; height: 22px; text-decoration: underline;"></textarea>) a Delano Lançamentos e Empreendimentos Imobiliários Ltda, sendo que, desta quantia <textarea style="min-width: 40px; max-width: 100%; width: 40px; max-height: 22px; height: 22px; text-decoration: underline;"></textarea>%( <textarea style="min-width: 40px; max-width: 100%; width: 40px; max-height: 22px; height: 22px; text-decoration: underline;"></textarea> por cento) servirá para pagamento de despesas com comercialização, incluindo mídia (publicidade) e propaganda), despesas administrativas e tributarias;
+	</div>
+	<div class="group">
+		b) R$<textarea style="min-width: 80px; max-width: 100%; width: 80px; max-height: 22px; height: 22px; text-decoration: underline;"></textarea>(<textarea style="min-width: 80px; max-width: 100%; width: 80px; max-height: 22px; height: 22px; text-decoration: underline;"></textarea>) aos Corretores de Imóveis abaixo assinados, livre de impostos; 
+	</div>
+	<div class="group">
+		<p>
+		<b style="text-decoration: underline;" >Parágrafo Primeiro:</b> Caso o pagamento acima seja estipulado em parcelas constantes de Notas Promissórias, o(s) CLIENTE(S) autoriza(m) aos CORRETORES (qualquer deles ou todos) emitir e enviar boleto bancário para pagamento, correndo todas as despesas bancarias por conta do(s) CLIENTE(S).
+		</p>
+	</div>
+	<div class="group">
+		<p>
+			<b style="text-decoration: underline;" >Parágrafo Segundo:</b> A falta de pagamento do valor acima contratado na data de vencimento ou na data de deposito de titulo de crédito (cheque) implicará na cobrança do valor principal, acrescido de juros de 1%(um por cento) ao mês, correção monetária pelo INPC/FGV, multa de 10%(dez por cento) sobre o valor total e 10%(dez por cento) de honorários advocatícios, caso haja interferência de profissional da área jurídica  para solução da pendência, sem prejuízo das perdas e danos que forem, eventualmente, apuradas (arts.389 e 395, do Código Civil), sendo certo, ainda, que a falta de pagamento de uma parcela por mais de 30(trinta) dias poderá acarretar no vencimento antecipado das demais.
+		</p>
+	</div>
+	<div class="group">
+		<p>
+			<b style="text-decoration: underline;" >Parágrafo Terceiro:</b> O atraso de qualquer pagamento por mais de 30 (trinta) dias, poderá gerar correção do valor respectivo pelo INPC, acréscimo de juros de 1% (um por cento) ao mês e multa de 10% (dez por cento) sobre o valor total da divida.
+		</p>
+	</div>
+	<div class="group">
+		<p>
+			<b style="text-decoration: underline;" >Parágrafo Quarto:</b> Emitidos os títulos para pagamento da comissão de corretagem na forma e valores previstos nesta clausula, o(s) O CLIENTE(S) se torna(m) devedor(ES) confesso(s) do(s) CORRETORES ate a quitação total, valendo o presente contrato como titulo executivo extrajudicial, conforme previsto em lei.
+		</p>
+	</div>
+	<div class="group">
+		<p>
+			<b style="text-decoration: underline;" >CLAUSULA QUARTA:</b> Depois de assinado o Contrato de Compra e Venda do imóvel pelo(s) CLIENTE(S) e pelo proprietário-vendedor o presente contrato se torna irrevogável e irretratável, obrigando as partes por si, seus herdeiros e sucessores a qualquer titulo.
+		</p>
+	</div>
+	<div class="group">
+		<p>
+			<b style="text-decoration: underline;" >CLAUSULA QUINTA:</b> O(s) CLIENTE(S) declara(m), expressamente, que leu(RAM) atentamente todas as clausulas e condições aqui pactuadas, notadamente a parte do financiamento bancário, preço e condições de pagamento e não devolução de quantia paga, estando, portanto, concorde(s) com plenitude da avença.
+		</p>
+		<p>
+			Assim, justas e contratadas, as partes firmam o presente instrumento, na presença de 02 (duas) testemunhas e em 03 (três)  vias de igual teor e forma, concordando que o foro para dirimir quaisquer duvidas oriundas do presente será o da Comarca de Goiânia-GO, preterindo-se outro qualquer mais privilegiado que seja.
+		</p>
+	</div>
+	<div class="group">
+		<p style="text-align: right" ><textarea style="padding:0; text-align: right; min-width: 100px; max-width: 100%; width: 100px; min-height: 20px; max-height: 20px; height: 20px;"></textarea>,<textarea style="padding:0; text-align: right; min-width: 30px; max-width: 100%; width: 30px; min-height: 20px; max-height: 20px; height: 20px;"></textarea> de <textarea style="text-align: right; min-width: 40px; max-width: 100%; width: 40px; min-height: 20px; max-height: 20px; height: 20px;"></textarea> 20<textarea style="padding:0; min-width: 40px; max-width: 100%; width: 40px; max-height: 20px; height: 20px;"></textarea></p>
+	</div>
+	<div class="group">
+	<br><br><br></div>	
+	<div class="group">
+		<p class="col-xs-6" style="text-align: center" >
+		____________________________________________ <br>
+			Cliente
+		</p>
+		<p class="col-xs-6" style="text-align: center" >
+		____________________________________________ <br>
+			Cliente
+		</p>
+	</div>
+	<div class="group">
+	<br><br><br></div>	
+	<div class="group">
+		<p class="col-xs-6" style="text-align: center" >
+			__________________________________________<br>
+			Delano Lançamentos e Empr. Imob. Ltda <br>
+			CRECI/JURIDICO 13.250
+		</p>
+		<p class="col-xs-6" style="text-align: center" >
+			Nome: _____________________________ <br>
+			CRECI/GO
+		</p>
+	</div>
+	<div class="group">
+	<br><br><br></div>	
+	<div class="group">
+		<p class="col-xs-6" style="text-align: center" >
+			Nome: _____________________________ <br>
+			CRECI/GO
+		</p>
+		<p class="col-xs-6" style="text-align: center" >
+			Nome: _____________________________ <br>
+			CRECI/GO
+		</p>
+	</div>
+	<div class="group">
+	<br><br><br></div>	
+	<div class="group">
+		<p class="col-xs-6" style="text-align: center" >
+			01 - Testemunha: _____________________________ <br>
+			CPF
+		</p>
+		<p class="col-xs-6" style="text-align: center" >
+			02 - Testemunha: _____________________________ <br>
+			CPF
+		</p>
+	</div>
+</div>
+<?php endif; ?>

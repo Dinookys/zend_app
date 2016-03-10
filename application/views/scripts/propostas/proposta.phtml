@@ -40,23 +40,23 @@
 
 
 </style>
+<?= $this->render('common/top-bar-back.phtml'); ?>	
+<div class="container">
+	<?= $this->render('common/message.phtml'); ?>		
+</div>
+<?php if($this->data) : ?>
 <div class="container print" >
-	<table class="table table-bordered" >
+	<table id="proposta" class="table table-bordered" >
 		<tbody>
 			<tr>
 				<td colspan="10" >
 					<img style="width: 100%;" alt="" src="<?= $this->baseUrl(); ?>/images/header_proposta_print.png">
 				</td>				
-			</tr>
-			<tr>
-				<td colspan="10" style="background: #eee;" >
-					<b>Proponente</b>	
-				</td>
-			</tr>
+			</tr>			
 			<tr>
 				<td colspan="10" >
 					<div class="title">
-						NOME
+						NOME PROPONENTE
 					</div>
 					<div class="content">
 						<?php echo isset($this->data['nome']) ? $this->data['nome'] : ''; ?>
@@ -331,16 +331,11 @@
 					</div>
 					<div class="content"></div>
 				</td>
-			</tr>
+			</tr>			
 			<tr>
-				<td colspan="10" style="background: #eee;" >
-					<b>Conjugue ou Segundo Proponente</b>	
-				</td>
-			</tr>
-						<tr>
 				<td colspan="10" >
 					<div class="title">
-						NOME
+						NOME CONJUGUE OU SEGUNDO PROPONENTE
 					</div>
 					<div class="content">
 						<?php echo isset($this->data['conj_nome']) ? $this->data['conj_nome'] : ''; ?>
@@ -617,11 +612,6 @@
 				</td>
 			</tr>
 			<tr>
-				<td colspan="10" style="background: #eee;" >
-					<b>Imóvel</b>					
-				</td>
-			</tr>
-			<tr>
 				<td colspan="5">
 					<div class="title">
 						IMÓVEL
@@ -648,6 +638,40 @@
 				</td>		
 			</tr>
 			<tr>
+				<td colspan="3" >
+					<div class="title">
+						PROPRIETÁRIO(a)
+					</div>
+					<div class="content">
+						<?php echo isset($this->empreendimento['incorporadora']) ? $this->empreendimento['incorporadora'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="3" >
+					<div class="title">
+						LOGRADOURO
+					</div>
+					<div class="content">
+						<?php echo isset($this->empreendimento['logradouro']) ? $this->empreendimento['logradouro'] : ''; ?>
+					</div>
+				</td>
+				<td colspan="2" >
+					<div class="title">
+						ÀREA ÚTIL
+					</div>
+					<div class="content">
+						<input style="width: 40px; text-align: right;" type="text">M²
+					</div>
+				</td>
+				<td colspan="2">
+					<div class="title">
+						GARAGEM
+					</div>
+					<div class="content">
+						<input type="text">
+					</div>
+				</td>
+			</tr>
+			<tr>
 				<td colspan="10" style="background: #eee;" >
 					<b>Condições de Pagamento</b>	
 				</td>
@@ -657,14 +681,10 @@
 					<div class="title">
 						VALOR NESTA DATA
 					</div>
-					<div class="content"></div>
-				</td>		
-				<td colspan="5">
-					<div class="title">
-						VALOR DO SINAL
+					<div class="content">
+						<input type="text" value="<?php echo isset($this->data['sinal']) ? $this->data['sinal'] : '' ?>" >
 					</div>
-					<div class="content"></div>
-				</td>
+				</td>						
 			</tr>
 			<tr>
 				<td colspan="2">
@@ -693,68 +713,243 @@
 					</div>					
 				</td>			
 			</tr>
-			<?php $count = 1; if(!empty($this->data['parcelas'])) : foreach ($this->data['parcelas'] as $key => $parcela) : ?>
-				<tr>
-					<td colspan="2">						
-						<div class="content">
-							<?= $count++; ?>
-						</div>
-					</td>
-					<td colspan="2">						
-						<div class="content">
-							<?= $parcela['valor']; ?>
-						</div>
-					</td>
-					<td colspan="2">						
-						<div class="content">
-							
-						</div>
-					</td>			
-					<td colspan="2">
-						<div class="content">
-							<?= $parcela['vencimento']; ?>
-						</div>
-					</td>			
-					<td colspan="2">
-						<div class="content">
-							<?= $parcela['tipo']; ?>
-						</div>
-					</td>			
-				</tr>
-			<?php endforeach; endif; ?>
-
+			<tr>
+				<td colspan="2">						
+					<div class="content">
+						<input type="text">
+					</div>
+				</td>
+				<td colspan="2">						
+					<div class="content">
+						<input type="text">
+					</div>
+				</td>
+				<td colspan="2">						
+					<div class="content">
+						<input type="text">
+					</div>
+				</td>			
+				<td colspan="2">
+					<div class="content relative">
+						<input id="data_vencimento_1" type="text">
+					</div>
+				</td>			
+				<td colspan="2">
+					<div class="content">
+						<input type="text">
+					</div>
+				</td>			
+			</tr>
+			<tr>
+				<td colspan="2">						
+					<div class="content">
+						<input type="text">
+					</div>
+				</td>
+				<td colspan="2">						
+					<div class="content">
+						<input type="text">
+					</div>
+				</td>
+				<td colspan="2">						
+					<div class="content">
+						<input type="text">
+					</div>
+				</td>			
+				<td colspan="2">
+					<div class="content relative">
+						<input id="data_vencimento_2" type="text">
+					</div>
+				</td>			
+				<td colspan="2">
+					<div class="content">
+						<input type="text">
+					</div>
+				</td>			
+			</tr>
+			<tr>
+				<td colspan="2">						
+					<div class="content">
+						<input type="text">
+					</div>
+				</td>
+				<td colspan="2">						
+					<div class="content">
+						<input type="text">
+					</div>
+				</td>
+				<td colspan="2">						
+					<div class="content">
+						<input type="text">
+					</div>
+				</td>			
+				<td colspan="2">
+					<div class="content relative">
+						<input id="data_vencimento_3" type="text">
+					</div>
+				</td>			
+				<td colspan="2">
+					<div class="content">
+						<input type="text">
+					</div>
+				</td>			
+			</tr>
+			<tr>
+				<td colspan="2">						
+					<div class="content">
+						<input type="text">
+					</div>
+				</td>
+				<td colspan="2">						
+					<div class="content">
+						<input type="text">
+					</div>
+				</td>
+				<td colspan="2">						
+					<div class="content">
+						<input type="text">
+					</div>
+				</td>			
+				<td colspan="2">
+					<div class="content relative">
+						<input id="data_vencimento_4" type="text">
+					</div>
+				</td>			
+				<td colspan="2">
+					<div class="content">
+						<input type="text">
+					</div>
+				</td>			
+			</tr>
+			<tr>
+				<td colspan="2">						
+					<div class="content">
+						<input type="text">
+					</div>
+				</td>
+				<td colspan="2">						
+					<div class="content">
+						<input type="text">
+					</div>
+				</td>
+				<td colspan="2">						
+					<div class="content">
+						<input type="text">
+					</div>
+				</td>			
+				<td colspan="2">
+					<div class="content relative">
+						<input id="data_vencimento_5" type="text">
+					</div>
+				</td>			
+				<td colspan="2">
+					<div class="content">
+						<input type="text">
+					</div>
+				</td>			
+			</tr>
+			<tr>
+				<td colspan="2">						
+					<div class="content">
+						<input type="text">
+					</div>
+				</td>
+				<td colspan="2">						
+					<div class="content">
+						<input type="text">
+					</div>
+				</td>
+				<td colspan="2">						
+					<div class="content">
+						<input type="text">
+					</div>
+				</td>			
+				<td colspan="2">
+					<div class="content relative">
+						<input id="data_vencimento_6" type="text">
+					</div>
+				</td>			
+				<td colspan="2">
+					<div class="content">
+						<input type="text">
+					</div>
+				</td>			
+			</tr>
+			<tr>
+				<td colspan="2">						
+					<div class="content">
+						<input type="text">
+					</div>
+				</td>
+				<td colspan="2">						
+					<div class="content">
+						<input type="text">
+					</div>
+				</td>
+				<td colspan="2">						
+					<div class="content">
+						<input type="text">
+					</div>
+				</td>			
+				<td colspan="2">
+					<div class="content relative">
+						<input id="data_vencimento_7" type="text">
+					</div>
+				</td>			
+				<td colspan="2">
+					<div class="content">
+						<input type="text">
+					</div>
+				</td>			
+			</tr>
 			<tr>
 				<td colspan="2">
 					<div class="title">
 						ÍNDICE ATÉ O HABITE-SE
 					</div>
-					<div class="content"></div>
+					<div class="content">
+						<input type="text">
+					</div>
 				</td>			
 				<td colspan="2">
 					<div class="title">
 						JUROS ATÉ A ENTREGA
 					</div>
-					<div class="content"></div>
+					<div class="content">
+						<input type="text">
+					</div>
 				</td>	
 				<td colspan="2">
 					<div class="title">
 						ÍNDICE APÓS A ENTREGA
 					</div>
-					<div class="content"></div>
+					<div class="content">
+						<input type="text">
+					</div>
 				</td>	
 				<td colspan="2">
 					<div class="title">
 						JUROS APÓS A ENTREGA
 					</div>
-					<div class="content"></div>
+					<div class="content">
+						<input type="text">
+					</div>
 				</td>	
 				<td colspan="2">
 					<div class="title">
 						DATA DE ASSINATURA DE CONTRATO
 					</div>
-					<div class="content"></div>
+					<div class="content relative">
+						<input id="data_assinatura" type="text">
+					</div>
 				</td>	
 			</tr>					
 		</tbody>
 	</table>
 </div>
+<script>
+	$("[id^=data]").datetimepicker({
+		format: 'DD/MM/YYYY'
+	});	
+</script>
+<?php endif; ?>

@@ -26,7 +26,8 @@ class Application_Form_Proposta extends Zend_Form
         
         $options_imovel = array('-- Selecione --');
         
-        $dataImovies = $imovel->selectAll(1);
+        $dataImovies = $imovel->selectAll(1);      
+        
         
         foreach ($dataImovies as $imovel){
             $options_imovel[$imovel->id] = $imovel->nome;
@@ -61,6 +62,11 @@ class Application_Form_Proposta extends Zend_Form
             'Sim'
         );
         
+        $this->addElement('hidden', 'created_user_id', array(
+            'value' => CURRENT_USER_ID,
+            'decorators' => $this->setColSize(1, false)
+        ));
+        
         // Adicionando tag HTML usando description do elemento
         $this->addElement('hidden', 'header3_imovel', array(
             'description' => '<h3>DADOS IMÓVEL</h3>',
@@ -78,8 +84,8 @@ class Application_Form_Proposta extends Zend_Form
         ));
         
         $this->addElement('select', 'imovel', array(
-            'label' => 'Imóvel',
-            'required' => false,
+            'label' => 'Empreendimento /imovel',
+            'required' => true,
             'filters' => array(
                 'StringTrim'
             ),
@@ -92,8 +98,8 @@ class Application_Form_Proposta extends Zend_Form
         ));
         
         $this->addElement('select', 'imovel_bloco_quadra', array(
-            'label' => 'Bloco/Quadra',
-            'required' => false,
+            'label' => 'Bloco /Quadra /Nº Casa',
+            'required' => true,
             'filters' => array(
                 'StringTrim'
             ),
@@ -105,17 +111,13 @@ class Application_Form_Proposta extends Zend_Form
             'decorators' => $this->setColSize(4)
         ));
         
-        $this->addElement('select', 'imovel_unidade', array(
+        $this->addElement('text', 'imovel_unidade', array(
             'label' => 'Unidade',
-            'required' => false,
+            'required' => true,
             'filters' => array(
                 'StringTrim'
             ),
             'class' => 'form-control',
-            'multiOptions' => $options_empty,
-            'validators' => array(
-                $required
-            ),
             'decorators' => $this->setColSize(4)
         ));
         
@@ -244,6 +246,9 @@ class Application_Form_Proposta extends Zend_Form
             'decorators' => $this->setColSize(2)
         ));
         
+        $naturalidade_estado = $this->getElement('naturalidade_estado');
+        $naturalidade_estado->setRegisterInArrayValidator(false);
+        
         $this->addElement('select', 'naturalidade', array(
             'label' => 'Naturalidade',
             'required' => false,
@@ -255,6 +260,9 @@ class Application_Form_Proposta extends Zend_Form
             'decorators' => $this->setColSize(2)
         ));
         
+        $naturalidade = $this->getElement('naturalidade');
+        $naturalidade->setRegisterInArrayValidator(false);
+        
         $this->addElement('select', 'sexo', array(
             'label' => 'Sexo',
             'required' => false,
@@ -262,7 +270,7 @@ class Application_Form_Proposta extends Zend_Form
                 'StringTrim'
             ),
             'class' => 'form-control',
-            'multiOptions' => array('M' => 'M', 'F' => 'F'),            
+            'multiOptions' => array('M' => 'Masculino', 'F' => 'Feminio'),            
             'decorators' => $this->setColSize(2)
         ));
         
@@ -661,7 +669,10 @@ class Application_Form_Proposta extends Zend_Form
             'class' => 'form-control',
             'multiOptions' => array(),
             'decorators' => $this->setColSize(2)
-        ));        
+        ));
+        
+        $conj_naturalidade = $this->getElement('conj_naturalidade_estado');
+        $conj_naturalidade->setRegisterInArrayValidator(false);
         
         $this->addElement('select', 'conj_naturalidade', array(
             'label' => 'Naturalidade',
@@ -674,6 +685,9 @@ class Application_Form_Proposta extends Zend_Form
             'decorators' => $this->setColSize(2)
         ));
         
+        $conj_naturalidade = $this->getElement('conj_naturalidade');
+        $conj_naturalidade->setRegisterInArrayValidator(false);
+        
         $this->addElement('select', 'conj_sexo', array(
             'label' => 'Sexo',
             'required' => false,
@@ -681,7 +695,7 @@ class Application_Form_Proposta extends Zend_Form
                 'StringTrim'
             ),
             'class' => 'form-control',
-            'multiOptions' => array('M' => 'M', 'F' => 'F'),
+            'multiOptions' => array('M' => 'Masculino', 'F' => 'Feminio'),
             'decorators' => $this->setColSize(2)
         ));
         
@@ -1045,8 +1059,8 @@ class Application_Form_Proposta extends Zend_Form
             'decorators' => $this->setColSize(1, false)
         ));
         
-        $this->addElement('hidden', 'created_user_id', array(
-            'value' => CURRENT_USER_ID,
+        $this->addElement('hidden', 'id_cliente', array(
+            'value' => '',
             'decorators' => $this->setColSize(1, false)
         ));
         
@@ -1061,12 +1075,17 @@ class Application_Form_Proposta extends Zend_Form
         ));
         
         $this->addElement('hidden', 'locked', array(
-            'value' => CURRENT_USER_ID,
+            'value' => '',
             'decorators' => $this->setColSize(1, false)
         ));
         
         $this->addElement('hidden', 'locked_by', array(
             'value' => CURRENT_USER_ID,
+            'decorators' => $this->setColSize(1, false)
+        ));
+
+        $this->addElement('hidden', 'status', array(
+            'value' => '2',
             'decorators' => $this->setColSize(1, false)
         ));
         
@@ -1103,7 +1122,7 @@ class Application_Form_Proposta extends Zend_Form
         $this->setMethod('post');
     }
 
-    private function setColSize($size = 12, $label = true, $addon = false)
+    public function setColSize($size = 12, $label = true, $addon = false)
     {
         $decorator = array(
             'Label',

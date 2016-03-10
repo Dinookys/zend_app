@@ -222,8 +222,7 @@ class Application_Model_Clientes
      * @return stdClass | boolean
      */
     public function convertData($data, $findKey = 'dados_cliente')
-    {
-        
+    {           
         if(!empty($data)){
             foreach ($data as $key => $value) {
                 foreach ($data[$key] as $inkey => $invalue) {

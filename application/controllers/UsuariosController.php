@@ -106,6 +106,10 @@ class UsuariosController extends Zend_Controller_Action
         
         if ($request->isPost()) {
             $data = $request->getPost();
+
+            if(empty($data['password'])){
+                unset($data['password']);
+            }
             
             if ($form->isValid($data)) {
                 $checkData = $this->_modelUsers->select($data['email']);

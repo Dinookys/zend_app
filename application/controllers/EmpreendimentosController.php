@@ -9,6 +9,8 @@ class EmpreendimentosController extends Zend_Controller_Action
 
     protected $_acl = null;
 
+    protected $_acl_model = null;
+    
     protected $_actionName = null;
 
     protected $_controllerName = null;
@@ -25,8 +27,8 @@ class EmpreendimentosController extends Zend_Controller_Action
         if (! $auth->hasIdentity()) {
             $this->redirect('/login');
         } else {
-            $acl = new Application_Model_Acl_Acl();
-            if (! $acl->isAllowed()) {
+            $this->_acl_model = new Application_Model_Acl_Acl();
+            if (! $this->_acl_model->isAllowed()) {
                 $this->redirect('/error/forbidden');
             }
         }
@@ -147,7 +149,9 @@ class EmpreendimentosController extends Zend_Controller_Action
             $data = $model->selectById($id);
         }
         
-        if($data['locked'] == 1 && $data['locked_by'] != CURRENT_USER_ID && $data['locked_by'] != 0){
+        $is_locked = $this->_acl_model->checkLocked($data['locked'],$data['locked_by']);                
+            
+        if ($is_locked) {
             $this->view->messages = array('Item bloqueado para edição');
             $this->view->form = '';
             $this->view->hide = true;

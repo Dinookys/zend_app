@@ -17,9 +17,10 @@ class Application_Form_Empreendimento extends Zend_Form
             'Médio padrão' => 'Médio padrão',
             'Econômico' => 'Econômico'            
         );
-        $options_empty = array('');
-
-
+        
+        $options_empty = array('');        
+        $options_tipo = array('0' => '--- Selecione uma opção ---', '1' => 'Apartamento','2' => 'Casa');
+        
         $this->addElement('text','nome',array(
             'label'  =>  'Nome',
             'required'  =>  true,
@@ -44,6 +45,16 @@ class Application_Form_Empreendimento extends Zend_Form
             'multiOptions' => $options_categoria,            
             'decorators' => $this->setColSize(3)
         ));
+        
+        $this->addElement('select','tipo',array(
+            'label'  =>  'Tipo de empreendimento',
+            'required'  =>  true,
+            'filters'   =>  array('StringTrim'),
+            'class'     => 'form-control',
+            'multiOptions' => $options_tipo,
+            'decorators' => $this->setColSize(3),
+            'validators' => array($required)
+        ));
 
         $this->addElement('select','cad_corretagem',array(
             'label'  =>  'Cad. Corretagem Mediação',
@@ -55,23 +66,7 @@ class Application_Form_Empreendimento extends Zend_Form
         ));
         
         $this->addElement('text','incorporadora',array(
-            'label'  =>  'Incorporadora',
-            'required'  =>  true,
-            'filters'   =>  array('StringTrim'),
-            'class'     => 'form-control',
-            'decorators' => $this->setColSize(6)
-        ));
-        
-        $this->addElement('text','tipo',array(
-            'label'  =>  'Tipo',
-            'required'  =>  true,
-            'filters'   =>  array('StringTrim'),
-            'class'     => 'form-control',
-            'decorators' => $this->setColSize(6)
-        ));
-        
-        $this->addElement('text','comissao',array(
-            'label'  =>  'Comissão do empreendimento',
+            'label'  =>  'Proprietario(a)',
             'required'  =>  true,
             'filters'   =>  array('StringTrim'),
             'class'     => 'form-control',

@@ -59,12 +59,19 @@ class Application_Model_Empreendimentos
     /**
      * 
      * @param unknown $id
+     * @param array $cols
      * @throws Zend_Db_Exception
      * @return mixed|bool
      */
-    public function selectById($id){
+    public function selectById($id, $cols = array()){
         try{
-            $sql = 'SELECT * FROM '. $this->name .' WHERE id=?';
+
+            if(!empty($cols)){
+                $sql = 'SELECT '. implode(',', $cols) .' FROM '. $this->name .' WHERE id=?';                
+            }else{
+                $sql = 'SELECT * FROM '. $this->name .' WHERE id=?';    
+            }
+
             return $this->db->fetchRow($sql,array($id), Zend_db::FETCH_ASSOC);
         }catch (Zend_Db_Exception $e){
             throw new Zend_Db_Exception($e->getMessage());

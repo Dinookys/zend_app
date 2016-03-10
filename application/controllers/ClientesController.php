@@ -8,6 +8,8 @@ class ClientesController extends Zend_Controller_Action
     protected $_custom;
 
     protected $_acl;
+    
+    protected $_acl_model;
 
     protected $_actionName;
 
@@ -25,8 +27,8 @@ class ClientesController extends Zend_Controller_Action
         if (! $auth->hasIdentity()) {
             $this->redirect('/login');
         } else {
-            $acl = new Application_Model_Acl_Acl();
-            if (! $acl->isAllowed()) {
+            $this->_acl_model = new Application_Model_Acl_Acl();
+            if (! $this->_acl_model->isAllowed()) {
                 $this->redirect('/error/forbidden');
             }
         }
@@ -173,7 +175,14 @@ class ClientesController extends Zend_Controller_Action
             $data['locked'] = $result['locked'];
             $data['locked_by'] = $result['locked_by'];
             
-            if($data['locked'] == 1 && $data['locked_by'] != CURRENT_USER_ID && $data['locked_by'] != 0 && in_array(CURRENT_USER_ROLE, $this->_acl['fullControl']) == false){
+            $is_locked = $this->_acl_model->checkLocked(
+                array(
+                    'locked_by' => $data['locked_by'], 
+                    'locked' => $data['locked']
+                    
+                ));
+            
+            if ($is_locked) {
                 $this->view->messages = array('Item bloqueado para edição');
                 $this->view->form = '';
                 return false;

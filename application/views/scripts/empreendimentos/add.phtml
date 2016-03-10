@@ -8,18 +8,18 @@
 				<?= $this->form->getElement('logradouro'); ?>
 				<?= $this->form->getElement('categoria'); ?>
 				<?= $this->form->getElement('cad_corretagem'); ?>
-				<?= $this->form->getElement('incorporadora'); ?>
+				<div class="col-xs-12" ></div>
+				<?= $this->form->getElement('incorporadora'); ?>				
 				<?= $this->form->getElement('tipo'); ?>
-				<?= $this->form->getElement('comissao'); ?>
 			</div>			
 			<table id="lista-unidades" class="table table-stripped table-condensed table-hover" >
 				<thead>
 					<tr>
 						<th>
-							BLOCO/QUADRA			
+							PAVIMENTO /ANDAR /Nº CASA		
 						</th>
 						<th>
-							UNIDADE
+							COMISSÃO
 						</th>
 						<th>
 							<a id="add-unidades" class="btn btn-default" >
@@ -42,7 +42,7 @@
 							<input class="form-control" type="text" name="unidades[<?= $key ?>][bloco-quadra]" value="<?= $unidade['bloco-quadra']?>" >
 						</td>
 						<td>
-							<input class="form-control" type="text" name="unidades[<?= $key ?>][unidade]" value="<?= $unidade['unidade']?>">
+							<input id="comissao-<?= $key ?>" class="form-control" type="text" name="unidades[<?= $key ?>][comissao]" value="<?= $unidade['comissao']?>">
 						</td>
 						<td>
 							<button class="remove-unidade btn btn-danger" >
@@ -57,7 +57,7 @@
 							<input class="form-control" type="text" name="unidades[0][bloco-quadra]">
 						</td>
 						<td>
-							<input class="form-control" type="text" name="unidades[0][unidade]">
+							<input id="comissao-0" class="form-control" type="text" name="unidades[0][comissao]">
 						</td>
 						<td>
 							<button class="remove-unidade btn btn-danger" >
@@ -76,15 +76,14 @@
 </div>
 <script type="text/javascript" src="<?php echo $this->baseUrl(); ?>/js/helper.js" ></script>
 <script>
-
-	$('#comissao').keyup(function(e){
-		var valor = currency_br($(this).val());
-
-		if(valor != undefined){
-			$(this).val(valor);
-		}
-		
-	});
+    $('body').on('keyup', '[id^=comissao]', function(e){
+    	var valor = currency_br($(this).val());
+    
+    	if(valor != undefined){
+    		$(this).val(valor);
+    	}
+    	
+    });
 
 	var totalUnidades = $("#lista-unidades tr").length - 1;	
 		$("#add-unidades").click(function(e){
@@ -95,7 +94,7 @@
             tr +='<input class="form-control" type="text" name="unidades['+ totalUnidades +'][bloco-quadra]" value="" />';                        
             tr +='</td>';            
             tr +='<td>';            
-            tr +='<input class="form-control" type="text" name="unidades['+ totalUnidades +'][unidade]" value="" />';                        
+            tr +='<input id="comissao-'+ totalUnidades +'" class="form-control" type="text" name="unidades['+ totalUnidades +'][comissao]" value="" />';                        
             tr +='</td>';            
             tr +='<td>';
             tr +='<a class="remove-unidade btn btn-danger" >';
@@ -128,3 +127,4 @@
 		});
 
 </script>
+

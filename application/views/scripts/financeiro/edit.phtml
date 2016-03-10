@@ -7,8 +7,8 @@
 			<table class="table" >
 			<thead>
 				<tr>
-					<th>
-						<div class="form-group" >
+					<th colspan="10">
+						<div style="width: 200px" class="form-group" >
 							<label>Solicitar liberação de pagamento</label>
 							<select class="form-control" name="liberar" >
 								<option value="1" <?= $this->form->liberar->getValue() ? 'selected' : '' ?> >Sim</option>
@@ -42,7 +42,7 @@
 		<?php $parcelas = $this->form->parcelas_pagas->getValue(); if(!empty($parcelas)): ?>
 			<?php 
 			     $parcelas = json_decode($parcelas, true);			     
-			     $comissoes = json_decode($this->form->comissao->getValue(), true);
+			     $comissoes = empty($this->form->comissao->getValue()) ? array() : json_decode($this->form->comissao->getValue(), true);
 			?>
 			<?php foreach ($parcelas as $key => $parcela): ?>
 				<tr>
@@ -119,7 +119,7 @@
 			<label for="restante">
 				Restante R$
 			</label>
-			<input id="restante" class="form-control" name="totalrestante" value="<?= $this->form->restante->getValue(); ?>" type="text" disabled>
+			<input id="restante" class="form-control" name="totalrestante" value="<?= $this->form->restante->getValue(); ?>" type="text" disabled >
 		</div>
 		
 		<?php if(!empty($comissoes)): ?>
@@ -158,13 +158,13 @@
 				<?php endforeach; ?>
 				</ul>
 			</div>
-		<?php endif; ?>
-		<input type="hidden" name="id_cliente" value="<?= $this->form->id_cliente->getValue(); ?>">			
-		<input type="hidden" name="locked_by" value="<?= $this->form->locked_by->getValue(); ?>">			
+		<?php endif; ?>					
+		<input type="hidden" name="locked_by" value="<?= $this->form->locked_by->getValue(); ?>">
+		<input type="hidden" name="id_proposta" value="<?= $this->form->id_proposta->getValue(); ?>">
+		<input type="hidden" name="last_user_id" value="<?= CURRENT_USER_ID; ?>">			
 		<input type="hidden" name="nome" value="<?= $this->form->nome->getValue(); ?>">
 		<input type="hidden" name="recebido" value="<?= $this->form->recebido->getValue(); ?>">
-		<input type="hidden" name="restante" value="<?= $this->form->restante->getValue(); ?>">
-		<input type="hidden" name="sinal" value="<?= $this->form->sinal->getValue(); ?>">								
+		<input type="hidden" name="restante" value="<?= $this->form->restante->getValue(); ?>">										
 		<input type="hidden" name="total" value="<?= $this->data['total']?>">						
 		</form>
 	</div>	

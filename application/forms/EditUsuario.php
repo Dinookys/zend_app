@@ -60,6 +60,17 @@ class Application_Form_EditUsuario extends Zend_Form
         ))
         ->setDefault('acesso', '0');
 
+        $this->addElement('password','password',array(
+            'label'  =>  'Alterar senha',
+            'required'  =>  false,
+            'filters'   =>  array('StringTrim'),
+            'class'     => 'form-control',
+            'autocomplete' => 'off',
+            'validators' => array(
+                array('StringLength', false, array('min' => 4, 'max' => 10))
+            )
+        ));
+
         $this->addElement('hidden','id',array(
             'label'  =>  ''
         )); 

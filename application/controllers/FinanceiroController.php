@@ -9,6 +9,8 @@ class FinanceiroController extends Zend_Controller_Action
 
     protected $_acl = null;
 
+    protected $_acl_model = null;
+
     protected $_actionName = null;
 
     protected $_controllerName = null;
@@ -25,8 +27,8 @@ class FinanceiroController extends Zend_Controller_Action
         if (! $auth->hasIdentity()) {
             $this->redirect('/login');
         } else {
-            $acl = new Application_Model_Acl_Acl();
-            if (! $acl->isAllowed()) {
+            $this->_acl_model = new Application_Model_Acl_Acl();
+            if (! $this->_acl_model->isAllowed()) {
                 $this->redirect('/error/forbidden');
             }
         }
@@ -62,6 +64,11 @@ class FinanceiroController extends Zend_Controller_Action
             );
         }
         $this->view->date = new Zend_Date();
+        $this->view->selectOptions = array(
+            'dinheiro' => 'Dinheiro',
+            'cheque' => 'Cheque',
+            'cartão' => 'Cartão'
+        );
     }
 
     public function indexAction()
@@ -92,53 +99,16 @@ class FinanceiroController extends Zend_Controller_Action
         $form = new Application_Form_Financeiro();
         $id = $request->getParam('id');
         
-        $data = $model_proposta->getPropostaAutorizada($id);
-        
-        $dados_extras = json_decode($data['dados_extras'], true);
-        $data['nome'] = $dados_extras['nome'];
-        $data['data_proposta'] = $dados_extras['data_proposta'];
-        
-        // Se estiver zerado sera gerado um erro informando a situação
-        $empreendimento = $model_imovel->selectById($dados_extras['imovel']);
-        
-        if (empty($empreendimento['comissao'])) {
-            $this->view->messages = array(
-                'Valor da comissão do empreendimento: <b>' . $empreendimento['nome'] . '</b> não informado!'
-            );
-            $this->view->message_type = 'alert-warning';
-            $this->view->hide = true;
-            return false;
-        } else {
-            // Passando o valor da comissão do imóvel
-            $data['total'] = $empreendimento['comissao'];
-        }
-        
-        unset($data['dados_extras']);
-        
-        if ($data['locked'] == 1 && $data['locked_by'] != CURRENT_USER_ID && $data['locked_by'] != 0 && in_array(CURRENT_USER_ROLE, $this->_acl['fullControl']) == false) {
-            $this->view->messages = array(
-                'Item bloqueado para edição'
-            );
-            $this->view->form = '';
-            $this->view->hide = true;
-            return false;
-        } else {
-            $model_proposta->lockRow($data['id_cliente'], CURRENT_USER_ID, 1);
-        }
-        
         if ($request->isPost()) {
+            
             $data = $request->getPost();
-            
-            if (isset($data['parcelas_pagas'])) {
-                $data['parcelas_pagas'] = json_encode($data['parcelas_pagas']);
-            }
-            
-            if (isset($data['comissao'])) {
-                $data['comissao'] = json_encode($data['comissao']);
-            }
+            $data['parcelas_pagas'] = isset($data['parcelas_pagas']) ? json_encode($data['parcelas_pagas']) : array();
+            $data['comissao'] = isset($data['comissao']) ? json_encode($data['comissao']) : json_encode(array());
             
             if ($form->valid($data)) {
                 $dataUpdate = $data;
+                
+                $getCondioes = $model_proposta->selectCondicoesPagamento($id);
                 
                 // Removendo campos inexistentes para fazer update
                 // TODO: colocar esse processo dinamico dentro do Model
@@ -146,73 +116,95 @@ class FinanceiroController extends Zend_Controller_Action
                 unset($dataUpdate['locked_by']);
                 unset($dataUpdate['nome']);
                 unset($dataUpdate['total']);
+                $dataUpdate['last_modified'] = date('Y-d-m h:i:s', time());
                 
+                // Tenta atualizar se não acresenta uma nova condição
                 if ($model_proposta->updateCondicoesPagamento($id, $dataUpdate)) {
                     $this->view->messages = array(
                         'Atualizado com sucesso!'
                     );
                     $this->view->message_type = 'alert-success';
+                    // Se não existir a condição ele cria uma nova.
+                } else 
+                    if (empty($getCondioes)) {
+                        $model_proposta->insertCondicoesPagamento($dataUpdate);
+                        $this->view->messages = array(
+                            'Dados inserido com sucesso!'
+                        );
+                        $this->view->message_type = 'alert-success';
+                    } else {
+                        $this->view->messages = array(
+                            'Sem alterações!'
+                        );
+                        $this->view->message_type = 'alert-info';
+                    }
+            }
+        } else {
+            
+            $data = $model_proposta->getPropostaAutorizada($id);
+            $is_locked = $this->_acl_model->checkLocked($data['locked'],$data['locked_by']);
+            
+            if ($is_locked) {
+                $this->view->messages = array(
+                    'Item bloqueado para edição'
+                );
+                $this->view->form = '';
+                $this->view->hide = true;
+                return false;
+            } else {
+                
+                $model_proposta->lockRow($data['id_proposta'], CURRENT_USER_ID, 1);
+                $dados_extras = json_decode($data['dados_extras'], true);
+                $data['nome'] = $dados_extras['nome'];
+                $data['data_proposta'] = $dados_extras['data_proposta'];
+                unset($data['dados_extras']);
+                
+                // Se estiver zerado sera gerado um erro informando a situação
+                $empreendimento = $model_imovel->selectById($dados_extras['imovel']);                                
+                
+                if (empty($empreendimento)) {
+                    $this->view->messages = array(
+                        'Empreendimento não informado na proposta!'
+                    );
+                    $this->view->message_type = 'alert-warning';
+                    $this->view->hide = true;
+                    return false;
+                } else {
+                    $unidades = json_decode($empreendimento['unidades'],true);
+                    // Passando o valor da comissão do imóvel
+                    foreach ($unidades as $unidade){
+                        if($unidade['bloco-quadra'] == $dados_extras['imovel_bloco_quadra']){
+                            $data['total'] = $unidade['comissao'];
+                        }
+                    }
                 }
             }
         }
         
         $this->view->barTitle = 'Parcelas: ' . $data['nome'];
-        $this->view->selectOptions = array(
-            'dinheiro' => 'Dinheiro',
-            'cheque' => 'Cheque',
-            'cartão' => 'Cartão'
-        );
         
         $form->populate($data);
         $this->view->form = $form;
         $this->view->data = $data;
     }
 
+    public function recebidosAction()
+    {
+        $model = new Application_Model_Propostas();
+        $select = $model->getPagamentosByUser($this->_ids);
+        $paginator = new Zend_Paginator(new Zend_Paginator_Adapter_DbSelect($select));
+        $paginator->setItemCountPerPage($this->_custom['itemCountPerPage'])->setCurrentPageNumber($this->_getParam('page', 1));
+        
+        $this->view->paginator = $paginator;
+    }
+
     public function trashAction()
     {
-        $request = $this->_request;
-        $model = new Application_Model_Clientes();
-        
-        if ($request->isPost()) {
-            $data = array_keys($request->getPost());
-            $totalData = count($data);
-            
-            $textoRemovido = 'item movido para lixeira';
-            if ($totalData > 1) {
-                $textoRemovido = 'itens movidos para lixeira';
-            }
-            
-            foreach ($data as $id) {
-                $model->trash($id, 0);
-            }
-            
-            $this->_FlashMessenger->setNamespace('index')->addMessage(sprintf('%s %s com sucesso!', $totalData, $textoRemovido));
-        }
-        
-        $this->redirect('/comissoes/index');
+        $this->redirect('/financeiro/index');
     }
 
     public function restoreAction()
     {
-        $request = $this->_request;
-        $model = new Application_Model_Clientes();
-        
-        if ($request->isPost()) {
-            $data = array_keys($request->getPost());
-            $totalData = count($data);
-            
-            $textoRemovido = 'item restaurado ';
-            if ($totalData > 1) {
-                $textoRemovido = 'itens restaurados';
-            }
-            
-            foreach ($data as $id) {
-                $model->trash($id, 1);
-            }
-            
-            $this->_FlashMessenger->setNamespace('index')->addMessage(sprintf('%s %s com sucesso!', $totalData, $textoRemovido));
-        }
-        
         $this->redirect('/' . $this->_controllerName);
     }
 
@@ -224,12 +216,14 @@ class FinanceiroController extends Zend_Controller_Action
         if ($request->isPost()) {
             $data = $request->getPost();
             if (isset($data['locked_by']) == CURRENT_USER_ID) {
-                $model->lockRow($data['id_cliente'], 0, 0);
+                $model->lockRow($data['id_proposta'], 0, 0);
             }
         }
         $this->redirect('/' . $this->_controllerName);
     }
 }
+
+
 
 
 

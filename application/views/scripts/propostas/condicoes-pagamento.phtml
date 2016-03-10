@@ -18,25 +18,6 @@
 <form class="container " id="<?= $this->form->getId(); ?>" method="<?= $this->form->getMethod(); ?>" enctype="<?= $this->form->getEnctype(); ?>">
 		<div class="row" >
 			<table class="table table-striped table-condensed table-bordered" >
-    			<tr>
-    				<td>
-    					<label>
-    						<?= $this->form->sinal->getLabel() ?>
-    					</label>
-    					<div class="input-group col-xs-4">    						
-    						<span class="input-group-addon" >R$</span>
-    						<input class="form-control" type="text" name="sinal" value="<?= $this->form->sinal->getValue() ?>" />
-    					</div>    	
-    					<?php if($this->form->sinal->getMessages()): ?>
-    						<ul class="errors">
-        					<?php foreach ($this->form->sinal->getMessages() AS $message) : ?>
-        						<li><?= $message; ?></li>	
-        					<?php endforeach;?>				         
-    					</ul>
-    					<?php endif;?>           	
-                    	<?= $this->form->id_cliente ?>
-    				</td>
-    			</tr>
     			<tr>    				
     				<td>
     					<table class="table" >
@@ -135,8 +116,9 @@
     				</td>
     			</tr>	
     		</table>
-		</div>
-		<?= $this->form->enviar; ?>
+    		<?= $this->form->id_proposta; ?>
+			<?= $this->form->enviar; ?>
+		</div>		
 	</form>
 <?php endif; ?>	
 	<script>

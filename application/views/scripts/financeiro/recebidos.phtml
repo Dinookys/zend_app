@@ -1,0 +1,70 @@
+<?= $this->render('common/top-bar-no-buttons.phtml'); ?>
+<div class="container">
+<div class="row">
+<?= $this->render('common/message.phtml'); ?>
+</div>
+</div>
+<div class="container panel panel-default">	
+    <table class="table table-condensed table-hover table-striped" >
+    	<thead>
+    		<tr>
+    			<th>
+    				Cliente
+    			</th>
+    			<th>
+    			 	Última atualização
+    			</th>
+    			<th>
+    				Atualizado por
+    			</th>
+    		</tr>
+    	</thead>
+    	<tbody>
+    		<?php foreach ($this->paginator AS $key => $data){
+                $cliente = json_decode($data['dados_cliente'],true);
+                $comissoes = json_decode($data['comissao'],true);                
+            ?>      
+        		<tr>
+        			<td>
+        				<a class="details" href="#" data-show="<?= $key; ?>" >
+        					<?= $cliente['nome']; ?>
+        				</a>
+        			</td>        			     			
+        			<td>
+						<?php if($data['last_modified'] != '0000-00-00 00:00:00') :
+						$this->date->set($data['last_modified']);?>
+						<?= $this->date->get('dd/MM/YYYY h:m:s') ?>
+						<?php endif; ?>
+					</td>
+					<td>
+						<?= $this->model_user->selectNameById($data['last_user_id']) ?>
+					</td>        			      			
+        		</tr>
+        		<tr class="" >
+        			<td colspan="3" >
+        				<?php if(!empty($comissoes)) : ?>
+        					<ul class="list-group" >
+        					<li class="list-group-item disabled" ><span class="badge">Parcela</span> <b>Valor</b></li>
+        					<?php 
+        					   foreach ($comissoes AS $key => $comissao) {
+    					           foreach ($comissao AS $k => $value){ ?>    					               					           
+            						<?php if($k == strtolower(CURRENT_USER_ROLE)) : ?>
+            							<li class="list-group-item <?php echo $value ? "list-group-item-success" : "list-group-item-warning" ?> " >
+            								<span class="badge">Nº <?= $key + 1 ?></span>
+            								<?php if($value) : ?>
+            									<span>R$ <?= $value;?></span>
+            								<?php else : ?>
+            									<span>---</span>
+            								<?php endif;?> 
+        								</li>					
+            						<?php endif; ?>            							
+        					<?php }
+    					     } ?> 
+            				</ul>       				
+        				<?php endif; ?>        					
+        			</td>
+        		</tr>
+            <?php } ?>
+    	</tbody>
+    </table>
+</div>

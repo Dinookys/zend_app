@@ -23,7 +23,7 @@
 				<?php foreach ($this->paginator as $key => $data) : ?>
 					<tr>
 					<td><input class="checkbox" id="<?= $data['id']; ?>" type="checkbox"
-						name="<?= $data->id; ?>"></td>
+						name="<?= $data['id']; ?>"></td>
 					<td>
 						<a href="<?= $this->baseUrl() ?>/usuarios/edit/id/<?= $data['id'] ?>">
 							<?= $data['nome']; ?>

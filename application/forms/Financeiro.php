@@ -46,13 +46,13 @@ class Application_Form_Financeiro extends Zend_Form
             'decorators' => $this->setColSize(12, false)
         ));
         
-        $this->addElement('hidden', 'id_cliente', array(
+        $this->addElement('hidden', 'id_proposta', array(
             'value' => '',
             'decorators' => $this->setColSize(1, false)
         ));
         
         $this->addElement('hidden', 'last_user_id', array(
-            'value' => '',
+            'value' => CURRENT_USER_ID,
             'decorators' => $this->setColSize(1, false)
         ));
         

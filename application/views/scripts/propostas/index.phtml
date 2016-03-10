@@ -25,9 +25,9 @@
 			</thead>
 			<tbody>			
 				<?php if($this->paginator) : ?>			
-				<?php foreach ($this->paginator as $key => $data) :
-				    $data = array_merge($data, json_decode($data['dados_cliente'], true));
+				<?php foreach ($this->paginator as $key => $data) :				    
 				    $data = array_merge($data, json_decode($data['dados_extras'], true));
+				    $empreendimento = $this->empreendimento->selectById($data['id']);
 				    unset($data['dados_extra']);
 				    unset($data['dados_cliente']);
 				?>
@@ -57,7 +57,7 @@
 						<?= $this->model_user->selectNameById($data['last_user_id']); ?>
 					</td>					
 					<td>
-						<?php if(in_array(CURRENT_USER_ROLE, array('Administrador','Diretor','Gerente'))) : ?>
+						<?php if(in_array(CURRENT_USER_ROLE, array('Administrador','Coordenador','Gerente'))) : ?>
 							<select rel="<?= $data['id']; ?>" class="form-control status" >
 								<option value="1" <?php if($data['status'] == '1') echo "Selected='Selected'" ?> >Aprovado</option>
 								<option value="2" <?php if($data['status'] == '2') echo "Selected='Selected'" ?> >Aguardando</option>
@@ -77,7 +77,7 @@
 						<?php endif; ?>
 					</td>
 					<td>
-						<?php if(in_array(CURRENT_USER_ROLE, array('Administrador','Diretor'))) : ?>
+						<?php if(in_array(CURRENT_USER_ROLE, array('Administrador','Coordenador', 'Gerente'))) : ?>
 							<select <?php if(in_array($data['status'], array('2','3'))) echo 'disabled' ?> rel="<?= $data['id']; ?>" class="form-control autorizado" >
 								<option value="0" <?php if($data['autorizado'] == '0') echo "Selected='Selected'" ?> >Não</option>
 								<option value="1" <?php if($data['autorizado'] == '1') echo "Selected='Selected'" ?> >Sim</option>
@@ -87,9 +87,24 @@
 						<?php endif; ?>
 					</td>
 					<td>
-						<a title="Imprimir proposta" href="<?= $this->baseUrl() ?>/<?= $this->controllerName; ?>/proposta/id/<?= $data['id'] ?>" class="btn btn-warning">
-    						<i class="glyphicon glyphicon-print" ></i>
+						<?php if($empreendimento['cad_corretagem']) : ?>
+						<a title="Imprimir contrato de mediação" href="<?= $this->baseUrl() ?>/<?= $this->controllerName; ?>/mediacao/id/<?= $data['id'] ?>" class="btn btn-info" >
+    						<i class="glyphicon glyphicon-list-alt" ></i>
     					</a>
+    					<?php else : ?>
+    						<button title="Sem contrato de mediação" class="btn btn-info" disabled="disabled" >
+    							<i class="glyphicon glyphicon-list-alt" ></i>
+    						</button>
+						<?php endif; ?>
+						<?php if($data['status'] == 1) : ?>
+							<a title="Imprimir proposta" href="<?= $this->baseUrl() ?>/<?= $this->controllerName; ?>/proposta/id/<?= $data['id'] ?>" class="btn btn-warning">
+	    						<i class="glyphicon glyphicon-print" ></i>
+	    					</a>
+	    				<?php else : ?>
+    						<button title="Proposta sem aprovação" class="btn btn-warning" disabled="disabled" >
+    							<i class="glyphicon glyphicon-print" ></i>
+    						</button>
+    					<?php endif; ?>
 					</td>
 				</tr>				
 				<?php endforeach; ?>

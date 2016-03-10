@@ -54,13 +54,6 @@ class Application_Form_CadastroCliente extends Zend_Form
         		'decorators' => $this->setColSize(12)
         ));
         
-        $this->addElement('hidden','imovel',array(
-            'label'  =>  '',            
-            'filters'   =>  array('StringTrim'),
-            'class'     => 'form-control',
-            'decorators' => $this->setColSize(12)
-        ));
-        
         // Adicionando tag HTML usando description do elemento
         $this->addElement('hidden', 'data_desc', array(            
             'ignore' => true,
@@ -113,7 +106,7 @@ class Application_Form_CadastroCliente extends Zend_Form
         ));
         
         $this->addElement('text','data_nasc',array(
-            'label'  =>  'Dt de Nascimento',
+            'label'  =>  'Data de Nascimento',
             'required'  =>  false,
             'description' => '<span class="glyphicon glyphicon-calendar"></span>',
             'filters'   =>  array('StringTrim'),

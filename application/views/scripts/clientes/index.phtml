@@ -17,7 +17,7 @@
 					<th>Data do cadastro</th>
 					<th>Criado</th>
 					<th>Modificado</th>
-					<th class="text-center" >Proposta</th>
+					<th class="text-center" >Criar proposta</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -51,7 +51,7 @@
 						<?= $this->model_user->selectNameById($data['last_user_id']); ?>
 					</td>
 					<td class="text-center" >
-						<a class="btn btn-info" href="<?= $this->baseUrl()?>/propostas/edit/id/<?= $data['id'] ?>" >
+						<a title="Criar uma nova proposta para: <?= $data['nome']; ?>" class="btn btn-info" href="<?= $this->baseUrl()?>/propostas/edit/id/0/cid/<?= $data['id']; ?>" >
 							<i class="glyphicon glyphicon-info-sign" ></i>
 						</a>
 					</td>				

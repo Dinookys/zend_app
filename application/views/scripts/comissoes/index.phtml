@@ -1,4 +1,4 @@
-<?= $this->render('common/top-bar-list-sample.phtml'); ?>
+<?= $this->render('common/top-bar-no-buttons.phtml'); ?>
 <div class="container">
 <div class="row">
 <?= $this->render('common/message.phtml'); ?>
@@ -13,30 +13,54 @@
 						<input type="checkbox" id="checkAll" title="Seleciona todos os itens">
 					</th>
 					<th>Nome</th>
-					<th>CPF</th>					
+					<th>CPF</th>
+					<th>Data da Proposta</th>
+					<th>Última atualização</th>
+					<th>Atualizado por</th>
+					<th>Valor a receber</th>
+					<th>Valor recebido</th>
 				</tr>
 			</thead>
 			<tbody>
-				<?php if($this->paginator) : ?>		
+				<?php if($this->paginator) : ?>	
 				<?php foreach ($this->paginator as $key => $data) :
-				    $data = array_merge($data, json_decode($data['dados_extras'], true));
+				    $data = array_merge($data, json_decode($data['dados_extras'], true));				    
 				?>
 					<tr>
-					<td><input class="checkbox" id="<?= $data['id_cliente']; ?>" type="checkbox"
-						name="<?= $data['id_cliente']; ?>"></td>
+					<td><input class="checkbox" id="<?= $data['id']; ?>" type="checkbox"
+						name="<?= $data['id']; ?>"></td>
 					<td>
 						
 						<?php if($data['locked'] == 1): ?>
 							 <i title="Sendo editado por: <?= $this->model_user->selectNameById($data['locked_by']) ?> " class="glyphicon glyphicon-lock"></i>
 						<?php endif; ?>
 					
-						<a href="<?= $this->baseUrl() ?>/<?= $this->controllerName; ?>/edit/id/<?= $data['id_cliente'] ?>">
+						<a title="Clique para visualizar parcelas de: <?= $data['nome']; ?>" href="<?= $this->baseUrl() ?>/<?= $this->controllerName; ?>/edit/id/<?= $data['id'] ?>">
 							<?= $data['nome']; ?>
 						</a>
 					</td>
 					<td>
 						<?= $data['cpf']; ?>
-					</td>							
+					</td>
+					<td>
+						<?php $this->date->set($data['data']);?>
+						<?= $this->date->get('dd/MM/YYYY') ?>
+					</td>
+					<td>
+						<?php if($data['last_modified'] != '0000-00-00 00:00:00') :
+						$this->date->set($data['last_modified']);?>
+						<?= $this->date->get('dd/MM/YYYY h:m:s') ?>
+						<?php endif; ?>
+					</td>
+					<td>
+						<?= $this->model_user->selectNameById($data['last_user_id']) ?>
+					</td>
+					<td>
+						<?= $data['restante']; ?>
+					</td>	
+					<td class="" >
+						<?= $data['recebido']; ?>
+					</td>				
 				</tr>
 				<?php endforeach; ?>
 				<?php endif; ?>
