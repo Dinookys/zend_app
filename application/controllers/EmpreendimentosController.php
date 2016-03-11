@@ -10,7 +10,7 @@ class EmpreendimentosController extends Zend_Controller_Action
     protected $_acl = null;
 
     protected $_acl_model = null;
-    
+
     protected $_actionName = null;
 
     protected $_controllerName = null;
@@ -71,11 +71,21 @@ class EmpreendimentosController extends Zend_Controller_Action
         $request = $this->_request;
         
         $filter = $request->getParam('filter');
-        if(isset($filter)){
-            $select = $model->selectQueryList(0);
-        }else{
-            $select = $model->selectQueryList(1);
-        }        
+        
+        if(is_null($filter)){
+            $filter = 1;
+        }
+        
+        $like = NULL;
+        
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $like = $data['search'];
+            $this->view->data = $data;
+        }
+        
+        $select = $model->selectQueryList($filter, $like);
+        
         $this->view->controllerName = $this->_controllerName;
         $this->view->model_user = new Application_Model_Usuarios();
         
@@ -275,7 +285,34 @@ class EmpreendimentosController extends Zend_Controller_Action
         }
     }
 
+    public function archiveAction()
+    {
+		$request = $this->_request;
+		$model = new Application_Model_Empreendimentos();
+
+		if ($request->isPost()) {
+			$data = array_keys($request->getPost());
+			$totalData = count($data);
+
+			$textoRemovido = 'item movido para arquivados';
+			if ($totalData > 1) {
+				$textoRemovido = 'itens movidos para arquivados';
+			}
+
+			foreach ($data as $id) {
+				$model->trash($id, 3);
+			}
+
+			$this->_FlashMessenger->setNamespace($this->_controllerName)->addMessage(sprintf('%s %s com sucesso!', $totalData, $textoRemovido));
+		}
+
+		$this->redirect('/'.$this->_controllerName);
+    }
+
+
 }
+
+
 
 
 

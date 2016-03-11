@@ -105,6 +105,7 @@ class Application_Form_EditUsuario extends Zend_Form
         ));
         
         $this->setAttrib('id', 'editar_usuario');
+        $this->setAttrib('autocomplete', 'off');
         $this->setAttrib('class', 'form');
         $this->setMethod('post');
         

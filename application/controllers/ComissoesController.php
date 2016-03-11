@@ -8,7 +8,7 @@ class ComissoesController extends Zend_Controller_Action
     protected $_custom = null;
 
     protected $_acl = null;
-    
+
     protected $_acl_model = null;
 
     protected $_actionName = null;
@@ -53,7 +53,7 @@ class ComissoesController extends Zend_Controller_Action
         $this->view->controllerName = $this->_controllerName = $this->getRequest()->getControllerName();
         $this->view->actionName = $this->_actionName = $this->getRequest()->getActionName();
         $this->view->user = $this->data_user;
-        $this->_FlashMessenger->clearMessages($this->_controllerName);
+        $this->view->messages = $this->_FlashMessenger->getMessages($this->_controllerName);
         
         if ($this->data_user->childrens_ids) {
             $this->_ids = $this->data_user->childrens_ids;
@@ -75,8 +75,16 @@ class ComissoesController extends Zend_Controller_Action
             $filter = 1;
         }
         
+        $like = NULL;
+        
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $like = $data['search'];
+            $this->view->data = $data;
+        }
+        
         $model_proposta = new Application_Model_Propostas();
-        $select = $model_proposta->getPropostasAutorizadas($filter, true);
+        $select = $model_proposta->getPropostasAutorizadas($filter, true, $like);
         
         $paginator = new Zend_Paginator(new Zend_Paginator_Adapter_DbSelect($select));
         $paginator->setItemCountPerPage($this->_custom['itemCountPerPage'])->setCurrentPageNumber($this->_getParam('page', 1));
@@ -175,32 +183,13 @@ class ComissoesController extends Zend_Controller_Action
 
     public function trashAction()
     {
-        $request = $this->_request;
-        $model = new Application_Model_Clientes();
-        
-        if ($request->isPost()) {
-            $data = array_keys($request->getPost());
-            $totalData = count($data);
-            
-            $textoRemovido = 'item movido para lixeira';
-            if ($totalData > 1) {
-                $textoRemovido = 'itens movidos para lixeira';
-            }
-            
-            foreach ($data as $id) {
-                $model->trash($id, 0);
-            }
-            
-            $this->_FlashMessenger->setNamespace('index')->addMessage(sprintf('%s %s com sucesso!', $totalData, $textoRemovido));
-        }
-        
         $this->redirect('/' . $this->_controllerName);
     }
 
     public function restoreAction()
     {
         $request = $this->_request;
-        $model = new Application_Model_Clientes();
+        $model = new Application_Model_Propostas();
         
         if ($request->isPost()) {
             $data = array_keys($request->getPost());
@@ -212,20 +201,44 @@ class ComissoesController extends Zend_Controller_Action
             }
             
             foreach ($data as $id) {
-                $model->trash($id, 1);
+                $model->trashFinanceiro($id, 1);
             }
             
-            $this->_FlashMessenger->setNamespace('index')->addMessage(sprintf('%s %s com sucesso!', $totalData, $textoRemovido));
+            $this->_FlashMessenger->setNamespace($this->_controllerName)->addMessage(sprintf('%s %s com sucesso!', $totalData, $textoRemovido));
         }
         
-        $this->redirect('/comissoes/index');
+        $this->redirect('/' . $this->_controllerName);
     }
 
-    public function unlockAction()
+    public function archiveAction()
     {
         $request = $this->_request;
         $model = new Application_Model_Propostas();
         
+        if ($request->isPost()) {
+            $data = array_keys($request->getPost());
+            $totalData = count($data);
+        
+            $textoRemovido = 'item movido para arquivados ';
+            if ($totalData > 1) {
+                $textoRemovido = 'itens movido para arquivados ';
+            }
+        
+            foreach ($data as $id) {
+                $model->trashFinanceiro($id, 3);
+            }
+        
+            $this->_FlashMessenger->setNamespace($this->_controllerName)->addMessage(sprintf('%s %s com sucesso!', $totalData, $textoRemovido));
+        }
+        
+        $this->redirect('/' . $this->_controllerName);
+    }
+    
+    public function unlockAction()
+    {
+        $request = $this->_request;
+        $model = new Application_Model_Propostas();
+    
         if ($request->isPost()) {
             $data = $request->getPost();
             if (isset($data['locked_by']) == CURRENT_USER_ID) {
@@ -234,5 +247,9 @@ class ComissoesController extends Zend_Controller_Action
         }
         $this->redirect('/' . $this->_controllerName);
     }
+    
+
 }
+
+
 

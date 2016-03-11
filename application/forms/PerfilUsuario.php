@@ -46,6 +46,7 @@ class Application_Form_PerfilUsuario extends Zend_Form
             'required'  =>  true,
             'filters'   =>  array('StringTrim'),
             'class'     => 'form-control',
+            'autocomplete' => 'off',
             'validators' => array(
                 array('identical', false, array('token' => 'password'))
             )

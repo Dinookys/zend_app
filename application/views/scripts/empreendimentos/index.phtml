@@ -59,6 +59,7 @@
     			<?php endif; ?>
 			</tbody>
 		</table>
+		<input type="hidden" name="search" value="<?= isset($this->data['search']) ? $this->data['search'] : '' ?>" >
 	</form>
 	
 	
@@ -70,3 +71,6 @@
     	<div class="alert alert-warning text-center" >Nenhum dado encontrado!</div>
     <?php endif;?>
 </div>
+
+<?php //Pegando o script.js ?>
+<?= $this->render('common/scripts-js/script-bar-list.phtml'); ?>

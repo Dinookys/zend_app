@@ -12,6 +12,8 @@ class UsuariosController extends Zend_Controller_Action
     protected $_actionName = null;
 
     protected $_FlashMessenger = null;
+    
+    protected $_controllerName = null;
 
     public function preDispatch()
     {
@@ -44,27 +46,31 @@ class UsuariosController extends Zend_Controller_Action
         $this->view->headTitle(strtoupper($this->getRequest()
             ->getControllerName()) . ' | ' . $this->_custom['company_name']);
         
-        $this->view->controllerName = $this->getRequest()->getControllerName();
+        $this->view->controllerName = $this->_controllerName = $this->getRequest()->getControllerName();
         $this->view->actionName = $this->_actionName = $this->getRequest()->getActionName();
-        $this->view->messages = $this->_FlashMessenger->getMessages($this->_actionName);
+        $this->view->messages = $this->_FlashMessenger->getMessages($this->_controllerName);
         $this->view->user = $this->data_user;
         
     }
 
     public function indexAction()
     {
-        $request = $this->_request;
+        $request = $this->_request;        
+        
+        $like = NULL;
+        
         if ($request->isPost()) {
             $data = $request->getPost();
+            $like = $data['search'];
+            $this->view->data = $data;
         }
         
         $filter = $request->getParam('filter');
-        
-        if($filter == '0'){
-            $select = $this->_modelUsers->selectAll('0');
-        }else{
-            $select = $this->_modelUsers->selectAll('1');
+        if($filter == ""){
+            $filter = 1;
         }
+        
+        $select = $this->_modelUsers->selectAll($filter, $like);
         
         $paginator = new Zend_Paginator(new Zend_Paginator_Adapter_DbSelect($select));
         $paginator->setItemCountPerPage($this->_custom['itemCountPerPage'])
@@ -114,7 +120,7 @@ class UsuariosController extends Zend_Controller_Action
             if ($form->isValid($data)) {
                 $checkData = $this->_modelUsers->select($data['email']);
                 
-                if ($checkData->id != $data['id'] && $checkData->email == $data['email']) {
+                if (!empty($checkData) && $checkData->id != $data['id'] && $checkData->email == $data['email']) {
                         $this->view->messages = array('O email <b>' . $data['email'] . '</b> já está cadastrado');
                 }else {
                     $this->_modelUsers->update($data);                    
@@ -215,7 +221,7 @@ class UsuariosController extends Zend_Controller_Action
     public function trashAction()
     {
         $request = $this->_request;
-        $model = new Application_Model_Clientes();
+        $model = new Application_Model_Usuarios();
         
         if ($request->isPost()) {
             $data = array_keys($request->getPost());
@@ -237,7 +243,61 @@ class UsuariosController extends Zend_Controller_Action
     }
 
     public function unlockAction()
-    {              
+    {
         $this->redirect('/usuarios/index');
     }
+
+    public function archiveAction()
+    {
+        $request = $this->_request;
+        $model = new Application_Model_Usuarios();
+        
+        if ($request->isPost()) {
+            $data = array_keys($request->getPost());
+            $totalData = count($data);
+        
+            $textoRemovido = 'item movido para arquivados';
+            if ($totalData > 1) {
+                $textoRemovido = 'itens movidos para arquivados';
+            }
+        
+            foreach ($data as $id) {
+                $model->trash($id, 3);
+            }
+        
+            $this->_FlashMessenger->setNamespace('index')->addMessage(sprintf('%s %s com sucesso!', $totalData, $textoRemovido));
+            
+        }
+        
+        $this->redirect('/usuarios/index');
+    }
+
+    public function restoreAction()
+    {
+        $request = $this->_request;
+        $model = new Application_Model_Usuarios();
+        
+        if ($request->isPost()) {
+            $data = array_keys($request->getPost());
+            $totalData = count($data);
+        
+            $textoRemovido = 'item restaurado ';
+            if ($totalData > 1) {
+                $textoRemovido = 'itens restaurados';
+            }
+        
+            foreach ($data as $id) {
+                $model->trash($id, 1);
+            }
+        
+            $this->_FlashMessenger->setNamespace($this->_controllerName)->addMessage(sprintf('%s %s com sucesso!', $totalData, $textoRemovido));
+        }
+        
+        $this->redirect('/usuarios/index');
+    }
+
+
 }
+
+
+

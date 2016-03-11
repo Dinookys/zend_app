@@ -19,13 +19,22 @@ class Application_Model_Empreendimentos
      * @throws Zend_Db_Exception
      * @return mixed|boolean
      */
-    public function selectQueryList($filter = 1)
+    public function selectQueryList($filter = 1, $like = NULL)
     {
         try {
             
             $select = new Zend_Db_Select($this->db);
             $select->from($this->name);
             $select->where('state=?', $filter);
+            
+            if(!is_null($like)){
+                $columns = array('nome','categoria','logradouro','incorporadora');
+                $select->where($columns[0] . ' LIKE ?', '%'. $like .'%' );
+                $select->orWhere($columns[1] . ' LIKE ?', '%'. $like .'%' );
+                $select->orWhere($columns[2] . ' LIKE ?', '%'. $like .'%' );
+                $select->orWhere($columns[3] . ' LIKE ?', '%'. $like .'%' );
+            }
+            
             $select->order('id DESC');            
             return $select;
             

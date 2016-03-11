@@ -3,21 +3,21 @@
 class ClientesController extends Zend_Controller_Action
 {
 
-    protected $data_user;
+    protected $data_user = null;
 
-    protected $_custom;
+    protected $_custom = null;
 
-    protected $_acl;
-    
-    protected $_acl_model;
+    protected $_acl = null;
 
-    protected $_actionName;
+    protected $_acl_model = null;
 
-    protected $_controllerName;
+    protected $_actionName = null;
 
-    protected $_FlashMessenger;
+    protected $_controllerName = null;
 
-    protected $_ids;
+    protected $_FlashMessenger = null;
+
+    protected $_ids = null;
 
     public function init()
     {
@@ -53,8 +53,7 @@ class ClientesController extends Zend_Controller_Action
         
         $this->view->controllerName = $this->_controllerName = $this->getRequest()->getControllerName();
         $this->view->actionName = $this->_actionName = $this->getRequest()->getActionName();
-        $this->view->user = $this->data_user;
-        $this->_FlashMessenger->clearMessages($this->_controllerName);
+        $this->view->user = $this->data_user;        
         
         if ($this->data_user->childrens_ids) {
             $this->_ids = $this->data_user->childrens_ids;
@@ -73,16 +72,24 @@ class ClientesController extends Zend_Controller_Action
         $request = $this->_request;
         $filter = $request->getParam('filter');
         
+        $like = NULL;
+        
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $like = $data['search'];
+            $this->view->data = $data;
+        }
+        
         if (is_null($filter)) {
             $filter = 1;
         }
         
         // Recuperando dados do clientes baseado no Perfil ativo.
         if (in_array(CURRENT_USER_ROLE, $this->_acl['fullControl'])) {            
-            $select = $model->selectAll($filter);
+            $select = $model->selectAll($filter, $like);
         } else {
             $ids = implode(',', $this->_ids);
-            $select = $model->selectByUsersIds($filter, $ids);
+            $select = $model->selectByUsersIds($filter, $ids, $like);
         }
         
         $paginator = new Zend_Paginator(new Zend_Paginator_Adapter_DbSelect($select));
@@ -254,7 +261,7 @@ class ClientesController extends Zend_Controller_Action
                 $model->trash($id, 0);
             }
             
-            $this->_FlashMessenger->setNamespace('index')->addMessage(sprintf('%s %s com sucesso!', $totalData, $textoRemovido));
+            $this->_FlashMessenger->setNamespace($this->_controllerName)->addMessage(sprintf('%s %s com sucesso!', $totalData, $textoRemovido));
         }
         
         $this->redirect('/clientes/index');
@@ -278,11 +285,35 @@ class ClientesController extends Zend_Controller_Action
                 $model->trash($id, 1);
             }
             
-            $this->_FlashMessenger->setNamespace('index')->addMessage(sprintf('%s %s com sucesso!', $totalData, $textoRemovido));
+            $this->_FlashMessenger->setNamespace($this->_controllerName)->addMessage(sprintf('%s %s com sucesso!', $totalData, $textoRemovido));
         }
         
         $this->redirect('/clientes/index');
     }
+    
+    public function archiveAction()
+    {       
+        $request = $this->_request;
+        $model = new Application_Model_Clientes();
+    
+        if ($request->isPost()) {
+            $data = array_keys($request->getPost());
+            $totalData = count($data);
+    
+            $textoRemovido = 'item movido para arquivados ';
+            if ($totalData > 1) {
+                $textoRemovido = 'itens movido para arquivados';
+            }
+    
+            foreach ($data as $id) {
+                $model->trash($id, 3);
+            }
+    
+            $this->_FlashMessenger->setNamespace($this->_controllerName)->addMessage(sprintf('%s %s com sucesso!', $totalData, $textoRemovido));
+        }
+    
+        $this->redirect('/clientes/index');
+    }        
 
     public function unlockAction()
     {
@@ -299,3 +330,4 @@ class ClientesController extends Zend_Controller_Action
     }
 
 }
+

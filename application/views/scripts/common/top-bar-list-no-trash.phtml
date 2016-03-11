@@ -1,0 +1,18 @@
+<div class="navbar navbar-default">
+	<div class="container">
+		<div class="navbar-brand">
+			<?= $this->barTitle; ?>
+		</div>	
+		<div class="navbar-form navbar-left">
+			<div class="form-group" >				
+				<input type="text" id="search" class="form-control" placeholder="Pesquisar" value="<?= isset($this->data['search']) ? $this->data['search'] : '' ?>" />
+			</div>			
+		</div>
+		<div class="navbar-right" >			
+			<a id="verarquivados" href="<?= $this->baseUrl() . '/' . $this->controllerName ?>/index/filter/3" class="btn btn-default navbar-btn">Itens Arquivados</a>
+			<a style="display: none;" href="#" id="restore" class="btn btn-success navbar-btn" title="Restaura item(s) selecionados" ><i class="glyphicon glyphicon-retweet" ></i> Restaurar</a>
+			<a href="#" id="arquivados" class="btn btn-warning navbar-btn" title="Enviar item(s) selecionados para Arquivados" ><i class="glyphicon glyphicon-tasks" ></i> Arquivar</a>
+			<a href="#" id="edit" class="btn btn-info navbar-btn" title="Editar item selecionado" ><i class="glyphicon glyphicon-edit" ></i> Editar</a>			
+		</div>		
+	</div>
+</div>

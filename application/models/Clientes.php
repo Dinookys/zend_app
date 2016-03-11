@@ -16,13 +16,20 @@ class Application_Model_Clientes
      * @param number $filterState
      * @throws Zend_Exception
      */
-    public function selectAll($filterState = 1)
+    public function selectAll($filterState = 1, $like = NULL)
     {
         try {
             $select = new Zend_Db_Select($this->db);
-            $select->from('' . $this->name . '')
-                          ->where('state=?', $filterState)
-                          ->order('id DESC');        
+            $select->from('' . $this->name . '');
+            $select->where('state=?', $filterState);
+            
+            if(!is_null($like)){
+                $columns = array('cpf', 'dados_cliente');
+                $select->where($columns[0] . ' LIKE ?', '%'. $like .'%' );
+                $select->orWhere($columns[1] . ' LIKE ?', '%'. $like .'%' );                
+            }
+            
+            $select->order('id DESC');        
           return $select;
             
         } catch (Zend_Exception $e) {
@@ -36,15 +43,23 @@ class Application_Model_Clientes
      * @param string $userIds            
      * @throws Zend_Exception
      */
-    public function selectByUsersIds($filterState = 1, $ids)
+    public function selectByUsersIds($filterState = 1, $ids, $like = NULL)
     {
         try {
             
             $select = new Zend_Db_Select($this->db);
-            $select->from('' . $this->name . '')
-            ->where('state=?', $filterState)
-            ->where('created_user_id IN ( '. $ids .' )')
-            ->order('id DESC');
+            $select->from('' . $this->name . '');
+            $select->where('state=?', $filterState);
+            $select->where('created_user_id IN ( '. $ids .' )');
+            
+            if(!is_null($like)){
+                $columns = array('cpf', 'dados_cliente');
+                $select->where($columns[0] . ' LIKE ?', '%'. $like .'%' );
+                $select->orWhere($columns[1] . ' LIKE ?', '%'. $like .'%' );
+            }
+            
+            $select->order('id DESC');            
+            
             return $select;
 
         } catch (Zend_Exception $e) {

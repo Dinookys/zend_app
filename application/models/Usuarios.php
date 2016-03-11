@@ -134,7 +134,7 @@ class Application_Model_Usuarios
      * @param Zend_DB::FETCH $mode            
      * @return array
      */
-    public function selectAll($filterState = 1)
+    public function selectAll($filterState = 1, $like = NULL)
     {
         try {
             
@@ -152,6 +152,14 @@ class Application_Model_Usuarios
             );
             
             $select->where('u.state = ?', $filterState);
+            
+            if(!is_null($like)){                
+                $columns = array('u.nome', 'u.email', 'p.role');                
+                $select->where($columns[0] . ' LIKE ?', '%'. $like .'%' );
+                $select->orWhere($columns[1] . ' LIKE ?', '%'. $like .'%' );
+                $select->orWhere($columns[2] . ' LIKE ?', '%'. $like .'%' );
+            }
+            
             $select->order('u.id DESC');
             
             return $select;

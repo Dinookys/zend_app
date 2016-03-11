@@ -53,7 +53,7 @@ class FinanceiroController extends Zend_Controller_Action
         $this->view->controllerName = $this->_controllerName = $this->getRequest()->getControllerName();
         $this->view->actionName = $this->_actionName = $this->getRequest()->getActionName();
         $this->view->user = $this->data_user;
-        $this->_FlashMessenger->clearMessages($this->_controllerName);
+        $this->view->messages = $this->_FlashMessenger->getMessages($this->_controllerName);
         
         if ($this->data_user->childrens_ids) {
             $this->_ids = $this->data_user->childrens_ids;
@@ -65,9 +65,11 @@ class FinanceiroController extends Zend_Controller_Action
         }
         $this->view->date = new Zend_Date();
         $this->view->selectOptions = array(
-            'dinheiro' => 'Dinheiro',
-            'cheque' => 'Cheque',
-            'cartão' => 'Cartão'
+            'Dinheiro' => 'Dinheiro',
+            'Cheque' => 'Cheque',
+            'Boleto' => 'Boleto',
+            'Transferência' => 'Transferência',
+            'Nota promissória' => 'Nota promissória'
         );
     }
 
@@ -76,12 +78,20 @@ class FinanceiroController extends Zend_Controller_Action
         $request = $this->_request;
         $filter = $request->getParam('filter');
         
+        $like = NULL;
+        
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $like = $data['search'];
+            $this->view->data = $data;
+        }
+        
         if (is_null($filter)) {
             $filter = 1;
         }
         
         $model_proposta = new Application_Model_Propostas();
-        $select = $model_proposta->getPropostasAutorizadas($filter);
+        $select = $model_proposta->getPropostasAutorizadas($filter, false, $like);
         
         $paginator = new Zend_Paginator(new Zend_Paginator_Adapter_DbSelect($select));
         $paginator->setItemCountPerPage($this->_custom['itemCountPerPage'])->setCurrentPageNumber($this->_getParam('page', 1));
@@ -199,20 +209,63 @@ class FinanceiroController extends Zend_Controller_Action
     }
 
     public function trashAction()
-    {
-        $this->redirect('/financeiro/index');
+    {        
+        $this->redirect('/' . $this->_controllerName);
     }
 
     public function restoreAction()
     {
+        $request = $this->_request;
+        $model = new Application_Model_Propostas();
+        
+        if ($request->isPost()) {
+            $data = array_keys($request->getPost());
+            $totalData = count($data);
+            
+            $textoRemovido = 'item restaurado ';
+            if ($totalData > 1) {
+                $textoRemovido = 'itens restaurados';
+            }
+            
+            foreach ($data as $id) {
+                $model->trashFinanceiro($id, 1);
+            }
+            
+            $this->_FlashMessenger->setNamespace($this->_controllerName)->addMessage(sprintf('%s %s com sucesso!', $totalData, $textoRemovido));
+        }
+        
         $this->redirect('/' . $this->_controllerName);
     }
 
-    public function unlockAction()
+    public function archiveAction()
     {
         $request = $this->_request;
         $model = new Application_Model_Propostas();
         
+        if ($request->isPost()) {
+            $data = array_keys($request->getPost());
+            $totalData = count($data);
+        
+            $textoRemovido = 'item movido para arquivados ';
+            if ($totalData > 1) {
+                $textoRemovido = 'itens movido para arquivados ';
+            }
+        
+            foreach ($data as $id) {
+                $model->trashFinanceiro($id, 3);
+            }
+        
+            $this->_FlashMessenger->setNamespace($this->_controllerName)->addMessage(sprintf('%s %s com sucesso!', $totalData, $textoRemovido));
+        }
+        
+        $this->redirect('/' . $this->_controllerName);
+    }
+    
+    public function unlockAction()
+    {
+        $request = $this->_request;
+        $model = new Application_Model_Propostas();
+    
         if ($request->isPost()) {
             $data = $request->getPost();
             if (isset($data['locked_by']) == CURRENT_USER_ID) {
@@ -222,9 +275,7 @@ class FinanceiroController extends Zend_Controller_Action
         $this->redirect('/' . $this->_controllerName);
     }
 }
-
-
-
+    
 
 
 

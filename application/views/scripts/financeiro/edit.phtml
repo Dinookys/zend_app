@@ -57,8 +57,9 @@
 									<input type="hidden" name="parcelas_pagas[<?php echo $key; ?>][valor]" value="<?php echo $parcela['valor'] ?>"/>
 									<input class="form-control valor" type="text" value="<?php echo $parcela['valor'] ?>" disabled />
 								<?php else : ?>
-									<input class="form-control valor" type="text" name="parcelas_pagas[<?php echo $key; ?>][valor]" value="<?php echo $parcela['valor'] ?>" />
+									<input class="form-control valor" type="text" name="parcelas_pagas[<?php echo $key; ?>][valor]" value="<?php echo $parcela['valor'] ?>" />									
 								<?php endif; ?>
+								<input type="hidden" name="parcelas_pagas[<?php echo $key; ?>][restante]" value="<?php echo $parcela['restante'] ?>" />
 							</div>
 						</div>
 					</td>    							
@@ -128,32 +129,56 @@
 				<ul class="list-group" >
 				<?php foreach ($comissoes as $key => $comissao) : ?>
 					<li class="list-group-item" id="comissao-<?= $key ?>" >
-						<p>
-							<b>Parcela Nº <?php echo $key + 1; ?></b>
-						</p>
-						<p>
-							<b>Empresa: </b>R$ <?= !empty($comissao['empresa']) ? $comissao['empresa'] : '00,00' ?>
-							<input type="hidden" name="comissao[<?= $key ?>][empresa]" value="<?= $comissao['empresa'] ?>">
-						</p>
-						<p>
-							<b>Diretor: </b>R$ <?= !empty($comissao['diretor']) ? $comissao['diretor'] : '00,00' ?>
-							<input type="hidden" name="comissao[<?= $key ?>][diretor]" value="<?= $comissao['diretor'] ?>">
-						</p>
-						<p>
-							<b>Gerente: </b>R$ <?= !empty($comissao['gerente']) ? $comissao['gerente'] : '00,00' ?>
-							<input type="hidden" name="comissao[<?= $key ?>][gerente]" value="<?= $comissao['gerente'] ?>">
-						</p>
-						<p>
-							<b>Coordenador: </b>R$ <?= !empty($comissao['coordenador']) ? $comissao['coordenador'] : '00,00' ?>
-							<input type="hidden" name="comissao[<?= $key ?>][coordenador]" value="<?= $comissao['coordenador'] ?>">
-						</p>
-						<p>
-							<b>Corretor: </b>R$ <?= !empty($comissao['corretor']) ? $comissao['corretor'] : '00,00' ?>
-							<input type="hidden" name="comissao[<?= $key ?>][corretor]" value="<?= $comissao['corretor'] ?>">
-						</p>
-						<hr>
-						<p><b>Valor total : </b>R$ <?= isset($parcelas[$key]['valor']) ? $parcelas[$key]['valor'] : '00,00' ?> </p>
-						<p><b>Valor restante desta parcela : </b>R$ <?= isset($parcelas[$key]['restante']) ? $parcelas[$key]['restante'] : '00,00' ?> </p>
+						<ul class="list-group" >
+							<li class="list-group-item" >
+								<b>Parcela Nº <?php echo $key + 1; ?></b>
+							</li>
+							<li class="list-group-item" >
+								<b>Empresa: </b>R$ <?= !empty($comissao['empresa']) ? $comissao['empresa'] : '00,00' ?>
+								<span class="pull-right" >
+									<label for="empresa-pago-<?= $key ?>" >Pago?</label>
+									<input id="empresa-pago-<?= $key ?>" type="checkbox" name="comissao[<?= $key ?>][empresa_pago]"  onclick="this.form.submit()" <?= $parcelas[$key]['liberado'] == 'true' ? '' : 'disabled'; ?> <?= isset($comissao['empresa_pago']) && $comissao['empresa_pago'] == 'on' ? 'checked=""' : '' ?> >	
+								</span>
+								<input type="hidden" name="comissao[<?= $key ?>][empresa]" value="<?= $comissao['empresa'] ?>">
+							</li>
+							<li class="list-group-item" >
+								<b>Diretor: </b>R$ <?= !empty($comissao['diretor']) ? $comissao['diretor'] : '00,00' ?>
+								<span class="pull-right" >
+									<label for="diretor-pago-<?= $key ?>" >Pago?</label>
+									<input id="diretor-pago-<?= $key ?>" type="checkbox" name="comissao[<?= $key ?>][diretor_pago]" onclick="this.form.submit()" <?= $parcelas[$key]['liberado'] == 'true' ? '' : 'disabled'; ?> <?= isset($comissao['diretor_pago']) && $comissao['diretor_pago']  == 'on' ? 'checked=""' : '' ?>  >
+								</span>
+								<input type="hidden" name="comissao[<?= $key ?>][diretor]" value="<?= $comissao['diretor'] ?>">
+							</li>
+							<li class="list-group-item" >
+								<b>Gerente: </b>R$ <?= !empty($comissao['gerente']) ? $comissao['gerente'] : '00,00' ?>
+								<span class="pull-right" >
+									<label for="gerente-pago-<?= $key ?>" >Pago?</label>
+									<input id="gerente-pago-<?= $key ?>" type="checkbox" name="comissao[<?= $key ?>][gerente_pago]" onclick="this.form.submit()" <?= $parcelas[$key]['liberado'] == 'true' ? '' : 'disabled'; ?> <?= isset($comissao['gerente_pago']) && $comissao['gerente_pago']  == 'on' ? 'checked=""' : '' ?>  >
+								</span>
+								<input type="hidden" name="comissao[<?= $key ?>][gerente]" value="<?= $comissao['gerente'] ?>">
+							</li>
+							<li class="list-group-item" >
+								<b>Coordenador: </b>R$ <?= !empty($comissao['coordenador']) ? $comissao['coordenador'] : '00,00' ?>
+								<span class="pull-right" >
+									<label for="coordenador-pago-<?= $key ?>" >Pago?</label>
+									<input id="coordenador-pago-<?= $key ?>" type="checkbox" name="comissao[<?= $key ?>][coordenador_pago]" onclick="this.form.submit()" <?= $parcelas[$key]['liberado'] == 'true' ? '' : 'disabled'; ?> <?= isset($comissao['coordenador_pago']) && $comissao['coordenador_pago']  == 'on' ? 'checked=""' : '' ?>  >
+								</span>
+								<input type="hidden" name="comissao[<?= $key ?>][coordenador]" value="<?= $comissao['coordenador'] ?>">
+							</li>
+							<li class="list-group-item" >
+								<b>Corretor: </b>R$ <?= !empty($comissao['corretor']) ? $comissao['corretor'] : '00,00' ?>
+								<span class="pull-right" >
+									<label for="corretor-pago-<?= $key ?>" >Pago?</label>
+									<input id="corretor-pago-<?= $key ?>" type="checkbox" name="comissao[<?= $key ?>][corretor_pago]" onclick="this.form.submit()" <?= $parcelas[$key]['liberado'] == 'true' ? '' : 'disabled'; ?> <?= isset($comissao['corretor_pago']) && $comissao['corretor_pago']  == 'on' ? 'checked=""' : '' ?>  >
+								</span>
+								<input type="hidden" name="comissao[<?= $key ?>][corretor]" value="<?= $comissao['corretor'] ?>">
+							</li>
+							<li class="list-group-item disabled">
+								<hr>
+							</li>
+							<li class="list-group-item" ><b>Valor total : </b>R$ <?= isset($parcelas[$key]['valor']) ? $parcelas[$key]['valor'] : '00,00' ?> </li>
+							<li class="list-group-item" ><b>Valor restante desta parcela : </b>R$ <?= isset($parcelas[$key]['restante']) ? $parcelas[$key]['restante'] : '00,00' ?> </li>							
+						</ul>
 					</li>
 				<?php endforeach; ?>
 				</ul>

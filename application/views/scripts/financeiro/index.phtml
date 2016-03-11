@@ -1,4 +1,4 @@
-<?= $this->render('common/top-bar-no-buttons.phtml'); ?>
+<?= $this->render('common/top-bar-list-no-trash.phtml'); ?>
 <div class="container">
 <div class="row">
 <?= $this->render('common/message.phtml'); ?>
@@ -56,7 +56,7 @@
 						<?= $this->model_user->selectNameById($data['last_user_id']) ?>
 					</td>
 					<td>
-						<?= $data['restante']; ?>
+						<?= $data['restante'] != "" ? $data['restante'] : '0,00'; ?>
 					</td>	
 					<td class="" >
 						<?= $data['recebido']; ?>
@@ -65,7 +65,8 @@
 				<?php endforeach; ?>
 				<?php endif; ?>
 		</tbody>
-		</table>			
+		</table>	
+		<input type="hidden" name="search" value="<?= isset($this->data['search']) ? $this->data['search'] : '' ?>" >		
 	</form>
 	
 	<?php if($this->paginator) : ?>
@@ -77,3 +78,6 @@
     <?php endif;?>
 	
 </div>
+
+<?php //Pegando o script.js ?>
+<?= $this->render('common/scripts-js/script-bar-list.phtml'); ?>

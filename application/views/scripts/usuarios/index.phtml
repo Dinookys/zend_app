@@ -47,7 +47,8 @@
 				</tr>
 				<?php endforeach; ?>
 		</tbody>
-		</table>		
+		</table>
+		<input type="hidden" name="search" value="<?= isset($this->data['search']) ? $this->data['search'] : '' ?>" >		
 	</form>
 	
 	<?php if($this->paginator) : ?>
@@ -59,3 +60,7 @@
     <?php endif;?>
 	
 </div>
+
+
+<?php //Pegando o script.js ?>
+<?= $this->render('common/scripts-js/script-bar-list.phtml'); ?>

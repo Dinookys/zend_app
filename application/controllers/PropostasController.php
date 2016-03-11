@@ -8,7 +8,7 @@ class PropostasController extends Zend_Controller_Action
     protected $_custom = null;
 
     protected $_acl = null;
-    
+
     protected $_acl_model = null;
 
     protected $_actionName = null;
@@ -81,13 +81,21 @@ class PropostasController extends Zend_Controller_Action
 		if (is_null($filter)) {
 			$filter = 1;
 		}
+		
+		$like = NULL;
+		
+		if ($request->isPost()) {
+		    $data = $request->getPost();
+		    $like = $data['search'];
+		    $this->view->data = $data;
+		}
 
 		// Recuperando dados do clientes baseado no Perfil ativo.
 		if (in_array(CURRENT_USER_ROLE, $this->_acl['fullControl'])) {
-			$select = $model->selectAll($filter);
+			$select = $model->selectAll($filter, $like);
 		} else {
 			$ids = implode(',', $this->_ids);
-			$select = $model->selectByUsersIds($ids, $filter);
+			$select = $model->selectByUsersIds($ids, $filter, $like);
 		}
 
 		$paginator = new Zend_Paginator(new Zend_Paginator_Adapter_DbSelect($select));
@@ -481,7 +489,15 @@ class PropostasController extends Zend_Controller_Action
 		}
     }
 
+    public function archiveAction()
+    {
+        // action body
+    }
+
+
 }
+
+
 
 
 

@@ -47,11 +47,17 @@ class Application_Model_Propostas extends Application_Model_Clientes
 	 * @return mixed
 	 * @throws Zend_Exception
 	 */
-	public function selectAll($filter = 1)
+	public function selectAll($filter = 1, $like = NULL)
 	{    
 		$select = new Zend_Db_Select($this->db);		
 		$select->from( array('p' => $this->name));
 		$select->where('p.state = ?', $filter);
+		
+		if(!is_null($like)){
+		    $columns = array('p.dados_extras');
+		    $select->where($columns[0] . ' LIKE ?', '%'. $like .'%' );		    
+		}
+		
 		$select->order('p.id DESC');
 		
 		return $select;
@@ -73,18 +79,21 @@ class Application_Model_Propostas extends Application_Model_Clientes
 	 * @throws Zend_Exception
 	 * @return mixed | boolean
 	 */
-	public function selectByUsersIds($ids, $filter = 1)
+	public function selectByUsersIds($ids, $filter = 1, $like = NULL)
 	{    
 	    $select = new Zend_Db_Select($this->db);
 	    
 	    $select->from(
-	        array('p' => $this->name));
-	    $select->joinLeft(
-	        array('c' => $this->_cliente_table),
-	        'p.id_cliente = c.id');
+	        array('p' => $this->name));	    
 	    
         $select->where('p.state = ?', $filter);
-        $select->where('c.created_user_id IN ('. $ids .')');
+        $select->where('p.created_user_id IN ('. $ids .')');
+        
+        if(!is_null($like)){
+            $columns = array('p.dados_extras');
+            $select->where($columns[0] . ' LIKE ?', '%'. $like .'%' );
+        }
+        
         $select->order('p.id DESC');
     
         return $select;
@@ -127,9 +136,9 @@ class Application_Model_Propostas extends Application_Model_Clientes
 	{
 		try {
 			if ($ids) {
-				$sql = 'SELECT p.* FROM ' . $this->name . ' as p LEFT JOIN ' . $this->_cliente_table . ' as c ON p.id_cliente = c.id WHERE c.id = ? AND p.created_user_id IN (' . $ids . ')';
+				$sql = 'SELECT p.* FROM ' . $this->name . ' as p LEFT JOIN ' . $this->_cliente_table . ' as c ON p.id_cliente = c.id WHERE p.id = ? AND p.created_user_id IN (' . $ids . ')';
 			} else {
-				$sql = 'SELECT p.* FROM ' . $this->name . ' as p LEFT JOIN ' . $this->_cliente_table . ' as c ON p.id_cliente = c.id WHERE c.id = ?';
+				$sql = 'SELECT p.* FROM ' . $this->name . ' as p LEFT JOIN ' . $this->_cliente_table . ' as c ON p.id_cliente = c.id WHERE p.id = ?';
 			}
 
 			$result = $this->db->fetchRow($sql, array(
@@ -142,28 +151,33 @@ class Application_Model_Propostas extends Application_Model_Clientes
 		}
 	}
 	
-	public function getPropostasAutorizadas($filter = 1, $liberarPagamento = false){
-	             
-	            try {
-	                
-	                $select = new Zend_Db_Select($this->db);
-	                $select->from(
-	                    array('pr' => $this->name),
-	                    array('id','id_cliente', 'created_user_id', 'dados_extras', 'locked', 'locked_by'));
-	                $select->joinLeft(array('pv' => $this->name_valores), 'pr.id = pv.id_proposta', array('liberar','restante','recebido','last_modified','last_user_id'));
-	                $select->where('pr.autorizado = 1');
-	                if($liberarPagamento){
-	                    $select->where('pv.liberar = 1');
-	                }
-	                $select->where('pr.state = ?', $filter);
-	                $select->order('pr.id DESC');
-	                
-	                return $select;
-	                
-	            }catch (Zend_Exception $e){
-	                throw new Zend_Exception($e->getMessage());
-	                return false;
-	            }
+	public function getPropostasAutorizadas($filter = 1, $liberarPagamento = false, $like = NULL){	             
+            try {
+                
+                $select = new Zend_Db_Select($this->db);
+                $select->from(
+                    array('pr' => $this->name),
+                    array('id','id_cliente', 'created_user_id', 'dados_extras', 'locked', 'locked_by'));
+                $select->joinLeft(array('pv' => $this->name_valores), 'pr.id = pv.id_proposta', array('liberar','restante','recebido','last_modified','last_user_id'));
+                $select->where('pr.autorizado = 1');
+                
+                if(!is_null($like)){
+                    $columns = array('pr.dados_extras');
+                    $select->where($columns[0] . ' LIKE ?', '%'. $like .'%' );                    
+                }
+                
+                if($liberarPagamento){
+                    $select->where('pv.liberar = 1');
+                }
+                $select->where('pv.state = ?', $filter);
+                $select->order('pr.id DESC');
+                
+                return $select;
+                
+            }catch (Zend_Exception $e){
+                throw new Zend_Exception($e->getMessage());
+                return false;
+        }
 	}
 	
 	public function getPropostaAutorizada($id){
@@ -176,6 +190,49 @@ class Application_Model_Propostas extends Application_Model_Clientes
 	                throw new Zend_Exception($e->getMessage());
 	                return false;
 	            }
+	}
+	
+	
+	/**
+	 * trash atualiza estado do item
+	 *
+	 * @param int $id
+	 * @param int $state
+	 * @throws Zend_Exception
+	 */
+	public function trashPropostaAutorizada($id, $state = 0)
+	{
+	    try {
+	        $where = $this->db->quoteInto('id = ?', $id);
+	        $bind = array(
+	            'state' => $state
+	        );
+	        $this->db->update($this->name, $bind, $where);
+	        return true;
+	    } catch (Zend_Db_Adapter_Exception $e) {
+	        throw new Zend_Exception($e->getMessage());
+	    }
+	}
+	
+	/**
+	 * trash atualiza estado do item
+	 *
+	 * @param int $id
+	 * @param int $state
+	 * @throws Zend_Exception
+	 */
+	public function trashFinanceiro($id, $state = 0)
+	{
+	    try {
+	        $where = $this->db->quoteInto('id_proposta = ?', $id);
+	        $bind = array(
+	            'state' => $state
+	        );
+	        $this->db->update($this->name_valores, $bind, $where);
+	        return true;
+	    } catch (Zend_Db_Adapter_Exception $e) {
+	        throw new Zend_Exception($e->getMessage());
+	    }
 	}
 
 	/**
@@ -362,13 +419,14 @@ class Application_Model_Propostas extends Application_Model_Clientes
 			throw new Zend_Db_Exception($e->getMessage());
 		}
 	}
+	
 	/**
 	 * Recuperar da table proposta_valores comissões baseadas em um array de ids do usuarios
 	 * @param array $uids
 	 */
 	public function getPagamentosByUser($uids = array()){	    
 	    $select = new Zend_Db_Select($this->db);
-	    $select->from(array('v' => $this->name_valores), array('id','id_proposta','comissao','last_modified','last_user_id'));
+	    $select->from(array('v' => $this->name_valores), array('id','id_proposta','comissao','parcelas_pagas','last_modified','last_user_id'));
 	    $select->join(array('c' => $this->name), 'v.id_proposta = c.id', 'dados_extras');
 	    $select->where('c.created_user_id IN ('. implode(',', $uids) .')');
 	    $select->order('v.last_modified DESC');    

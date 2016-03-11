@@ -1,0 +1,111 @@
+<script>
+	(function($){
+		$(document).ready(function(){
+
+			$('#search').on('keypress', function(e){
+
+				$('input[name=search]').val($(this).val());
+				
+				if(e.keyCode == 13 || e.key == 13){
+					$('form').submit();
+				}	
+			});
+			
+			$('#edit').click(function(e){
+				e.preventDefault();
+				var id = $('input[type=checkbox].checkbox:checked').eq(0).attr('id');
+				
+				if(id != undefined){
+					window.location.href = '<?= $this->baseUrl() . '/'. $this->controllerName; ?>/edit/id/'+ id + '';
+				}else{
+					bootbox.alert("Selecione um item através da lista");
+				}				
+			});
+
+			$('#remove').click(function(e){
+				e.preventDefault();
+				var id = $('input[type=checkbox].checkbox:checked').eq(0).attr('id');
+				if(id == undefined){
+					bootbox.alert("Selecione um item através da lista");
+				}else{
+        			bootbox.confirm("Remover definitivamente item(s) selecionados?", function(result){
+        				if(result){
+        					$('form#<?= $this->controllerName ?>').attr('action', '<?= $this->baseUrl() . '/'. $this->controllerName ?>/delete').submit();
+        				}else{
+        					$('.checkbox').prop('checked', false);
+        				}
+        			});
+				}	
+			});
+
+			$('#lixeira').click(function(e){
+				e.preventDefault();
+				var id = $('input[type=checkbox].checkbox:checked').eq(0).attr('id');
+				if(id == undefined){
+					bootbox.alert("Selecione um item através da lista");
+				}else{
+        			bootbox.confirm("Enviar item(s) selecionados para lixeira?", function(result){
+        				if(result){
+        					$('form#<?= $this->controllerName ?>').attr('action', '<?= $this->baseUrl() . '/'. $this->controllerName ?>/trash').submit();
+        				}else{
+        					$('.checkbox').prop('checked', false);
+        				}
+        			});
+				}	
+			});
+
+			$('#arquivados').click(function(e){
+				e.preventDefault();
+				var id = $('input[type=checkbox].checkbox:checked').eq(0).attr('id');
+				if(id == undefined){
+					bootbox.alert("Selecione um item através da lista");
+				}else{
+        			bootbox.confirm("Enviar item(s) selecionados para arquivados?", function(result){
+        				if(result){
+        					$('form#<?= $this->controllerName ?>').attr('action', '<?= $this->baseUrl() . '/'. $this->controllerName ?>/archive').submit();
+        				}else{
+        					$('.checkbox').prop('checked', false);
+        				}
+        			});
+				}	
+			});
+        					
+
+			$('#restore').click(function(e){
+				e.preventDefault();
+				var id = $('input[type=checkbox].checkbox:checked').eq(0).attr('id');
+				if(id == undefined){
+					bootbox.alert("Selecione um item através da lista");
+				}else{
+        			bootbox.confirm("Restaurar item(s) selecionados?", function(result){
+        				if(result){
+        					$('form#<?= $this->controllerName ?>').attr('action', '<?= $this->baseUrl() . '/'. $this->controllerName ?>/restore').submit();
+        				}else{
+        					$('.checkbox').prop('checked', false);
+        				}
+        			});
+				}	
+			});
+			
+			$('#checkAll').click(function(e){				
+				$('.checkbox').prop('checked', $(this).is(":checked"));
+			});
+
+			if(window.location.href.replace(window.location.origin, '') == '<?= $this->baseUrl() . '/' . $this->controllerName ?>/index/filter/0'){
+				$("#verlixeira").text('Sair da lixeira');
+				$("#verlixeira").attr( 'href','<?= $this->baseUrl() . '/' . $this->controllerName ?>/index');		
+				$("#lixeira").css({'display': 'none'});	
+				$("#remove").css({'display': 'inline-block'});
+				$("#restore").css({'display': 'inline-block'});						
+			}else if(window.location.href.replace(window.location.origin, '') == '<?= $this->baseUrl() . '/' . $this->controllerName ?>/index/filter/3'){
+				$("#verarquivados").text('Sair de Arquivados');
+				$("#verarquivados").attr( 'href','<?= $this->baseUrl() . '/' . $this->controllerName ?>/index');				
+				$("#restore").css({'display': 'inline-block'});	
+			}else{
+				$("#remove").css({'display': 'none'});
+				$("#restore").css({'display': 'none'});
+			};
+
+		});
+	})(jQuery);	
+</script>

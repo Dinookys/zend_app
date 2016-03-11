@@ -21,8 +21,9 @@
     	</thead>
     	<tbody>
     		<?php foreach ($this->paginator AS $key => $data){
-                $cliente = json_decode($data['dados_cliente'],true);
-                $comissoes = json_decode($data['comissao'],true);                
+                $cliente = json_decode($data['dados_extras'],true);
+                $comissoes = json_decode($data['comissao'],true);
+                $parcelas_pagas = json_decode($data['parcelas_pagas'],true);
             ?>      
         		<tr>
         			<td>
@@ -49,9 +50,9 @@
         					   foreach ($comissoes AS $key => $comissao) {
     					           foreach ($comissao AS $k => $value){ ?>    					               					           
             						<?php if($k == strtolower(CURRENT_USER_ROLE)) : ?>
-            							<li class="list-group-item <?php echo $value ? "list-group-item-success" : "list-group-item-warning" ?> " >
+            							<li class="list-group-item <?php echo $value && $parcelas_pagas[$key]['liberado'] === true ? "list-group-item-success" : "list-group-item-warning" ?> " >
             								<span class="badge">Nº <?= $key + 1 ?></span>
-            								<?php if($value) : ?>
+            								<?php if($value && $parcelas_pagas[$key]['liberado'] === true) : ?>
             									<span>R$ <?= $value;?></span>
             								<?php else : ?>
             									<span>---</span>

@@ -1,11 +1,11 @@
-<?= $this->render('common/top-bar-no-buttons.phtml'); ?>
+<?= $this->render('common/top-bar-list-no-trash.phtml'); ?>
 <div class="container">
 <div class="row">
 <?= $this->render('common/message.phtml'); ?>
 </div>
 </div>
 <div class="container panel panel-default">	
-	<form name="comissoes-list" id="financeiro" action="" method="post">
+	<form name="comissoes-list" id="comissoes" action="" method="post">
 		<table class="table table-condensed table-hover table-striped">
 			<thead>
 				<tr>
@@ -65,7 +65,8 @@
 				<?php endforeach; ?>
 				<?php endif; ?>
 		</tbody>
-		</table>			
+		</table>		
+		<input type="hidden" name="search" value="<?= isset($this->data['search']) ? $this->data['search'] : '' ?>" >	
 	</form>
 	
 	<?php if($this->paginator) : ?>
@@ -77,3 +78,6 @@
     <?php endif;?>
 	
 </div>
+
+<?php //Pegando o script.js ?>
+<?= $this->render('common/scripts-js/script-bar-list.phtml'); ?>

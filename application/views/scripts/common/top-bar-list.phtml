@@ -1,90 +1,16 @@
-<script>
-	(function($){
-		$(document).ready(function(){
-			$('#edit').click(function(e){
-				e.preventDefault();
-				var id = $('input[type=checkbox].checkbox:checked').eq(0).attr('id');
-				
-				if(id != undefined){
-					window.location.href = '<?= $this->baseUrl() . '/'. $this->controllerName; ?>/edit/id/'+ id + '';
-				}else{
-					bootbox.alert("Selecione um item através da lista");
-				}				
-			});
-
-			$('#remove').click(function(e){
-				e.preventDefault();
-				var id = $('input[type=checkbox].checkbox:checked').eq(0).attr('id');
-				if(id == undefined){
-					bootbox.alert("Selecione um item através da lista");
-				}else{
-        			bootbox.confirm("Remover definitivamente item(s) selecionados?", function(result){
-        				if(result){
-        					$('form#<?= $this->controllerName ?>').attr('action', '<?= $this->baseUrl() . '/'. $this->controllerName ?>/delete').submit();
-        				}else{
-        					$('.checkbox').prop('checked', false);
-        				}
-        			});
-				}	
-			});
-
-			$('#lixeira').click(function(e){
-				e.preventDefault();
-				var id = $('input[type=checkbox].checkbox:checked').eq(0).attr('id');
-				if(id == undefined){
-					bootbox.alert("Selecione um item através da lista");
-				}else{
-        			bootbox.confirm("Enviar item(s) selecionados para lixeira?", function(result){
-        				if(result){
-        					$('form#<?= $this->controllerName ?>').attr('action', '<?= $this->baseUrl() . '/'. $this->controllerName ?>/trash').submit();
-        				}else{
-        					$('.checkbox').prop('checked', false);
-        				}
-        			});
-				}	
-			});
-
-			$('#restore').click(function(e){
-				e.preventDefault();
-				var id = $('input[type=checkbox].checkbox:checked').eq(0).attr('id');
-				if(id == undefined){
-					bootbox.alert("Selecione um item através da lista");
-				}else{
-        			bootbox.confirm("Restaurar item(s) selecionados?", function(result){
-        				if(result){
-        					$('form#<?= $this->controllerName ?>').attr('action', '<?= $this->baseUrl() . '/'. $this->controllerName ?>/restore').submit();
-        				}else{
-        					$('.checkbox').prop('checked', false);
-        				}
-        			});
-				}	
-			});
-			
-			$('#checkAll').click(function(e){				
-				$('.checkbox').prop('checked', $(this).is(":checked"));
-			});
-
-			if(window.location.href.replace(window.location.origin, '') == '<?= $this->baseUrl() . '/' . $this->controllerName ?>/index/filter/0'){
-				$("#verlixeira").text('Sair da lixeira');
-				$("#verlixeira").attr( 'href','<?= $this->baseUrl() . '/' . $this->controllerName ?>/index');		
-				$("#lixeira").css({'display': 'none'});	
-				$("#remove").css({'display': 'inline-block'});
-				$("#restore").css({'display': 'inline-block'});						
-			}else{
-				$("#remove").css({'display': 'none'});
-				$("#restore").css({'display': 'none'});	
-			};
-
-		});
-	})(jQuery);	
-</script>
 <div class="navbar navbar-default">
 	<div class="container">
 		<div class="navbar-brand">
 			<?= $this->barTitle; ?>
 		</div>	
+		<div class="navbar-form navbar-left">
+			<div class="form-group" >				
+				<input type="text" id="search" value="<?= isset($this->data['search']) ? $this->data['search'] : '' ?>"  class="form-control" placeholder="Pesquisar" />
+			</div>			
+		</div>
 		<div class="navbar-right" >
 			<a id="verlixeira" href="<?= $this->baseUrl() . '/' . $this->controllerName ?>/index/filter/0" class="btn btn-default navbar-btn">Ver lixeira</a>
+			<a id="verarquivados" href="<?= $this->baseUrl() . '/' . $this->controllerName ?>/index/filter/3" class="btn btn-default navbar-btn">Itens Arquivados</a>
 			<?php 
 			     // Pemissão para exclusão do item
 			     if($this->user->role != 'Corretor') : 
@@ -92,7 +18,8 @@
 			<a style="display: none;" href="#" id="remove" class="btn btn-danger navbar-btn" title="Remover definitivamente item(s) selecionados" ><i class="glyphicon glyphicon-remove-sign" ></i> Remover</a>
 			<?php endif; ?>
 			<a style="display: none;" href="#" id="restore" class="btn btn-success navbar-btn" title="Restaura item(s) selecionados" ><i class="glyphicon glyphicon-retweet" ></i> Restaurar</a>				
-			<a href="#" id="lixeira" class="btn btn-warning navbar-btn" title="Enviar item(s) selecionados para Lixeira" ><i class="glyphicon glyphicon-trash" ></i> Lixeira</a>
+			<a href="#" id="lixeira" class="btn btn-danger navbar-btn" title="Enviar item(s) selecionados para Lixeira" ><i class="glyphicon glyphicon-trash" ></i> Lixeira</a>
+			<a href="#" id="arquivados" class="btn btn-warning navbar-btn" title="Enviar item(s) selecionados para Arquivados" ><i class="glyphicon glyphicon-tasks" ></i> Arquivar</a>
 			<a href="#" id="edit" class="btn btn-info navbar-btn" title="Editar item selecionado" ><i class="glyphicon glyphicon-edit" ></i> Editar</a>
 			<a class="btn btn-success navbar-btn" href="<?= $this->baseUrl() . '/' . $this->controllerName ?>/add" title="Adicionar" ><i class="glyphicon glyphicon-plus-sign"></i> Adicionar</a>
 		</div>		
